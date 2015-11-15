@@ -19,7 +19,7 @@
           '<div>' +
             '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
               'width="' + tAttrs.width + '" height="' + tAttrs.height + '"' +
-            '></svg' +
+            '></svg>' +
           '</div>';
       },
       link: function(scope, element, attrs) {
