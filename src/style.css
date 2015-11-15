@@ -33,3 +33,9 @@ a:visited {
 chart {
   display: block;
 }
+
+.land {
+  fill: #f7f7f7;
+  fill-opacity: 1;
+  stroke: none;
+}
