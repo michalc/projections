@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #068dc5;
+  color: white;
+}
+
+.wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-width: 1010px;
+  min-height: 665px;
+}
+
+a,
+a:visited {
+  color: white
+}
+
+chart {
+  display: block;
+}

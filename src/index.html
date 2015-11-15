@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html ng-app="projections">
+  <head>
+    <meta charset="utf-8">
+    <title>Projection Explorer</title>
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="mercator.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body overlay reflow>
+    <div class="wrapper" ng-controller="ProjectionsController">
+      <chart
+        chart="chart"
+        width="1010"
+        height="665"
+      >
+      </chart>
+    </div>
+  </body>
+</html>
