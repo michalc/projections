@@ -11,8 +11,11 @@
   </head>
   <body overlay reflow>
     <div class="wrapper" ng-controller="ProjectionsController">
+      <input type="range" min="-180" max="180" step="1" ng-model="offsets.latitude" ng-model-int>
+      <input type="range" min="-180" max="180" step="1" ng-model="offsets.longitude" ng-model-int>
       <chart
         chart="chart"
+        offsets="offsets"
         chart-bounds="bounds"
         width="1010"
         height="665"
