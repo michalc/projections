@@ -5,6 +5,7 @@
   Mercator.toEarth = toEarth;
   Mercator.bearing = bearing;
   Mercator.distance = distance;
+  Mercator.rotate = rotate;
   Mercator.greatCircle = greatCircle;
   Mercator.greatCirclePath = greatCirclePath;
 
@@ -119,6 +120,49 @@
         Math.sin(fromLat)*Math.sin(toLat)
       + Math.cos(fromLat)*Math.cos(toLat)*Math.cos(fromLong-fromLat)
     );
+  }
+
+  // latRotation rotates about y axis (line through earth along original equator)
+  // longRotation rotates about z axis (line through earth pole to pole)
+  function rotate(long, lat, longRotationDegrees, latRotationDegrees) {
+    // Convert to spherical-polar radian coordinates
+    var theeta = toRadians(long);
+    var phi = toRadians(lat + 90); // In usual spherical-polar coords, phi is 0 along z-axis
+
+    // Convert to cartesian coordinates (assuming radius of Earth is 1)
+    // http://mathworld.wolfram.com/SphericalCoordinates.html
+    var x = Math.cos(theeta) * Math.sin(phi);
+    var y = Math.sin(theeta) * Math.sin(phi);
+    var z = Math.cos(phi);
+
+    // Convert rotation angle to radians
+    var rotLong = toRadians(longRotationDegrees);
+    var rotLat = toRadians(latRotationDegrees);
+
+    // Rotate about z axis
+    var x_r1 = x * Math.cos(rotLong) - y * Math.sin(rotLong);
+    var y_r1 = x * Math.sin(rotLong) + y * Math.cos(rotLong);
+    var z_r1 = z;
+
+    // Rotate about x axis
+    var x_r2 = x_r1;
+    var y_r2 = y_r1 * Math.cos(rotLat) - z_r1 * Math.sin(rotLat);
+    var z_r2 = z_r1 * Math.sin(rotLat) + z_r1 * Math.cos(rotLat);
+
+    // Transform back to spherical polar
+    var theeta_r2 = Math.atan(y_r2 / x_r2);
+    var phi_r2 = Math.acos(z_r2);
+
+    // Convert to lat/long
+    var long_r2 = toDegrees(theeta_r2);
+    if      (x_r2 < 0 && y_r2 < 0) long_r2 = long_r2 - 180;
+    else if (x_r2 < 0 && y_r2 > 0) long_r2 = long_r2 + 180;
+    var lat_r2 = toDegrees(phi_r2) - 90;
+
+    return {
+      long: long_r2,
+      lat: lat_r2
+    };
   }
 
   function greatCircle(fromLong, fromLat, toLong, toLat, f) {

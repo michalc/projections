@@ -47,37 +47,20 @@
           var t1 = performance.now();
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
-          // Very unoptimized. Repeat the chart in every direction
-          // ... also very wrong! Can't just offset like this.
-          // Rotating latitude will affect lines of longitude!
-          var offsets = [
-            [-360, -180],
-            [-360,   0],
-            [-360,  180],
-            [0   , -180],
-            [0   ,   0],
-            [0   ,  180],
-            [360,  -180],
-            [360,    0],
-            [360,   180]
-          ];
           chart.features.forEach(function(feature) {
-            offsets.forEach(function(offset) {
-              var chartCoords = [];
-              feature.geometry.coordinates[0].forEach(function(longLat) {
-                var offsetLong = longLat[0] + offset[0] + offsetLongitude;
-                var offsetLat = longLat[1] + offset[1] + offsetLatitude;
-                var xy = Mercator.toChart(bounds, offsetLong, offsetLat);
-                chartCoords.push(xy);
+            var chartCoords = [];
+            feature.geometry.coordinates[0].forEach(function(longLat) {
+              var rotated = Mercator.rotate(longLat[0], longLat[1], offsetLongitude, offsetLatitude);
+              var xy = Mercator.toChart(bounds, rotated.long, rotated.lat);
+              chartCoords.push(xy);
 
-              });
-
-              path += '<path class="land" d="';
-              chartCoords.forEach(function(coord, i) {
-                path += (i == 0 ? 'M' : 'L') + Math.round(coord.x) + ',' + Math.round(coord.y);
-              });
-              path += 'z"/>';
             });
+
+            path += '<path class="land" d="';
+            chartCoords.forEach(function(coord, i) {
+              path += (i == 0 ? 'M' : 'L') + Math.round(coord.x) + ',' + Math.round(coord.y);
+            });
+            path += 'z"/>';
 
           });
           path += '</g></svg>';
