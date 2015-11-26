@@ -104,9 +104,9 @@
       },
       screen: {
         top: 0,
-        bottom: 665, 
+        bottom: 740,
         left: 0,
-        right: 1010
+        right: 800
       }
     };
   });
