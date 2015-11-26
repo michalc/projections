@@ -48,6 +48,8 @@
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
           // Very unoptimized. Repeat the chart in every direction
+          // ... also very wrong! Can't just offset like this.
+          // Rotating latitude will affect lines of longitude!
           var offsets = [
             [-360, -180],
             [-360,   0],
