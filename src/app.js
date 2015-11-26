@@ -46,23 +46,37 @@
           }
           var t1 = performance.now();
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
+
+          // Very unoptimized. Repeat the chart in every direction
+          var offsets = [
+            [-360, -180],
+            [-360,   0],
+            [-360,  180],
+            [0   , -180],
+            [0   ,   0],
+            [0   ,  180],
+            [360,  -180],
+            [360,    0],
+            [360,   180]
+          ];
           chart.features.forEach(function(feature) {
-            var chartCoords = [];
-            feature.geometry.coordinates[0].forEach(function(longLat) {
-              // *Very* broken since the shapes cross the entire map
-              // would need to do something clever like copy the entire shape to the other side
-              var offsetLong = longLat[0] + offsetLongitude;
-              offsetLong = offsetLong < -180 ? offsetLong + 360 : (offsetLong > 180 ? offsetLong - 360 : offsetLong);
-              var offsetLat = longLat[1] + offsetLatitude;
-              offsetLat = offsetLat < -90 ? offsetLat + 180 : (offsetLat > 90 ? offsetLat - 180 : offsetLat);
-              chartCoords.push(Mercator.toChart(bounds, offsetLong, offsetLat));
+            offsets.forEach(function(offset) {
+              var chartCoords = [];
+              feature.geometry.coordinates[0].forEach(function(longLat) {
+                var offsetLong = longLat[0] + offset[0] + offsetLongitude;
+                var offsetLat = longLat[1] + offset[1] + offsetLatitude;
+                var xy = Mercator.toChart(bounds, offsetLong, offsetLat);
+                chartCoords.push(xy);
+
+              });
+
+              path += '<path class="land" d="';
+              chartCoords.forEach(function(coord, i) {
+                path += (i == 0 ? 'M' : 'L') + Math.round(coord.x) + ',' + Math.round(coord.y);
+              });
+              path += 'z"/>';
             });
 
-            path += '<path class="land" d="';
-            chartCoords.forEach(function(coord, i) {
-              path += (i == 0 ? 'M' : 'L') + Math.round(coord.x) + ',' + Math.round(coord.y);
-            });
-            path += 'z"/>';
           });
           path += '</g></svg>';
           var t2 = performance.now();

@@ -8,6 +8,10 @@
   Mercator.greatCircle = greatCircle;
   Mercator.greatCirclePath = greatCirclePath;
 
+  // Points at infinity on the chart
+  // get mapped to this
+  var MAX_BOUND = 99999;
+
   function toRadians(deg) {
     return deg * Math.PI / 180;
   }
@@ -21,6 +25,12 @@
   }
 
   function thetaToY(W, theta) {
+    // Fudge to be able to plot things at (/beyond) pole
+    // this is useful since shapes might contain vertices
+    // that are at infinity, but still want to plot the ones
+    // that aren't
+    if (theta >= Math.PI / 2) return MAX_BOUND;
+    if (theta <= -Math.PI / 2) return -MAX_BOUND;
     return W / (2 * Math.PI) * Math.log(Math.tan(Math.PI / 4 + theta / 2));
   }
 
