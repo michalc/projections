@@ -144,10 +144,10 @@
     var y_r1 = x * Math.sin(rotLong) + y * Math.cos(rotLong);
     var z_r1 = z;
 
-    // Rotate about x axis
-    var x_r2 = x_r1;
-    var y_r2 = y_r1 * Math.cos(rotLat) - z_r1 * Math.sin(rotLat);
-    var z_r2 = z_r1 * Math.sin(rotLat) + z_r1 * Math.cos(rotLat);
+    // Rotate about y axis
+    var x_r2 = x_r1 * Math.cos(rotLat) + z_r1 * Math.sin(rotLat);
+    var y_r2 = y_r1;
+    var z_r2 = z_r1 * Math.cos(rotLat) - x_r1 * Math.sin(rotLat);
 
     // Transform back to spherical polar
     var theeta_r2 = Math.atan(y_r2 / x_r2);
