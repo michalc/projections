@@ -48,20 +48,63 @@
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
           chart.features.forEach(function(feature) {
-            var chartCoords = [];
+
+
+            var rotatedCoords = [];
+            var chartCoordsSet = [];
             feature.geometry.coordinates[0].forEach(function(longLat) {
               var rotated = Mercator.rotate(longLat[0], longLat[1], offsetLongitude, offsetLatitude);
-              var xy = Mercator.toChart(bounds, rotated.long, rotated.lat);
-              chartCoords.push(xy);
-
+              rotatedCoords.push(rotated);
             });
 
-            path += '<path class="land" d="';
-            chartCoords.forEach(function(coord, i) {
-              path += (i == 0 ? 'M' : 'L') + Math.round(coord.x) + ',' + Math.round(coord.y);
-            });
-            path += 'z"/>';
+            // Need to properly display
+            // - shapes going over a pole (there can be at most one at each pole)
+            // - shapes with points on both side of the map
+            //   (shapes going over the pole are examples of these, there are others)
 
+
+            //Check how many discontinuites of longitude there are
+            var DISCONTINUTY_THREASHOLD = 180;
+            var numDiscontinuities = 0;
+            rotatedCoords.forEach(function(longLat, i) {
+              var prev = rotatedCoords[i == 0 ? rotatedCoords.length - 1 : i - 1].long;
+              var curr = longLat.long;
+              if (Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0) {
+                ++numDiscontinuities;
+              }
+            });
+
+            var shapeOver180 = numDiscontinuities > 0 && numDiscontinuities % 2 == 0;
+
+            if (!shapeOver180) {
+              chartCoordsSet[0] = rotatedCoords;
+            } else {
+              // If the shape goes over the 180 meridian, need 2 copies
+              var rotated1 = [];
+              var rotated2 = [];
+              rotatedCoords.forEach(function(longLat, i) {
+                rotated1.push({
+                  long: (longLat.long + 360) % 360,
+                  lat: longLat.lat
+                });
+                rotated2.push({
+                  long: (longLat.long - 360) % 360,
+                  lat: longLat.lat
+                });
+              });
+              chartCoordsSet = [rotated1, rotated2];
+            }
+
+            chartCoordsSet.forEach(function(chartCoords) {
+              path += '<path class="land" d="';
+              chartCoords.forEach(function(coord, i) {
+                var xy = Mercator.toChart(bounds, coord.long, coord.lat);
+                var chartX = Math.round(xy.x);
+                var chartY =  Math.round(xy.y);
+                path += (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+              });
+              path += 'z"/>';
+            })
           });
           path += '</g></svg>';
           var t2 = performance.now();
