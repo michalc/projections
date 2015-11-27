@@ -48,8 +48,6 @@
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
           chart.features.forEach(function(feature) {
-
-
             var rotatedCoords = [];
             var chartCoordsSet = [];
             feature.geometry.coordinates[0].forEach(function(longLat) {
@@ -62,16 +60,19 @@
             // - shapes with points on both side of the map
             //   (shapes going over the pole are examples of these, there are others)
 
-
             //Check how many discontinuites of longitude there are
             var DISCONTINUTY_THREASHOLD = 180;
             var numDiscontinuities = 0;
+            var sameAsFirst = [];
+            var firstDirection;
             rotatedCoords.forEach(function(longLat, i) {
               var prev = rotatedCoords[i == 0 ? rotatedCoords.length - 1 : i - 1].long;
               var curr = longLat.long;
               if (Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0) {
                 ++numDiscontinuities;
+                firstDirection = firstDirection || (prev < curr ? 1 : -1);
               }
+              sameAsFirst[i] = numDiscontinuities % 2 == 0;
             });
 
             var shapeOver180 = numDiscontinuities > 0 && numDiscontinuities % 2 == 0;
@@ -79,16 +80,15 @@
             if (!shapeOver180) {
               chartCoordsSet[0] = rotatedCoords;
             } else {
-              // If the shape goes over the 180 meridian, need 2 copies
               var rotated1 = [];
               var rotated2 = [];
               rotatedCoords.forEach(function(longLat, i) {
                 rotated1.push({
-                  long: (longLat.long + 360) % 360,
+                  long: longLat.long - (!sameAsFirst[i] ? firstDirection * 360 : 0),
                   lat: longLat.lat
                 });
                 rotated2.push({
-                  long: (longLat.long - 360) % 360,
+                  long: longLat.long + (sameAsFirst[i] ? firstDirection * 360 : 0),
                   lat: longLat.lat
                 });
               });
