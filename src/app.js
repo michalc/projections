@@ -117,6 +117,8 @@
                 in: prev.index,
                 out: curr.index,
                 type: type,
+                inEdge:  type == 2 ? prev.direction : prev.direction,
+                outEdge: type == 2 ? prev.direction : !prev.direction,
                 longLatIn: prev.longLat,
                 longLatOut: curr.longLat
               });
