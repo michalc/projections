@@ -55,48 +55,157 @@
               rotatedCoords.push(rotated);
             });
 
-            // Need to properly display
-            // - shapes going over a pole (there can be at most one at each pole)
-            // - shapes with points on both side of the map
-            //   (shapes going over the pole are examples of these, there are others)
-
-            //Check how many discontinuites of longitude there are
-            var DISCONTINUTY_THREASHOLD = 180;
-            var numDiscontinuities = 0;
-            var sameAsFirst = [];
-            var firstDirection;
-            rotatedCoords.forEach(function(longLat, i) {
-              var prev = rotatedCoords[i == 0 ? rotatedCoords.length - 1 : i - 1].long;
-              var curr = longLat.long;
-              if (Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0) {
-                ++numDiscontinuities;
-                firstDirection = firstDirection || (prev < curr ? 1 : -1);
-              }
-              sameAsFirst[i] = numDiscontinuities % 2 == 0;
-            });
-
-            var shapeOver180 = numDiscontinuities > 0 && numDiscontinuities % 2 == 0;
-
-            if (!shapeOver180) {
-              chartCoordsSet[0] = rotatedCoords;
-            } else {
-              var rotated1 = [];
-              var rotated2 = [];
-              rotatedCoords.forEach(function(longLat, i) {
-                rotated1.push({
-                  long: longLat.long - (!sameAsFirst[i] ? firstDirection * 360 : 0),
-                  lat: longLat.lat
-                });
-                rotated2.push({
-                  long: longLat.long + (sameAsFirst[i] ? firstDirection * 360 : 0),
-                  lat: longLat.lat
-                });
-              });
-              chartCoordsSet = [rotated1, rotated2];
+            function discontinuityDirection(prev, curr) {
+              return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
             }
 
-            chartCoordsSet.forEach(function(chartCoords) {
-              path += '<path class="land" d="';
+            // Fudge to determine is 2 points are discontinuous
+            var DISCONTINUTY_THREASHOLD = 180;
+
+            // Array of objects describing discontinuities in the path
+            // described by the point after the discontinuity
+            //   index:     where in the path it occurs
+            //   longLat:   coords of the point
+            //   direction: 1 is -ve to +ve, -1 is +ve to -ve 
+            var discontinuities = [];
+
+            // Find discontinuities
+            rotatedCoords.forEach(function(longLat, i) {
+              var prevIndex = i == 0 ? rotatedCoords.length - 1 : i - 1;
+              var prev = rotatedCoords[prevIndex].long;
+              var curr = longLat.long;
+              var direction = discontinuityDirection(prev, curr);
+              if (direction) {
+                discontinuities.push({
+                  index: i,
+                  longLat: longLat,
+                  direction: direction
+                });
+              }
+            });
+
+            // Array of objects describing the types of segments in the path
+            //   in:         index of first
+            //   out:        index beyond the last point in the path
+            //   type:       0 is simple with no discontinuities (must be the only one in path)
+            //               1 is one that goes all the way around the earth
+            //               2 shape that goes up to + beyond an edge
+            //               3 is like 2, but coastal outline closer to pole that type 1
+            //               like type 1 but closer to pole
+            //   longLatIn:  coords on in point
+            //   longLatOut: coords on out point
+            //    
+            var segments = [];
+
+            // No discontinuites mean the segment must be simple
+            if (!discontinuities.length) {
+              segments.push({
+                type: 0,
+                in: 0,
+                out: rotatedCoords.length
+              });
+            }
+
+            // Find segment types by comparing discontinuities
+            discontinuities.forEach(function(discon, i) {
+              var prevIndex = i == 0 ? discontinuities.length - 1 : i - 1;
+              var nextIndex = (i + 1) % discontinuities.length;
+              var prev = discontinuities[prevIndex];
+              var curr = discon;
+              var type = prev.direction == curr.direction ? 1 : 2;
+              segments.push({
+                in: prev.index,
+                out: curr.index,
+                type: type,
+                longLatIn: prev.longLat,
+                longLatOut: curr.longLat
+              });
+            });
+
+            var type1Coords = null;
+            segments.forEach(function(segment) {
+              if (segment.type == 1) {
+                type1Coords = segment.longLat;
+              }
+            });
+
+            if (type1Coords) {
+              var poleDirection = type1Coords.lat > 0 ? 1 : -1;
+              segments.forEach(function(segment) {
+                if (segment.type == 2 && segment.lat * poleDirection > type1Coords.lat) {
+
+                }
+              });
+            }
+            // Segments of type are like 2 but closer to pole
+            if (discontinuities.length) {
+              console.log(segments);
+            }
+
+
+            // Types 3s are determined by their latitude being closer to the pole
+            // than of a type 2
+            // var type2Lat = null;
+            // discontinuities.forEach(function(discon, i) {
+            //   if (type2Lat == null && discon.dire)
+            // });
+
+
+            var numDiscontinuities = discontinuities.length;
+            var shapeOverPole = numDiscontinuities > 0 && numDiscontinuities % 2 == 1;
+            var shapeOver180 = numDiscontinuities > 0 && (numDiscontinuities % 2 == 0 || (shapeOverPole && numDiscontinuities >= 3));
+            var easyShape = !shapeOver180 && !shapeOverPole;
+
+            if (easyShape) {
+              chartCoordsSet[0] = rotatedCoords;
+            } 
+
+            // if (shapeOverPole) {
+            //   console.log(numDiscontinuities);
+            //   var pole = rotatedCoords[0].lat > 0 ? 1 : -1;
+            //   chartCoordsSet[0] = rotatedCoords;
+            //   var minDiscontinuity = null;
+            //   var afterMinDisontinuity = null;
+            //   var minDiscontinuityIndex = null;
+
+            //   // Find the discontinuity clo
+            //   rotatedCoords.forEach(function(longLat, i) {
+            //     var prev = rotatedCoords[i == 0 ? rotatedCoords.length - 1 : i - 1];
+            //     var curr = longLat;
+            //     if (Math.abs(prev.long - curr.long) > DISCONTINUTY_THREASHOLD && prev.long * curr.long < 0) {
+            //       console.log(prev, curr);
+            //       if (minDiscontinuity === null || Math.abs(prev.lat) > Math.abs(minDiscontinuity.lat)) {
+            //         minDiscontinuity = prev;
+            //         afterMinDisontinuity = curr;
+            //         minDiscontinuityIndex = i;
+            //       }
+            //     }
+            //   });
+            //   console.log(minDiscontinuity.lat, afterMinDisontinuity.lat);
+            //   minDiscontinuity.lat = pole * 89;
+            //   afterMinDisontinuity.lat = pole * 89;
+            //   console.log(minDiscontinuity, afterMinDisontinuity, rotatedCoords[minDiscontinuityIndex + 1]);
+            // }
+
+            //   // Extend
+            // if (shapeOver180) {
+            //   var rotated1 = [];
+            //   var rotated2 = [];
+            //   rotatedCoords.forEach(function(longLat, i) {
+            //     rotated1.push({
+            //       long: longLat.long - (!sameAsFirst[i] ? firstDirection * 360 : 0),
+            //       lat: longLat.lat
+            //     });
+            //     rotated2.push({
+            //       long: longLat.long + (sameAsFirst[i] ? firstDirection * 360 : 0),
+            //       lat: longLat.lat
+            //     });
+            //   });
+            //   chartCoordsSet = [rotated1, rotated2];
+            // }
+
+            chartCoordsSet.forEach(function(chartCoords, i) {
+              path += '<path class="land' + (i > 0 ? '' : '') + '" d="';
               chartCoords.forEach(function(coord, i) {
                 var xy = Mercator.toChart(bounds, coord.long, coord.lat);
                 var chartX = Math.round(xy.x);
