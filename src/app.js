@@ -60,14 +60,53 @@
               return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
             }
 
-            // Returns the segments points including either side of any discontiuity
+            function prev(length, i) {
+              return i == 0 ? length - 1 : i - 1;
+            }
+
+            function next(length, i) {
+              return (i + 1) % length;
+            }
+
+            // Point after i that is continous with i
+            function continuousAfter(i) {
+              var atPoint = rotatedCoords[i];
+              var atAfter = rotatedCoords[next(rotatedCoords.length, i)];
+              var discon = discontinuityDirection(atPoint.long, atAfter.long);
+              var continous = {
+                long: atAfter.long - discon * 360,
+                lat: atAfter.lat
+              };
+              return continous;
+            }
+
+            // Point before i that is continous with i
+            function continousBefore(i) {
+              var atPoint = rotatedCoords[i];
+              var atBefore = rotatedCoords[prev(rotatedCoords.length, i)];
+              var discon = discontinuityDirection(atPoint.long, atBefore.long);
+              var continous = {
+                long: atBefore.long - discon * 360,
+                lat: atBefore.lat
+              };
+              return continous;
+            }
+
             function segmentCoords(segment) {
               var coords = [];
               var i = segment.in;
               while (i != segment.out) {
                 coords.push(rotatedCoords[i]);
-                i = (i + 1) % rotatedCoords.length;
+                i = next(rotatedCoords.length, i);
               }
+
+              // Add point before that is continous with first point in path
+              coords.unshift(continousBefore(segment.in))
+
+              // Add point after that is continous with last point in path
+              // Note: The out point is not included in the path
+              coords.push(continuousAfter(prev(rotatedCoords.length, segment.out)));
+
               return coords;
             }
 
@@ -83,10 +122,10 @@
 
             // Find discontinuities
             rotatedCoords.forEach(function(longLat, i) {
-              var prevIndex = i == 0 ? rotatedCoords.length - 1 : i - 1;
-              var prev = rotatedCoords[prevIndex].long;
-              var curr = longLat.long;
-              var direction = discontinuityDirection(prev, curr);
+              var prevIndex = prev(rotatedCoords.length, i);
+              var prevLong = rotatedCoords[prevIndex].long;
+              var currLong = longLat.long;
+              var direction = discontinuityDirection(prevLong, currLong);
               if (direction) {
                 discontinuities.push({
                   index: i,
@@ -122,29 +161,37 @@
 
             // Find segment types by comparing discontinuities
             discontinuities.forEach(function(discon, i) {
-              var prevIndex = i == 0 ? discontinuities.length - 1 : i - 1;
-              var nextIndex = (i + 1) % discontinuities.length;
-              var prev = discontinuities[prevIndex];
-              var curr = discon;
-              var type = prev.direction == curr.direction ? 1 : 2;
+              var prevIndex = prev(discontinuities.length, i);
+              var nextIndex = next(discontinuities.length, i);
+              var prevDiscon = discontinuities[prevIndex];
+              var currDiscon = discon;
+              var type = prev.direction == currDiscon.direction ? 1 : 2;
               var segment = {
                 type: type,
-                in: prev.index,
-                out: curr.index,
-                inCoords: prev.longLat,
-                outCoords: curr.longLat,
+                in: prevDiscon.index,
+                out: currDiscon.index,
+                inCoords: prevDiscon.longLat,
+                outCoords: currDiscon.longLat,
                 coords: null
               };
               segment.coords = segmentCoords(segment);
               segments.push(segment);
             });
 
-            // Combine the segments into separate shapes
-            segments.forEach(function(segment) {
-              shapes.push({
-                coords: segment.coords
-              });
-            });
+
+            if (segments.length === 1 && segments[0].type == 0) {
+              shapes = [{
+                coords: segments[0].coords
+              }];
+            } else {
+              // Combine the segments into separate shapes
+              segments.forEach(function(segment) {
+                shapes.push({
+                  coords: segment.coords
+                });
+              });    
+            }
+
 
             shapes.forEach(function(shape, i) {
               path += '<path class="land" d="';
