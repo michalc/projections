@@ -165,7 +165,7 @@
               var nextIndex = next(discontinuities.length, i);
               var prevDiscon = discontinuities[prevIndex];
               var currDiscon = discon;
-              var type = prev.direction == currDiscon.direction ? 1 : 2;
+              var type = prevDiscon.direction === currDiscon.direction ? 1 : 2;
               var segment = {
                 type: type,
                 in: prevDiscon.index,
@@ -181,7 +181,7 @@
             var endpointsLeft = [];
             var endpointsRight = [];
             segments.forEach(function(segment) {
-              if (segment.in === segment.out) return;
+              if (segment.type === 0) return;
               var inArray = segment.coords[0].long < 0 ? endpointsLeft : endpointsRight;
               var inEndpoint = {
                 type: 'beginning',
@@ -220,11 +220,6 @@
               // Walk along each side creating shapes
               var leftShapeCoords = [];
               endpointsLeft.forEach(function(endpoint) {
-                // For now ignore lines all the way accros
-                if (endpoint.side !== endpoint.otherSide) {
-                  console.info('Ignoring line accross world');
-                  return;
-                }
                 leftShapeCoords = leftShapeCoords.concat(endpoint.segment.coords);
               });
               
@@ -235,20 +230,33 @@
               }
               var rightShapeCoords = [];
               endpointsRight.forEach(function(endpoint) {
-                // For now ignore lines all the way accros
-                if (endpoint.side !== endpoint.otherSide) {
-                  console.info('Ignoring line accross world');
-                  return;
-                }
                 rightShapeCoords = rightShapeCoords.concat(endpoint.segment.coords);
               });
               if (rightShapeCoords.length) {
                 shapes.push({
                   coords: rightShapeCoords
                 });
-              }  
-            }
+              }
 
+              endpointsLeft.forEach(function(endpoint) {
+                if (endpoint.side !== endpoint.otherSide) {
+                  var first = endpoint.segment.coords[0];
+                  var pole = first.lat < 0 ? -1 : 1;
+                  endpoint.segment.coords.unshift({
+                    long: first.long,
+                    lat: 89 * pole
+                  });
+                  var last = endpoint.segment.coords[endpoint.segment.coords.length - 1];
+                  endpoint.segment.coords.push({
+                    long: last.long,
+                    lat: 89 * pole
+                  });
+                  shapes.push({
+                    coords: endpoint.segment.coords
+                  });
+                }
+              })
+            }
 
             shapes.forEach(function(shape, i) {
               path += '<path class="land" d="';
