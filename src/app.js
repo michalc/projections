@@ -178,18 +178,75 @@
               segments.push(segment);
             });
 
+            var endpointsLeft = [];
+            var endpointsRight = [];
+            segments.forEach(function(segment) {
+              if (segment.in === segment.out) return;
+              var inArray = segment.coords[0].long < 0 ? endpointsLeft : endpointsRight;
+              var inEndpoint = {
+                type: 'beginning',
+                side: inArray == endpointsLeft ? 'left' : 'right',
+                otherSide: null,
+                coords: segment.coords[0],
+                segment: segment
+              };
+              var outArray = segment.coords[segment.coords.length - 1].long < 0 ? endpointsLeft : endpointsRight;
+              var outEndpoint = {
+                type: 'end',
+                side: outArray == endpointsLeft ? 'left' : 'right',
+                otherSide: null,
+                coords: segment.coords[segment.coords.length - 1],
+                segment: segment
+              };
+              inEndpoint.otherSide = outEndpoint.side;
+              outEndpoint.otherSide = inEndpoint.side;
+              inArray.push(inEndpoint);
+              outArray.push(outEndpoint);
+            });
+
+            // endpointsLeft.sort(function(a, b) {
+            //   return a.coords.long > b.coords.long;
+            // });
+            // endpointsRight.sort(function(a, b) {
+            //   return a.coords.long > b.coords.long;
+            // });
 
             if (segments.length === 1 && segments[0].type == 0) {
               shapes = [{
                 coords: segments[0].coords
               }];
             } else {
-              // Combine the segments into separate shapes
-              segments.forEach(function(segment) {
+
+              // Walk along each side creating shapes
+              var leftShapeCoords = [];
+              endpointsLeft.forEach(function(endpoint) {
+                // For now ignore lines all the way accros
+                if (endpoint.side !== endpoint.otherSide) {
+                  console.info('Ignoring line accross world');
+                  return;
+                }
+                leftShapeCoords = leftShapeCoords.concat(endpoint.segment.coords);
+              });
+              
+              if (leftShapeCoords.length) {
                 shapes.push({
-                  coords: segment.coords
+                  coords: leftShapeCoords
                 });
-              });    
+              }
+              var rightShapeCoords = [];
+              endpointsRight.forEach(function(endpoint) {
+                // For now ignore lines all the way accros
+                if (endpoint.side !== endpoint.otherSide) {
+                  console.info('Ignoring line accross world');
+                  return;
+                }
+                rightShapeCoords = rightShapeCoords.concat(endpoint.segment.coords);
+              });
+              if (rightShapeCoords.length) {
+                shapes.push({
+                  coords: rightShapeCoords
+                });
+              }  
             }
 
 
