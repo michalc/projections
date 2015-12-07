@@ -95,10 +95,10 @@
             function segmentCoords(segment) {
               var coords = [];
               var i = segment.in;
-              while (i != segment.out) {
+              do {
                 coords.push(rotatedCoords[i]);
                 i = next(rotatedCoords.length, i);
-              }
+              } while (i != segment.out);
 
               // Add point before that is continous with first point in path
               coords.unshift(continousBefore(segment.in))
@@ -220,7 +220,9 @@
               // Walk along each side creating shapes
               var leftShapeCoords = [];
               endpointsLeft.forEach(function(endpoint) {
-                leftShapeCoords = leftShapeCoords.concat(endpoint.segment.coords);
+                if (endpoint.side === endpoint.otherSide) {
+                  leftShapeCoords = leftShapeCoords.concat(endpoint.segment.coords);
+                }
               });
               
               if (leftShapeCoords.length) {
@@ -230,7 +232,9 @@
               }
               var rightShapeCoords = [];
               endpointsRight.forEach(function(endpoint) {
-                rightShapeCoords = rightShapeCoords.concat(endpoint.segment.coords);
+                if (endpoint.side === endpoint.otherSide) {
+                  rightShapeCoords = rightShapeCoords.concat(endpoint.segment.coords);
+                }
               });
               if (rightShapeCoords.length) {
                 shapes.push({
@@ -244,12 +248,12 @@
                   var pole = first.lat < 0 ? -1 : 1;
                   endpoint.segment.coords.unshift({
                     long: first.long,
-                    lat: 89 * pole
+                    lat: 88 * pole
                   });
                   var last = endpoint.segment.coords[endpoint.segment.coords.length - 1];
                   endpoint.segment.coords.push({
                     long: last.long,
-                    lat: 89 * pole
+                    lat: 88 * pole
                   });
                   shapes.push({
                     coords: endpoint.segment.coords
