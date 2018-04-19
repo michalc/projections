@@ -2,7 +2,6 @@
 
 (function(Mercator) {
   Mercator.toChart = toChart;
-  Mercator.toEarth = toEarth;
   Mercator.rotate = rotate;
 
   // Points at infinity on the chart
@@ -69,25 +68,6 @@
     return {
       x: chartX,
       y: chartY
-    };
-  }
-
-  function toEarth(chartBounds, chartX, chartY) {
-    var W = getW(chartBounds);
-
-    var lambda_0 = getLambda_0(chartBounds, chartX);
-    var x = chartX;
-    var lambda = xToLambda(W, lambda_0, x);
-    var long = toDegrees(lambda);
-
-    var y_top = getY_top(chartBounds);
-    var y = y_top - chartY;
-    var theta = yToTheta(W, y);
-    var lat = toDegrees(theta); 
-
-    return {
-      long: long,
-      lat: lat
     };
   }
 
