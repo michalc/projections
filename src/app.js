@@ -204,13 +204,6 @@
               outArray.push(outEndpoint);
             });
 
-            // endpointsLeft.sort(function(a, b) {
-            //   return a.coords.long > b.coords.long;
-            // });
-            // endpointsRight.sort(function(a, b) {
-            //   return a.coords.long > b.coords.long;
-            // });
-
             if (segments.length === 1 && segments[0].type == 0) {
               shapes = [{
                 coords: segments[0].coords
