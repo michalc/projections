@@ -260,7 +260,7 @@
           chart.features.forEach(function(feature) {
             var shapes = getShapes(bounds, offsetLongitude, offsetLatitude, feature);
 
-            path += shapes.reduce(function(pathForShapes, shape) {
+            path += _.reduce(shapes, function(pathForShapes, shape) {
               pathForShapes += '<path class="land" d="';
               shape.coords.forEach(function(coord, i) {
                 var xy = Mercator.toChart(bounds, coord.long, coord.lat);
