@@ -262,12 +262,12 @@
 
             path += _.reduce(shapes, function(pathForShapes, shape) {
               pathForShapes += '<path class="land" d="';
-              shape.coords.forEach(function(coord, i) {
+              pathForShapes += _.map(shape.coords, function(coord, i) {
                 var xy = Mercator.toChart(bounds, coord.long, coord.lat);
                 var chartX = Math.round(xy.x);
                 var chartY =  Math.round(xy.y);
-                pathForShapes += (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
-              });
+                return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+              }).join('');
               pathForShapes += 'z"/>';
               return pathForShapes;
             }, '');
