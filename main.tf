@@ -16,11 +16,23 @@ data "aws_route53_zone" "charemza_name" {
 
 resource "aws_s3_bucket" "projections_charemza_name" {
   bucket = "projections.charemza.name"
-  acl = "public-read"
+  policy = "${data.aws_iam_policy_document.projections_charemza_name.json}"
 
   website {
     index_document = "index.html"
     error_document = "error.html"
+  }
+}
+
+data "aws_iam_policy_document" "projections_charemza_name" {
+  statement {
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = ["*"]
+    }
+    actions = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::projections.charemza.name/*"]
   }
 }
 
