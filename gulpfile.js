@@ -78,6 +78,7 @@ gulp.task('default', [], function() {
     .pipe(gulp.dest(dest));
 
   var cssSrc = [
+    'node_modules/normalize.css/normalize.css',
     'src/style.css'
   ];
   var css = gulp.src(cssSrc)
@@ -91,8 +92,7 @@ gulp.task('default', [], function() {
   var bowerSrcDir = 'bower_components';
   var bowerDest = build + '/bower_components';
   var files = [
-    bowerSrcDir + '/angular/angular.min.js',
-    bowerSrcDir + '/normalize-css/normalize.css'
+    bowerSrcDir + '/angular/angular.min.js'
   ];
 
   var bower = gulp.src(files, {base: bowerSrcDir})

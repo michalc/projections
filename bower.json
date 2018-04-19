@@ -1,7 +1,6 @@
 {
   "name": "projections",
   "dependencies": {
-    "angular": "1.4.7",
-    "normalize-css": "3.0.3"
+    "angular": "1.4.7"
   }
 }
