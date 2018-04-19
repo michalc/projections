@@ -3,8 +3,6 @@
 (function(Mercator) {
   Mercator.toChart = toChart;
   Mercator.toEarth = toEarth;
-  Mercator.bearing = bearing;
-  Mercator.distance = distance;
   Mercator.rotate = rotate;
 
   // Points at infinity on the chart
@@ -91,33 +89,6 @@
       long: long,
       lat: lat
     };
-  }
-
-  function bearing(chartBounds, fromLong, fromLat, toLong, toLat) {
-    var fromChartCoords = toChart(chartBounds, fromLong, fromLat);
-    var toChartCoords = toChart(chartBounds, toLong, toLat);
-    var dx = toChartCoords.x - fromChartCoords.x;
-    var dy = fromChartCoords.y - toChartCoords.y; // y increasing doing down, not up
-    if (dy === 0) {
-      if (dx === 0) return 0;
-      if (dx > 0) return 90;
-      return 270;
-    }
-    var theta = Math.atan(dx/dy);
-    return toDegrees(theta) + (dy < 0 ? 180 : 0) + (dx < 0 && dy > 0 ? 360 : 0);
-  }
-
-  // http://williams.best.vwh.net/avform.htm
-  function distance(fromLong, fromLat, toLong, toLat) {
-    fromLong = toRadians(fromLong);
-    fromLat = toRadians(fromLat);
-    toLong = toRadians(toLong);
-    toLat = toRadians(toLat);
-
-    return Math.acos(
-        Math.sin(fromLat)*Math.sin(toLat)
-      + Math.cos(fromLat)*Math.cos(toLat)*Math.cos(fromLong-fromLat)
-    );
   }
 
   // latRotation rotates about y axis (line through earth along original equator)
