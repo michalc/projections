@@ -63,6 +63,7 @@ gulp.task('default', [], function() {
     .pipe(gulp.dest(dataDest));
 
   var jsSrc = [
+    'node_modules/angular/angular.min.js',
     'src/mercator.js',
     'src/app.js'
   ];
@@ -88,16 +89,5 @@ gulp.task('default', [], function() {
     }))
     .pipe(gulp.dest(dest));
 
-
-  var bowerSrcDir = 'bower_components';
-  var bowerDest = build + '/bower_components';
-  var files = [
-    bowerSrcDir + '/angular/angular.min.js'
-  ];
-
-  var bower = gulp.src(files, {base: bowerSrcDir})
-    .pipe(changed(bowerDest))
-    .pipe(gulp.dest(bowerDest));
-
-  return merge(data, html, js, css, bower);
+  return merge(data, html, js, css);
 });

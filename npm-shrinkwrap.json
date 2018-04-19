@@ -16,6 +16,11 @@
       "from": "amdefine@>=0.0.4",
       "resolved": "https://registry.npmjs.org/amdefine/-/amdefine-1.0.1.tgz"
     },
+    "angular": {
+      "version": "1.4.7",
+      "from": "angular@1.4.7",
+      "resolved": "https://registry.npmjs.org/angular/-/angular-1.4.7.tgz"
+    },
     "ansi-escapes": {
       "version": "1.4.0",
       "from": "ansi-escapes@>=1.1.0 <2.0.0",
