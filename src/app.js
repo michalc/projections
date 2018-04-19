@@ -260,16 +260,17 @@
           chart.features.forEach(function(feature) {
             var shapes = getShapes(bounds, offsetLongitude, offsetLatitude, feature);
 
-            shapes.forEach(function(shape, i) {
-              path += '<path class="land" d="';
+            path += shapes.reduce(function(pathForShapes, shape) {
+              pathForShapes += '<path class="land" d="';
               shape.coords.forEach(function(coord, i) {
                 var xy = Mercator.toChart(bounds, coord.long, coord.lat);
                 var chartX = Math.round(xy.x);
                 var chartY =  Math.round(xy.y);
-                path += (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+                pathForShapes += (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
               });
-              path += 'z"/>';
-            })
+              pathForShapes += 'z"/>';
+              return pathForShapes;
+            }, '');
           });
           path += '</g></svg>';
           var t2 = performance.now();
