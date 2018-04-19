@@ -6,8 +6,6 @@
   Mercator.bearing = bearing;
   Mercator.distance = distance;
   Mercator.rotate = rotate;
-  Mercator.greatCircle = greatCircle;
-  Mercator.greatCirclePath = greatCirclePath;
 
   // Points at infinity on the chart
   // get mapped to this
@@ -164,33 +162,5 @@
       long: long_r2,
       lat: lat_r2
     };
-  }
-
-  function greatCircle(fromLong, fromLat, toLong, toLat, f) {
-    fromLong = toRadians(fromLong);
-    fromLat = toRadians(fromLat);
-    toLong = toRadians(toLong);
-    toLat = toRadians(toLat);
-
-    var d = distance(fromLong, fromLat, toLong, toLat);
-    var A = Math.sin((1-f)*d)/Math.sin(d);
-    var B = Math.sin(f*d)/Math.sin(d);
-    var x = A*Math.cos(fromLat)*Math.cos(fromLong) + B*Math.cos(toLat)*Math.cos(toLong);
-    var y = A*Math.cos(fromLat)*Math.sin(fromLong) + B*Math.cos(toLat)*Math.sin(toLong);
-    var z = A*Math.sin(fromLat) + B*Math.sin(toLat)
-    return {
-      long: toDegrees(Math.atan2(y,x)),
-      lat: toDegrees(Math.atan2(z, Math.sqrt(Math.pow(x,2)+Math.pow(y,2))))
-    };
-  }
-
-  function greatCirclePath(fromLong, fromLat, toLong, toLat, numPoints) {
-    var path = [];
-    var i, f;
-    for (i = 0; i < numPoints; ++i) {
-      f = 1/(numPoints-1) * i;
-      path.push(Mercator.greatCircle(fromLong, fromLat, toLong, toLat, f));
-    }
-    return path;
   }
 })(typeof exports === 'undefined' ? this.Mercator = {} : exports);
