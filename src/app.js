@@ -261,15 +261,15 @@
             var shapes = getShapes(bounds, offsetLongitude, offsetLatitude, feature);
 
             path += _.reduce(shapes, function(pathForShapes, shape) {
-              pathForShapes += '<path class="land" d="';
-              pathForShapes += _.map(shape.coords, function(coord, i) {
-                var xy = Mercator.toChart(bounds, coord.long, coord.lat);
-                var chartX = Math.round(xy.x);
-                var chartY =  Math.round(xy.y);
-                return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
-              }).join('');
-              pathForShapes += 'z"/>';
-              return pathForShapes;
+              return pathForShapes
+                + '<path class="land" d="' 
+                + _.map(shape.coords, function(coord, i) {
+                    var xy = Mercator.toChart(bounds, coord.long, coord.lat);
+                    var chartX = Math.round(xy.x);
+                    var chartY =  Math.round(xy.y);
+                    return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+                }).join()
+               + 'z"/>';
             }, '');
           });
           path += '</g></svg>';
