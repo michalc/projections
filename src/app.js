@@ -258,7 +258,20 @@
       link: function(scope, element, attrs) {
         var svg = element.find('svg');
         var g = null;
-        var bounds = scope.$eval(attrs.chartBounds);
+        var bounds = {
+          earth: {
+            top: 83.6,
+            bottom: -83.6,
+            left: -180,
+            right: 180
+          },
+          screen: {
+            top: 0,
+            bottom: 740,
+            left: 0,
+            right: 800
+          }
+        };
 
         // Would it be faster to edit the existing one?
         function createChart(chart, offsetLongitude, offsetLatitude) {
@@ -312,21 +325,6 @@
     $scope.offsets = {
       longitude: 0,
       latitude: 0
-    };
-
-    $scope.bounds = {
-      earth: {
-        top: 83.6,
-        bottom: -83.6,
-        left: -180,
-        right: 180
-      },
-      screen: {
-        top: 0,
-        bottom: 740,
-        left: 0,
-        right: 800
-      }
     };
   });
 
