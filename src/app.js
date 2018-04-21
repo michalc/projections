@@ -257,21 +257,23 @@
           var t1 = performance.now();
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
-          chart.features.forEach(function(feature) {
-            var shapes = getShapes(bounds, offsetLongitude, offsetLatitude, feature);
+          var allShapes = _(chart.features)
+            .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
+            .flatten()
+            .value();
 
-            path += _.reduce(shapes, function(pathForShapes, shape) {
-              return pathForShapes
-                + '<path class="land" d="' 
-                + _.map(shape.coords, function(coord, i) {
-                    var xy = Mercator.toChart(bounds, coord.long, coord.lat);
-                    var chartX = Math.round(xy.x);
-                    var chartY =  Math.round(xy.y);
-                    return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
-                }).join()
-               + 'z"/>';
-            }, '');
-          });
+          path += _.reduce(allShapes, function(pathForShapes, shape) {
+            return pathForShapes
+              + '<path class="land" d="'
+              + _.map(shape.coords, function(coord, i) {
+                  var xy = Mercator.toChart(bounds, coord.long, coord.lat);
+                  var chartX = Math.round(xy.x);
+                  var chartY =  Math.round(xy.y);
+                  return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+              }).join()
+              + 'z"/>';
+          }, '');
+
           path += '</g></svg>';
           var t2 = performance.now();
           console.info(Math.round((t2 - t1) * 1000) / 1000, 'milliseconds to create text SVG element');
