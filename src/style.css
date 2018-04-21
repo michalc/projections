@@ -14,13 +14,7 @@ body {
 }
 
 .wrapper {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
+  text-align: center;
   min-width: 1010px;
   min-height: 665px;
 }
