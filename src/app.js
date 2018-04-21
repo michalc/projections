@@ -232,7 +232,7 @@
     return $window.Mercator;
   });
 
-  app.directive('ngModelInt', function() {
+  app.directive('ngModelFloat', function() {
     return {
       require: 'ngModel',
       link: function(scope, element, attrs, ngModelController) {
