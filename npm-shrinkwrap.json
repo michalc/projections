@@ -171,11 +171,6 @@
       "from": "boom@>=4.0.0 <5.0.0",
       "resolved": "https://registry.npmjs.org/boom/-/boom-4.3.1.tgz"
     },
-    "bower": {
-      "version": "1.8.2",
-      "from": "bower@>=1.6.5 <2.0.0",
-      "resolved": "https://registry.npmjs.org/bower/-/bower-1.8.2.tgz"
-    },
     "brace-expansion": {
       "version": "1.1.8",
       "from": "brace-expansion@>=1.0.0 <2.0.0",
@@ -1660,6 +1655,11 @@
           "from": "inherits@>=1.0.0 <2.0.0",
           "resolved": "https://registry.npmjs.org/inherits/-/inherits-1.0.2.tgz"
         },
+        "lodash": {
+          "version": "1.0.2",
+          "from": "lodash@>=1.0.1 <1.1.0",
+          "resolved": "https://registry.npmjs.org/lodash/-/lodash-1.0.2.tgz"
+        },
         "minimatch": {
           "version": "0.2.14",
           "from": "minimatch@>=0.2.11 <0.3.0",
@@ -2129,9 +2129,9 @@
       }
     },
     "lodash": {
-      "version": "1.0.2",
-      "from": "lodash@>=1.0.1 <1.1.0",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-1.0.2.tgz"
+      "version": "4.17.5",
+      "from": "lodash@>=4.17.5 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.5.tgz"
     },
     "lodash._arraycopy": {
       "version": "3.0.0",
@@ -2450,6 +2450,11 @@
       "version": "1.0.1",
       "from": "map-obj@>=1.0.1 <2.0.0",
       "resolved": "https://registry.npmjs.org/map-obj/-/map-obj-1.0.1.tgz"
+    },
+    "mapnik-vector-tile": {
+      "version": "1.6.1",
+      "from": "mapnik-vector-tile@1.6.1",
+      "resolved": "https://registry.npmjs.org/mapnik-vector-tile/-/mapnik-vector-tile-1.6.1.tgz"
     },
     "match-stream": {
       "version": "0.0.2",
@@ -3127,6 +3132,11 @@
       "from": "process-nextick-args@>=1.0.6 <1.1.0",
       "resolved": "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-1.0.7.tgz"
     },
+    "protozero": {
+      "version": "1.5.1",
+      "from": "protozero@1.5.1",
+      "resolved": "https://registry.npmjs.org/protozero/-/protozero-1.5.1.tgz"
+    },
     "pullstream": {
       "version": "0.4.1",
       "from": "pullstream@>=0.4.1 <1.0.0",
@@ -3305,16 +3315,6 @@
       "version": "0.0.1",
       "from": "replace-ext@0.0.1",
       "resolved": "https://registry.npmjs.org/replace-ext/-/replace-ext-0.0.1.tgz"
-    },
-    "request": {
-      "version": "2.82.0",
-      "from": "request@latest",
-      "resolved": "https://registry.npmjs.org/request/-/request-2.82.0.tgz"
-    },
-    "request-progress": {
-      "version": "3.0.0",
-      "from": "request-progress@latest",
-      "resolved": "https://registry.npmjs.org/request-progress/-/request-progress-3.0.0.tgz"
     },
     "resolve": {
       "version": "1.4.0",

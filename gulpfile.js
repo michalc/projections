@@ -63,7 +63,7 @@ gulp.task('default', [], function() {
     .pipe(gulp.dest(dataDest));
 
   var jsSrc = [
-    'node_modules/lodash/dist/lodash.min.js',
+    'node_modules/lodash/lodash.min.js',
     'node_modules/angular/angular.min.js',
     'src/mercator.js',
     'src/app.js'
