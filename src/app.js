@@ -270,11 +270,10 @@
 
           var allShapes = _(chart.features)
             .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
-            .flatten()
-            .value();
+            .flatten();
 
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>' 
-            + _.reduce(allShapes, function(pathForShapes, shape) {
+            + allShapes.reduce(function(pathForShapes, shape) {
               return pathForShapes
                 + '<path class="land" d="'
                 + _.map(shape.coords, function(chartCoord, i) {
