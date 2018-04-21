@@ -255,26 +255,26 @@
             g = null;
           }
           var t1 = performance.now();
-          var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>';
 
           var allShapes = _(chart.features)
             .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
             .flatten()
             .value();
 
-          path += _.reduce(allShapes, function(pathForShapes, shape) {
-            return pathForShapes
-              + '<path class="land" d="'
-              + _.map(shape.coords, function(coord, i) {
-                  var xy = Mercator.toChart(bounds, coord.long, coord.lat);
-                  var chartX = Math.round(xy.x);
-                  var chartY =  Math.round(xy.y);
-                  return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
-              }).join()
-              + 'z"/>';
-          }, '');
+          var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>' 
+            + _.reduce(allShapes, function(pathForShapes, shape) {
+              return pathForShapes
+                + '<path class="land" d="'
+                + _.map(shape.coords, function(coord, i) {
+                    var xy = Mercator.toChart(bounds, coord.long, coord.lat);
+                    var chartX = Math.round(xy.x);
+                    var chartY =  Math.round(xy.y);
+                    return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+                }).join()
+                + 'z"/>';
+            }, '')
+            + '</g></svg>';
 
-          path += '</g></svg>';
           var t2 = performance.now();
           console.info(Math.round((t2 - t1) * 1000) / 1000, 'milliseconds to create text SVG element');
           var content = new DOMParser().parseFromString(path, 'text/xml');
