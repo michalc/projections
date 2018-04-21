@@ -66,6 +66,14 @@
       return coords;
     }
 
+    function toChart(coords) {
+      var xy = Mercator.toChart(bounds, coords.long, coords.lat);
+      return {
+        x: Math.round(xy.x),
+        y: Math.round(xy.y)
+      }
+    }
+
     // Fudge to determine is 2 points are discontinuous
     var DISCONTINUTY_THREASHOLD = 180;
 
@@ -210,7 +218,12 @@
         }
       })
     }
-    return shapes;
+
+    return _.map(shapes, function(shape) {
+      return {
+        coords: _.map(shape.coords, toChart)
+      };
+    });
   }
 
   var app = angular.module('projections', []);
@@ -265,11 +278,8 @@
             + _.reduce(allShapes, function(pathForShapes, shape) {
               return pathForShapes
                 + '<path class="land" d="'
-                + _.map(shape.coords, function(coord, i) {
-                    var xy = Mercator.toChart(bounds, coord.long, coord.lat);
-                    var chartX = Math.round(xy.x);
-                    var chartY =  Math.round(xy.y);
-                    return (i == 0 ? 'M' : 'L') + chartX + ',' + chartY;
+                + _.map(shape.coords, function(chartCoord, i) {
+                    return (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
                 }).join()
                 + 'z"/>';
             }, '')
