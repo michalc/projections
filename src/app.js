@@ -262,7 +262,6 @@
 
         // Would it be faster to edit the existing one?
         function createChart(chart, offsetLongitude, offsetLatitude) {
-          if (!chart)  return;
           if (g) {
             g.remove();
             g = null;
