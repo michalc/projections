@@ -69,8 +69,8 @@
     var chartX = x;
 
     return {
-      x: Math.round(chartX),
-      y: Math.round(chartY)
+      x: Math.trunc(chartX),
+      y: Math.trunc(chartY)
     };
   }
 
