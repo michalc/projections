@@ -39,10 +39,6 @@
     return W / (2 * Math.PI) * (lambda - lambda_0);
   }
 
-  function getW(chartBounds) {
-    return chartBounds.screen.right - chartBounds.screen.left;
-  }
-
   function getY_top(W, chartBounds) {
     var theta_top = toRadians(chartBounds.earth.top);
     return thetaToY(W, theta_top);
@@ -51,7 +47,7 @@
   function toChart(chartBounds, coords) {
     var long = coords.long;
     var lat = coords.lat;
-    var W = getW(chartBounds);
+    var W = chartBounds.screen.right - chartBounds.screen.left;
 
     var theta = toRadians(lat);
     var y = thetaToY(W, theta);
