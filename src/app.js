@@ -7,7 +7,7 @@
     var rotatedCoords = [];
     var shapes = [];
     feature.geometry.coordinates[0].forEach(function(longLat) {
-      var rotated = Mercator.rotate(longLat[0], longLat[1], offsetLongitude, offsetLatitude);
+      var rotated = Mercator.rotate(offsetLongitude, offsetLatitude, longLat[0], longLat[1]);
       rotatedCoords.push(rotated);
     });
 
