@@ -53,7 +53,9 @@
     return thetaToY(W, theta_top);
   }
 
-  function toChart(chartBounds, long, lat) {
+  function toChart(chartBounds, coords) {
+    var long = coords.long;
+    var lat = coords.lat;
     var W = getW(chartBounds);
 
     var theta = toRadians(lat);
@@ -67,8 +69,8 @@
     var chartX = x;
 
     return {
-      x: chartX,
-      y: chartY
+      x: Math.round(chartX),
+      y: Math.round(chartY)
     };
   }
 
@@ -183,11 +185,7 @@
     }
 
     function toChart(coords) {
-      var xy = Mercator.toChart(bounds, coords.long, coords.lat);
-      return {
-        x: Math.round(xy.x),
-        y: Math.round(xy.y)
-      }
+      return Mercator.toChart(bounds, coords);
     }
 
     // Fudge to determine is 2 points are discontinuous
