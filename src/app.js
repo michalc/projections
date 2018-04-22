@@ -3,7 +3,7 @@
 (function(angular) {
   'use strict';
 
-  function getShapes(bounds, offsetLongitude, offsetLatitude, rotatedCoords) {
+  function getShapes(bounds, rotatedCoords) {
     var shapes = [];
 
     // 1 for -180 to 180, -1 for 180 to -180
@@ -274,7 +274,7 @@
             .map(function(coordinates) {
               return _.map(coordinates, rotate);
             })
-            .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
+            .map(_.partial(getShapes, bounds))
             .flatten();
 
           var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>' 
