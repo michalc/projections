@@ -17,10 +17,6 @@
     return rad * 180 / Math.PI;
   }
 
-  function yToTheta(W, y) {
-    return 2 * Math.atan(Math.exp(y * 2 * Math.PI / W)) - Math.PI / 2;
-  }
-
   function thetaToY(W, theta) {
     // Fudge to be able to plot things at (/beyond) pole
     // this is useful since shapes might contain vertices
