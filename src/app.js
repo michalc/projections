@@ -20,6 +20,19 @@
     };
   });
 
+  function fetch(url) {
+    return new Promise((resolve, reject) => {
+      function reqListener() {
+        resolve(JSON.parse(oReq.responseText));
+      }
+
+      var oReq = new XMLHttpRequest();
+      oReq.addEventListener('load', reqListener);
+      oReq.open('GET', url);
+      oReq.send(); 
+    });
+  }
+
   var pathPool = [];
   function getPath(i) {
       var needed = Math.max(i + 1 - pathPool.length, 0);
@@ -104,10 +117,11 @@
     };
   });
 
-  app.controller('ProjectionsController', function($http, $scope, Mercator) {
+  app.controller('ProjectionsController', function($scope, Mercator) {
     $scope.chart = null;
-    $http.get('data/GSHHS_c_L1.json').then(function(results) {
-      $scope.chart = results.data;
+    fetch('data/GSHHS_c_L1.json').then(function(results) {
+      $scope.chart = results;
+      $scope.$apply();
     });
 
     $scope.offsets = {
