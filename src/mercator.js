@@ -84,8 +84,9 @@
 
     // Convert to cartesian coordinates (assuming radius of Earth is 1)
     // http://mathworld.wolfram.com/SphericalCoordinates.html
-    var x = Math.cos(theeta) * Math.sin(phi);
-    var y = Math.sin(theeta) * Math.sin(phi);
+    var sinPhi = Math.sin(phi)
+    var x = Math.cos(theeta) * sinPhi;
+    var y = Math.sin(theeta) * sinPhi;
     var z = Math.cos(phi);
 
     // Convert rotation angle to radians
@@ -93,14 +94,18 @@
     var rotLat = toRadians(latRotationDegrees);
 
     // Rotate about z axis
-    var x_r1 = x * Math.cos(rotLong) - y * Math.sin(rotLong);
-    var y_r1 = x * Math.sin(rotLong) + y * Math.cos(rotLong);
+    var sinRotLong = Math.sin(rotLong);
+    var cosRotLong = Math.cos(rotLong);
+    var x_r1 = x * cosRotLong - y * sinRotLong;
+    var y_r1 = x * sinRotLong + y * cosRotLong;
     var z_r1 = z;
 
     // Rotate about y axis
-    var x_r2 = x_r1 * Math.cos(rotLat) + z_r1 * Math.sin(rotLat);
+    var sinRotLat = Math.sin(rotLat);
+    var cosRotLat = Math.cos(rotLat);
+    var x_r2 = x_r1 * cosRotLat + z_r1 * sinRotLat;
     var y_r2 = y_r1;
-    var z_r2 = z_r1 * Math.cos(rotLat) - x_r1 * Math.sin(rotLat);
+    var z_r2 = z_r1 * cosRotLat - x_r1 * sinRotLat;
 
     // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
     // atan works for +- Infinity, so no need to handle division by 2 case
