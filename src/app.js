@@ -6,8 +6,9 @@
   function getShapes(bounds, offsetLongitude, offsetLatitude, feature) {
     var rotatedCoords = [];
     var shapes = [];
+    var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
     feature.geometry.coordinates[0].forEach(function(longLat) {
-      var rotated = Mercator.rotate(offsetLongitude, offsetLatitude, longLat[0], longLat[1]);
+      var rotated = rotate(longLat[0], longLat[1]);
       rotatedCoords.push(rotated);
     });
 
