@@ -184,9 +184,7 @@
       return coords;
     }
 
-    function toChart(coords) {
-      return Mercator.toChart(bounds, coords);
-    }
+    var toChart = _.partial(Mercator.toChart, bounds);
 
     // Fudge to determine is 2 points are discontinuous
     var DISCONTINUTY_THREASHOLD = 180;
