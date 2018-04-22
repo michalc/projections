@@ -220,9 +220,7 @@
     }
 
     return _.map(shapes, function(shape) {
-      return {
-        coords: _.map(shape.coords, toChart)
-      };
+      return _.map(shape.coords, toChart);
     });
   }
 
@@ -280,7 +278,6 @@
             g = null;
           }
           var t1 = performance.now();
-
           var allShapes = _(chart.features)
             .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
             .flatten();
@@ -289,7 +286,7 @@
             + allShapes.reduce(function(pathForShapes, shape) {
               return pathForShapes
                 + '<path class="land" d="'
-                + _.map(shape.coords, function(chartCoord, i) {
+                + _.map(shape, function(chartCoord, i) {
                     return (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
                 }).join()
                 + 'z"/>';
