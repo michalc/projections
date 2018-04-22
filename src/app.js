@@ -67,7 +67,6 @@
           }
 
           var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-          var t1 = performance.now();
           g = _(chart.features)
             .map(function(feature) {
               return feature.geometry.coordinates[0];
@@ -91,11 +90,7 @@
               return group;
             }, document.createElementNS('http://www.w3.org/2000/svg', 'g'));
 
-          var t2 = performance.now();
-          console.info(Math.round((t2 - t1) * 1000) / 1000, 'milliseconds to create text SVG element');
           svg.append(g);
-          var t3 = performance.now();
-          console.info(Math.round((t3 - t2) * 1000) / 1000, 'milliseconds to append to document');
         }
 
         scope.$watchGroup([attrs.chart, function() {
