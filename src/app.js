@@ -20,6 +20,15 @@
     };
   });
 
+  var pathPool = [];
+  function getPath(i) {
+      var needed = Math.max(i + 1 - pathPool.length, 0);
+      for (var j = 0; j < needed; ++j) {
+        pathPool.push(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+      }
+      return pathPool[i];
+  };
+
   app.directive('chart', function(Mercator) {
     return {
       restrict:'E',
@@ -68,11 +77,11 @@
             })
             .map(_.partial(Mercator.getShapes, bounds))
             .flatten()
-            .map(function(shape) {
+            .map(function(shape, i) {
               var path = _.reduce(shape, function(path, chartCoord, i) {
                   return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
               }, '') + 'z';
-              var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              var pathElement = getPath(i);
               pathElement.setAttributeNS(null, 'class', 'land');
               pathElement.setAttributeNS(null, 'd', path);
               return pathElement;
