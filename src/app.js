@@ -3,10 +3,8 @@
 (function(angular) {
   'use strict';
 
-  function getShapes(bounds, offsetLongitude, offsetLatitude, coordinates) {
+  function getShapes(bounds, offsetLongitude, offsetLatitude, rotatedCoords) {
     var shapes = [];
-    var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-    var rotatedCoords = _.map(coordinates, rotate);
 
     // 1 for -180 to 180, -1 for 180 to -180
     function discontinuityDirection(prev, curr) {
@@ -266,10 +264,15 @@
             g.remove();
             g = null;
           }
+
+          var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
           var t1 = performance.now();
           var allShapes = _(chart.features)
             .map(function(feature) {
               return feature.geometry.coordinates[0];
+            })
+            .map(function(coordinates) {
+              return _.map(coordinates, rotate);
             })
             .map(_.partial(getShapes, bounds, offsetLongitude, offsetLatitude))
             .flatten();
