@@ -59,7 +59,7 @@
 
           var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
           var t1 = performance.now();
-          var allShapes = _(chart.features)
+          g = _(chart.features)
             .map(function(feature) {
               return feature.geometry.coordinates[0];
             })
@@ -67,23 +67,23 @@
               return _.map(coordinates, rotate);
             })
             .map(_.partial(Mercator.getShapes, bounds))
-            .flatten();
-
-          var path = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1"><g>' 
-            + allShapes.reduce(function(pathForShapes, shape) {
-              return pathForShapes
-                + '<path class="land" d="'
-                + _.map(shape, function(chartCoord, i) {
-                    return (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
-                }).join()
-                + 'z"/>';
-            }, '')
-            + '</g></svg>';
+            .flatten()
+            .map(function(shape) {
+              var path = _.reduce(shape, function(path, chartCoord, i) {
+                  return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
+              }, '') + 'z';
+              var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              pathElement.setAttributeNS(null, 'class', 'land');
+              pathElement.setAttributeNS(null, 'd', path);
+              return pathElement;
+            })
+            .reduce(function(group, pathElement) {
+              group.appendChild(pathElement);
+              return group;
+            }, document.createElementNS('http://www.w3.org/2000/svg', 'g'));
 
           var t2 = performance.now();
           console.info(Math.round((t2 - t1) * 1000) / 1000, 'milliseconds to create text SVG element');
-          var content = new DOMParser().parseFromString(path, 'text/xml');
-          g = content.children[0].children[0];
           svg.append(g);
           var t3 = performance.now();
           console.info(Math.round((t3 - t2) * 1000) / 1000, 'milliseconds to append to document');
