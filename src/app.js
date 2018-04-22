@@ -4,12 +4,10 @@
   'use strict';
 
   function getShapes(bounds, offsetLongitude, offsetLatitude, feature) {
-    var rotatedCoords = [];
     var shapes = [];
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-    feature.geometry.coordinates[0].forEach(function(longLat) {
-      var rotated = rotate(longLat[0], longLat[1]);
-      rotatedCoords.push(rotated);
+    var rotatedCoords = _.map(feature.geometry.coordinates[0], function(longLat) {
+      return rotate(longLat[0], longLat[1]);
     });
 
     // 1 for -180 to 180, -1 for 180 to -180
