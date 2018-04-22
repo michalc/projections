@@ -3,7 +3,6 @@
   "repository": "https://github.com/michalc/projections/",
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.4.7",
     "gulp": "^3.9.0",
     "gulp-changed": "^1.3.0",
     "gulp-cssnext": "^1.0.1",

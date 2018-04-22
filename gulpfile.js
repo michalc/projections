@@ -64,7 +64,6 @@ gulp.task('default', [], function() {
 
   var jsSrc = [
     'node_modules/lodash/lodash.min.js',
-    'node_modules/angular/angular.min.js',
     'src/mercator.js',
     'src/app.js'
   ];
