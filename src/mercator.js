@@ -43,10 +43,6 @@
     return chartBounds.screen.right - chartBounds.screen.left;
   }
 
-  function getLambda_0(chartBounds) {
-    return toRadians(chartBounds.earth.left);
-  }
-
   function getY_top(chartBounds) {
     var W = getW(chartBounds);
     var theta_top = toRadians(chartBounds.earth.top);
@@ -64,7 +60,7 @@
     var chartY = y_top - y;
 
     var lambda = toRadians(long);
-    var lambda_0 = getLambda_0(chartBounds);
+    var lambda_0 = toRadians(chartBounds.earth.left);
     var x = lambdaToX(W, lambda_0, lambda);
     var chartX = x;
 
