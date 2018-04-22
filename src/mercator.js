@@ -73,7 +73,10 @@
 
   // latRotation rotates about y axis (line through earth along original equator)
   // longRotation rotates about z axis (line through earth pole to pole)
-  function rotate(longRotationDegrees, latRotationDegrees, long, lat) {
+  function rotate(longRotationDegrees, latRotationDegrees, longLat) {
+    var long = longLat[0];
+    var lat = longLat[1];
+
     // Convert to spherical-polar radian coordinates
     var theeta = toRadians(long);
     var phi = toRadians(lat + 90); // In usual spherical-polar coords, phi is 0 along z-axis

@@ -6,9 +6,7 @@
   function getShapes(bounds, offsetLongitude, offsetLatitude, feature) {
     var shapes = [];
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-    var rotatedCoords = _.map(feature.geometry.coordinates[0], function(longLat) {
-      return rotate(longLat[0], longLat[1]);
-    });
+    var rotatedCoords = _.map(feature.geometry.coordinates[0], rotate);
 
     // 1 for -180 to 180, -1 for 180 to -180
     function discontinuityDirection(prev, curr) {
