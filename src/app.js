@@ -26,22 +26,7 @@
   };
     
   var g = null;
-  var bounds = {
-    earth: {
-      top: 83.6,
-      bottom: -83.6,
-      left: -180,
-      right: 180
-    },
-    screen: {
-      top: 0,
-      bottom: 740,
-      left: 0,
-      right: 800
-    }
-  };
-
-  function createChart(svg, chart, offsetLongitude, offsetLatitude) {
+  function createChart(svg, chart, bounds, offsetLongitude, offsetLatitude) {
     if (g) {
       g.remove();
       g = null;
@@ -75,6 +60,21 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    var bounds = {
+      earth: {
+        top: 83.6,
+        bottom: -83.6,
+        left: -180,
+        right: 180
+      },
+      screen: {
+        top: 0,
+        bottom: 740,
+        left: 0,
+        right: 800
+      }
+    };
+
     var svg = document.getElementById('svg');
     var latitudeInput = document.getElementById('latitude-input');
     var longitudeInput = document.getElementById('longitude-input');
@@ -94,7 +94,7 @@
     var chart;
     function draw() {
       if (!chart) return;
-      createChart(svg, chart, longitude, latitude);
+      createChart(svg, chart, bounds, longitude, latitude);
     }
 
     fetch('data/GSHHS_c_L1.json').then(function(results) {
