@@ -166,9 +166,7 @@
     });
 
     if (segments.length === 1 && segments[0].type == 0) {
-      shapes = [{
-        coords: segments[0].coords
-      }];
+      shapes = [segments[0].coords]
     } else {
 
       // Walk along each side creating shapes
@@ -180,9 +178,7 @@
       });
       
       if (leftShapeCoords.length) {
-        shapes.push({
-          coords: leftShapeCoords
-        });
+        shapes.push(leftShapeCoords)
       }
       var rightShapeCoords = [];
       endpointsRight.forEach(function(endpoint) {
@@ -191,9 +187,7 @@
         }
       });
       if (rightShapeCoords.length) {
-        shapes.push({
-          coords: rightShapeCoords
-        });
+        shapes.push(rightShapeCoords);
       }
 
       endpointsLeft.forEach(function(endpoint) {
@@ -209,15 +203,13 @@
             long: last.long,
             lat: 88 * pole
           });
-          shapes.push({
-            coords: endpoint.segment.coords
-          });
+          shapes.push(endpoint.segment.coords);
         }
       })
     }
 
     return _.map(shapes, function(shape) {
-      return _.map(shape.coords, toChart);
+      return _.map(shape, toChart);
     });
   }
 
