@@ -7,7 +7,7 @@ var merge = require('merge2');
 
 // Requires dev dependencies to be installed
 gulp.task('download-charts', function () {
-  var download = require('gulp-download');
+  var download = require('gulp-download-stream');
   var unzip = require('gulp-unzip');
   var url = 'https://www.ngdc.noaa.gov/mgg/shorelines/data/gshhg/latest/gshhg-shp-2.3.7.zip';
   return download(url)
