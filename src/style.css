@@ -15,8 +15,13 @@ body {
 
 .wrapper {
   text-align: center;
-  min-width: 1010px;
-  min-height: 665px;
+  width: 100%;
+  height: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 0;
 }
 
 a,
@@ -26,6 +31,11 @@ a:visited {
 
 chart {
   display: block;
+}
+
+svg {
+  height: calc(100% - 20px);
+  width: 100%;
 }
 
 .land {

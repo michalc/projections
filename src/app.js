@@ -75,7 +75,6 @@
       }
     };
 
-    var svg = document.getElementById('svg');
     var latitudeInput = document.getElementById('latitude-input');
     var longitudeInput = document.getElementById('longitude-input');
 
@@ -91,9 +90,21 @@
       draw();
     });
 
+
+    var svg = document.getElementById('svg');
+    function setSvgDimensions() {
+      svg.setAttribute('width', svg.clientWidth);
+      svg.setAttribute('height', svg.clientHeight);
+    }
+    window.addEventListener('resize', setSvgDimensions);
+    window.addEventListener('resize', draw);
+    setSvgDimensions();
+
     var chart;
     function draw() {
       if (!chart) return;
+      bounds.screen.right = svg.clientWidth;
+      bounds.screen.bottom = svg.clientHeight;
       createChart(svg, chart, bounds, longitude, latitude);
     }
 
