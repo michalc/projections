@@ -26,14 +26,18 @@
   };
     
   var g = null;
-  function createChart(svg, chart, bounds, offsetLongitude, offsetLatitude) {
+  function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
     if (g) {
       g.remove();
       g = null;
     }
 
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-    g = _(chart.features)
+    g = _(charts)
+      .map(function(chart) {
+        return chart.features;
+      })
+      .flatten()
       .map(function(feature) {
         return feature.geometry.coordinates[0];
       })
@@ -103,14 +107,14 @@
     window.addEventListener('resize', draw);
     setSvgDimensions();
 
-    var chart;
+    var charts;
     function draw() {
-      if (!chart) return;
-      createChart(svg, chart, bounds, longitude, latitude);
+      if (!charts) return;
+      createChart(svg, charts, bounds, longitude, latitude);
     }
 
-    fetch('data/GSHHS_c_L1.json').then(function(results) {
-      chart = results;
+    Promise.all([fetch('data/GSHHS_c_L1.json'), fetch('data/GSHHS_c_L5.json')]).then(function(results) {
+      charts = results;
       draw();
     });
   });

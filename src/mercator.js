@@ -97,8 +97,12 @@
     var z_r2 = z_r1 * cosRotLat - x_r1 * sinRotLat;
 
     // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
-    // atan works for +- Infinity, so no need to handle division by 2 case
-    var theeta_r2 = Math.atan(y_r2 / x_r2);
+    // atan works for +- Infinity, but, 0 / 0 = NaN,
+    // so we have to handle that case
+    var theeta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan(y_r2 / x_r2) : 
+                       Object.is(y_r2, -0) ? -Math.PI / 2 :
+                                              Math.PI / 2;
+
     var phi_r2 = Math.acos(z_r2);
 
     // Convert to lat/long
