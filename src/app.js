@@ -59,7 +59,7 @@
     svg.append(g);
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
+  window.addEventListener('load', function() {
     var bounds = {
       earth: {
         top: 83.6,
@@ -90,11 +90,14 @@
       draw();
     });
 
-
     var svg = document.getElementById('svg');
     function setSvgDimensions() {
-      svg.setAttribute('width', svg.clientWidth);
-      svg.setAttribute('height', svg.clientHeight);
+      var parent = svg.parentElement;
+      var screenBound = Math.min(parent.offsetWidth, parent.offsetHeight);
+      svg.setAttribute('width', screenBound);
+      svg.setAttribute('height', screenBound);
+      bounds.screen.right = screenBound;
+      bounds.screen.bottom = screenBound;
     }
     window.addEventListener('resize', setSvgDimensions);
     window.addEventListener('resize', draw);
@@ -103,8 +106,6 @@
     var chart;
     function draw() {
       if (!chart) return;
-      bounds.screen.right = svg.clientWidth;
-      bounds.screen.bottom = svg.clientHeight;
       createChart(svg, chart, bounds, longitude, latitude);
     }
 
