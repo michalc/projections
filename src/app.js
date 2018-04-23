@@ -149,6 +149,7 @@
 
       charts = [mostOfWorld, antarticaIslands, [antarticaProper]];
       draw();
+      document.body.removeAttribute('class');
     });
   });
 })();
