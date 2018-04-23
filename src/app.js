@@ -34,43 +34,7 @@
 
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
 
-    var mostOfWorld = _(charts[0].features)
-      .map(function(feature) {
-        return feature.geometry.coordinates[0];
-      })
-      .value();
-
-    var antarticaIslands = _(charts[1].features)
-      .filter(function(feature) {
-        return feature.id > 2;
-      })
-      .map(function(feature) {
-        return feature.geometry.coordinates[0];
-      })
-      .value();
-
-    var antarticaProper = _(charts[1].features)
-      .filter(function(feature) {
-        return feature.id <= 2;
-      })
-      .map(function(feature) {
-        return feature.geometry.coordinates[0];
-      })
-      .map(function(featureCoords) {
-        // Annoyingly land masses stradding 180 longtidue are split up.
-        // This is most obvious in Antartica,  and done by adding in points
-        // at the South Pole and after
-        var seenSouthPole = false;
-        return _.filter(featureCoords, function(coords) {
-          seenSouthPole = seenSouthPole || coords[1] == -90;
-          return !seenSouthPole;
-        });
-      })
-      .reverse()
-      .flatten()
-      .value();
-
-    g = _([mostOfWorld, antarticaIslands, [antarticaProper]])
+    g = _(charts)
       .flatten()
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
@@ -145,7 +109,43 @@
     }
 
     Promise.all([fetch('data/GSHHS_c_L1.json'), fetch('data/GSHHS_c_L5.json')]).then(function(results) {
-      charts = results;
+      var mostOfWorld = _(results[0].features)
+        .map(function(feature) {
+          return feature.geometry.coordinates[0];
+        })
+        .value();
+
+      var antarticaIslands = _(results[1].features)
+        .filter(function(feature) {
+          return feature.id > 2;
+        })
+        .map(function(feature) {
+          return feature.geometry.coordinates[0];
+        })
+        .value();
+
+      var antarticaProper = _(results[1].features)
+        .filter(function(feature) {
+          return feature.id <= 2;
+        })
+        .map(function(feature) {
+          return feature.geometry.coordinates[0];
+        })
+        .map(function(featureCoords) {
+          // Annoyingly land masses stradding 180 longtidue are split up.
+          // This is most obvious in Antartica,  and done by adding in points
+          // at the South Pole and after
+          var seenSouthPole = false;
+          return _.filter(featureCoords, function(coords) {
+            seenSouthPole = seenSouthPole || coords[1] == -90;
+            return !seenSouthPole;
+          });
+        })
+        .reverse()
+        .flatten()
+        .value();
+
+      charts = [mostOfWorld, antarticaIslands, [antarticaProper]];
       draw();
     });
   });
