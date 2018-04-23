@@ -87,6 +87,17 @@ gulp.task('default', [], function() {
     return JSON.parse(files[0].contents);
   });
 
+  var cssSrc = [
+    'node_modules/normalize.css/normalize.css',
+    'src/style.css'
+  ];
+  var css = gulp.src(cssSrc)
+    .pipe(changed(dest))
+    .pipe(cssnext({
+      browsers: 'Safari >= 8, iOS >= 8, Chrome >= 46, Firefox >= 42'
+    }))
+    .pipe(gulp.dest(dest));
+
   var handlebarOpts = {
     helpers: {
       assetPath: function (path, context) {
@@ -104,17 +115,6 @@ gulp.task('default', [], function() {
 
     return streamToPromise(htmlStream);
   });
-
-  var cssSrc = [
-    'node_modules/normalize.css/normalize.css',
-    'src/style.css'
-  ];
-  var css = gulp.src(cssSrc)
-    .pipe(changed(dest))
-    .pipe(cssnext({
-      browsers: 'Safari >= 8, iOS >= 8, Chrome >= 46, Firefox >= 42'
-    }))
-    .pipe(gulp.dest(dest));
 
   return Promise.all([streamToPromise(css), html])
 });
