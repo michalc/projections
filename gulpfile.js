@@ -71,6 +71,7 @@ gulp.task('default', [], function() {
     .pipe(gulp.dest(dataDest));
 
   var js = browserify('src/app.js')
+    .plugin('tinyify', {})
     .bundle()
     .pipe(source('app.js'))
     .pipe(gulp.dest(dest));
