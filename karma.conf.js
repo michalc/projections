@@ -15,11 +15,22 @@ module.exports = function(config) {
       'tests/*Spec.js': ['browserify']
     },
     browserify: {
-      'paths': ['src/']
+      'paths': ['src/'],
+      'transform': [[
+        'browserify-istanbul',
+        {instrumenterConfig: {embedSource: true}}
+      ]]
+    },
+    coverageReporter: {
+      reporters: [
+        { type: "text" },
+        { type: "html", dir: "coverage" },
+        { type: "lcov" }
+      ]
     },
     exclude: [
     ],
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
