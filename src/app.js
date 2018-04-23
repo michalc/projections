@@ -56,9 +56,21 @@
       .map(function(feature) {
         return feature.geometry.coordinates[0];
       })
+      .map(function(featureCoords) {
+        // Annoyingly land masses stradding 180 longtidue are split up.
+        // This is most obvious in Antartica,  and done by adding in points
+        // at the South Pole and after
+        var seenSouthPole = false;
+        return _.filter(featureCoords, function(coords) {
+          seenSouthPole = seenSouthPole || coords[1] == -90;
+          return !seenSouthPole;
+        });
+      })
+      .reverse()
+      .flatten()
       .value();
 
-    g = _([mostOfWorld, antarticaIslands, antarticaProper])
+    g = _([mostOfWorld, antarticaIslands, [antarticaProper]])
       .flatten()
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
