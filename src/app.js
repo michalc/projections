@@ -4,7 +4,7 @@
   'use strict';
 
   function fetch(url) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function(resolve, reject) {
       function reqListener() {
         resolve(JSON.parse(oReq.responseText));
       }
