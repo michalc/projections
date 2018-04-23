@@ -29,7 +29,7 @@
     "watchify": "^3.11.0"
   },
   "scripts": {
-    "test": "gulp lint"
+    "test": "gulp lint && ./node_modules/.bin/karma start"
   },
   "devDependencies": {
     "geojson-stream": "0.0.1",
