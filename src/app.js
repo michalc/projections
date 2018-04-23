@@ -91,8 +91,7 @@
 
     var svg = document.getElementById('svg');
     function setSvgDimensions() {
-      var parent = svg.parentElement;
-      var screenBound = Math.min(parent.offsetWidth, parent.offsetHeight);
+      var screenBound = Math.min(window.innerWidth, window.innerHeight - 30);
       svg.setAttribute('width', screenBound);
       svg.setAttribute('height', screenBound);
       bounds.screen.right = screenBound;
