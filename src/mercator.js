@@ -1,6 +1,8 @@
 /* global exports */
 
 (function(Mercator) {
+  var _ = require('lodash');
+
   Mercator.toChart = toChart;
   Mercator.rotate = rotate;
   Mercator.getShapes = getShapes;
@@ -318,4 +320,4 @@
       return _.map(shape, toChart);
     });
   }
-})(typeof exports === 'undefined' ? this.Mercator = {} : exports);
+})(module.exports);

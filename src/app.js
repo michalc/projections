@@ -3,6 +3,9 @@
 (function() {
   'use strict';
 
+  var _ = require('lodash');
+  var Mercator = require('./mercator');
+
   function fetch(url) {
     return new Promise(function(resolve, reject) {
       function reqListener() {

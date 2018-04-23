@@ -1,9 +1,11 @@
 /* eslint-env node */
 
+var browserify = require('browserify');
 var gulp = require('gulp');
 var eslint = require('gulp-eslint');
 var changed = require('gulp-changed');
 var merge = require('merge2');
+var source = require('vinyl-source-stream');
 
 // Requires dev dependencies to be installed
 gulp.task('download-charts', function () {
@@ -68,13 +70,9 @@ gulp.task('default', [], function() {
     .pipe(changed(dataDest))
     .pipe(gulp.dest(dataDest));
 
-  var jsSrc = [
-    'node_modules/lodash/lodash.min.js',
-    'src/mercator.js',
-    'src/app.js'
-  ];
-  var js= gulp.src(jsSrc)
-    .pipe(changed(dest))
+  var js = browserify('src/app.js')
+    .bundle()
+    .pipe(source('app.js'))
     .pipe(gulp.dest(dest));
 
   var htmlSrc = [
