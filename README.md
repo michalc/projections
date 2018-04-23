@@ -1,4 +1,4 @@
-# projections [![Build Status](https://travis-ci.org/michalc/projections.svg?branch=master)](https://travis-ci.org/michalc/projections)
+# projections [![Build Status](https://travis-ci.org/michalc/projections.svg?branch=master)](https://travis-ci.org/michalc/projections) [![codecov](https://codecov.io/gh/michalc/projections/branch/master/graph/badge.svg)](https://codecov.io/gh/michalc/projections)
 
 Experiments with projecting coast/border data in real-time in the browser.
 
