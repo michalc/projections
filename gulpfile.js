@@ -2,10 +2,15 @@
 
 var browserify = require('browserify');
 var gulp = require('gulp');
+var buffer = require('gulp-buffer');
+var handlebars = require('gulp-compile-handlebars');
 var eslint = require('gulp-eslint');
 var changed = require('gulp-changed');
+var rev = require('gulp-rev');
 var merge = require('merge2');
 var source = require('vinyl-source-stream');
+var stream = require('stream');
+var streamToPromise = require('stream-to-promise');
 
 // Requires dev dependencies to be installed
 gulp.task('download-charts', function () {
@@ -70,18 +75,35 @@ gulp.task('default', [], function() {
     .pipe(changed(dataDest))
     .pipe(gulp.dest(dataDest));
 
-  var js = browserify('src/app.js')
+  var manifestStream = browserify('src/app.js')
     .plugin('tinyify', {})
     .bundle()
     .pipe(source('app.js'))
-    .pipe(gulp.dest(dest));
+    .pipe(buffer())
+    .pipe(rev())
+    .pipe(gulp.dest(dest))
+    .pipe(rev.manifest());
+  var manifest = streamToPromise(manifestStream).then(function(files) {
+    return JSON.parse(files[0].contents);
+  });
 
+  var handlebarOpts = {
+    helpers: {
+      assetPath: function (path, context) {
+        return context.data.root[path];
+      }
+    }
+  };
   var htmlSrc = [
     'src/index.html'
   ];
-  var html = gulp.src(htmlSrc)
-    .pipe(changed(dest))
-    .pipe(gulp.dest(dest));
+  var html = manifest.then(function(manifestContents) {
+    var htmlStream = gulp.src(htmlSrc)
+        .pipe(handlebars(manifestContents, handlebarOpts))
+        .pipe(gulp.dest(dest));
+
+    return streamToPromise(htmlStream);
+  });
 
   var cssSrc = [
     'node_modules/normalize.css/normalize.css',
@@ -94,5 +116,5 @@ gulp.task('default', [], function() {
     }))
     .pipe(gulp.dest(dest));
 
-  return merge(data, html, js, css);
+  return Promise.all([streamToPromise(css), html])
 });
