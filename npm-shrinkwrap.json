@@ -710,6 +710,11 @@
         }
       }
     },
+    "clean-css": {
+      "version": "4.1.11",
+      "from": "clean-css@latest",
+      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.1.11.tgz"
+    },
     "cli-cursor": {
       "version": "1.0.2",
       "from": "cli-cursor@>=1.0.1 <2.0.0",

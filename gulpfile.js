@@ -1,6 +1,7 @@
 /* eslint-env node */
 
 var browserify = require('browserify');
+var CleanCSS = require('clean-css');
 var gulp = require('gulp');
 var buffer = require('gulp-buffer');
 var handlebars = require('gulp-compile-handlebars');
@@ -91,26 +92,40 @@ gulp.task('default', [], function() {
     'node_modules/normalize.css/normalize.css',
     'src/style.css'
   ];
-  var css = gulp.src(cssSrc)
+  var cssStream = gulp.src(cssSrc)
     .pipe(changed(dest))
     .pipe(cssnext({
       browsers: 'Safari >= 8, iOS >= 8, Chrome >= 46, Firefox >= 42'
-    }))
-    .pipe(gulp.dest(dest));
+    }));
+  var css = streamToPromise(cssStream).then(function(css) {
+    var concatedCss = css.map(function(file) {
+      return file.contents.toString('utf-8');
+    }).join('\n');
+
+    return new CleanCSS({}).minify(concatedCss).styles;
+  });
 
   var handlebarOpts = {
     helpers: {
       assetPath: function (path, context) {
-        return context.data.root[path];
+        return context.data.root.manifest[path];
+      },
+      css: function(context) {
+        return new handlebars.Handlebars.SafeString(context.data.root.css);
       }
     }
   };
   var htmlSrc = [
     'src/index.html'
   ];
-  var html = manifest.then(function(manifestContents) {
+  var html = Promise.all([manifest, css]).then(function(results) {
+    var manifestContents = results[0];
+    var cssContents = results[1];
     var htmlStream = gulp.src(htmlSrc)
-        .pipe(handlebars(manifestContents, handlebarOpts))
+        .pipe(handlebars({
+          manifest: manifestContents,
+          css: cssContents
+        }, handlebarOpts))
         .pipe(gulp.dest(dest));
 
     return streamToPromise(htmlStream);
