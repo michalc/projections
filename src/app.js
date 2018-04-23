@@ -33,14 +33,33 @@
     }
 
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
-    g = _(charts)
-      .map(function(chart) {
-        return chart.features;
-      })
-      .flatten()
+
+    var mostOfWorld = _(charts[0].features)
       .map(function(feature) {
         return feature.geometry.coordinates[0];
       })
+      .value();
+
+    var antarticaIslands = _(charts[1].features)
+      .filter(function(feature) {
+        return feature.id > 2;
+      })
+      .map(function(feature) {
+        return feature.geometry.coordinates[0];
+      })
+      .value();
+
+    var antarticaProper = _(charts[1].features)
+      .filter(function(feature) {
+        return feature.id <= 2;
+      })
+      .map(function(feature) {
+        return feature.geometry.coordinates[0];
+      })
+      .value();
+
+    g = _([mostOfWorld, antarticaIslands, antarticaProper])
+      .flatten()
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
       })
