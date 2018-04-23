@@ -9,7 +9,7 @@ var merge = require('merge2');
 gulp.task('download-charts', function () {
   var download = require('gulp-download');
   var unzip = require('gulp-unzip');
-  var url = 'http://www.ngdc.noaa.gov/mgg/shorelines/data/gshhg/latest/gshhg-shp-2.3.4.zip';
+  var url = 'https://www.ngdc.noaa.gov/mgg/shorelines/data/gshhg/latest/gshhg-shp-2.3.7.zip';
   return download(url)
     .pipe(unzip())
     .pipe(gulp.dest('data_src/'));
