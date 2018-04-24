@@ -8,6 +8,7 @@ var handlebars = require('gulp-compile-handlebars');
 var eslint = require('gulp-eslint');
 var changed = require('gulp-changed');
 var rev = require('gulp-rev');
+var _ = require('lodash');
 var merge = require('merge2');
 var source = require('vinyl-source-stream');
 var stream = require('stream');
@@ -32,18 +33,64 @@ gulp.task('generate-charts', function () {
   var outputDir = 'data';
 
   // Land
-  var l1Land = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L1.shp'))
-    .pipe(geoJsonStream.stringify())
-    .pipe(source('GSHHS_c_L1.json'))
-    .pipe(gulp.dest(outputDir));
+  var mostOfWorldStream = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L1.shp'))
+    .pipe(geoJsonStream.stringify());
 
   // Antarctica
-  var l2Land = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L5.shp'))
-    .pipe(geoJsonStream.stringify())
-    .pipe(source('GSHHS_c_L5.json'))
-    .pipe(gulp.dest(outputDir));
+  var antarticaStream = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L5.shp'))
+    .pipe(geoJsonStream.stringify());
 
-  return merge(l1Land, l2Land, l2Land);
+  return Promise.all([streamToPromise(mostOfWorldStream), streamToPromise(antarticaStream)]).then(function(collections) {
+    var mostOfWorldFeatures = JSON.parse(collections[0]).features;
+    var mostOfWorld = _(mostOfWorldFeatures)
+      .map(function(feature) {
+        return feature.geometry.coordinates[0];
+      })
+      .value();
+
+    var antarticaFeatures = JSON.parse(collections[1]).features;
+    var antarticaIslands = _(antarticaFeatures)
+      .filter(function(feature) {
+        return feature.id > 2;
+      })
+      .map(function(feature) {
+        return feature.geometry.coordinates[0];
+      })
+      .value();
+    
+    var antarticaProper = _(antarticaFeatures)
+      .filter(function(feature) {
+        return feature.id <= 2;
+      })
+      .map(function(feature) {
+        return feature.geometry.coordinates[0];
+      })
+      .map(function(featureCoords) {
+        // Annoyingly land masses stradding 180 longtidue are split up.
+        // This is most obvious in Antartica,  and done by adding in points
+        // at the South Pole and after
+        var seenSouthPole = false;
+        return _.filter(featureCoords, function(coords) {
+          seenSouthPole = seenSouthPole || coords[1] == -90;
+          return !seenSouthPole;
+        });
+      })
+      .reverse()
+      .flatten()
+      .value();
+
+    charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper]]);
+    chartsString = JSON.stringify(charts);
+
+    var saveStream = new stream.Readable()
+    saveStream.pipe(source('data.json'))
+      .pipe(gulp.dest(outputDir));
+
+    saveStream.push(chartsString) 
+    saveStream.push(null) 
+
+    return streamToPromise(saveStream);
+  });
 });
 
 gulp.task('lint', function () {
