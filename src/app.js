@@ -34,9 +34,11 @@
   function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
     for (var j = 0; j < charts.length; ++j) {
       var shape = Mercator.getShape(offsetLongitude, offsetLatitude, bounds, charts[j]);
-      var path = shape.reduce(function(path, chartCoord, i) {
-          return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
-      }, '') + 'z';
+      var path = '';
+      for (var i = 0; i < shape.length; ++i) {
+        path += (i == 0 ? 'M' : 'L') + shape[i].x + ',' + shape[i].y;
+      }
+      path += 'z';
       var pathElement = getPath(svg, j);
       pathElement.setAttributeNS(null, 'd', path);
     }
