@@ -152,21 +152,15 @@
         var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
         var direction = discontinuityDirection(prevCoord.long, currCoord.long);
 
-        var coordsForPoint;
-        if (!direction) {
-          coordsForPoint = [currCoord];
-        } else {
-          coordsForPoint = [
-            {long: currCoord.long - 360 * direction, lat: currCoord.lat},
-            {long: currCoord.long - (360 + extraLong) * direction, lat: currCoord.lat},
-            {long: currCoord.long - (360 + extraLong) * direction, lat: offLat * pole},
-            {long: prevCoord.long + (360 + extraLong) * direction, lat: offLat * pole},
-            {long: prevCoord.long + (360 + extraLong) * direction, lat: prevCoord.lat},
-            {long: prevCoord.long + 360 * direction, lat: prevCoord.lat},
-            currCoord
-          ]
-        }
-        return coordsForPoint;
+        return !direction ? [currCoord] : [
+          {long: currCoord.long - 360 * direction, lat: currCoord.lat},
+          {long: currCoord.long - (360 + extraLong) * direction, lat: currCoord.lat},
+          {long: currCoord.long - (360 + extraLong) * direction, lat: offLat * pole},
+          {long: prevCoord.long + (360 + extraLong) * direction, lat: offLat * pole},
+          {long: prevCoord.long + (360 + extraLong) * direction, lat: prevCoord.lat},
+          {long: prevCoord.long + 360 * direction, lat: prevCoord.lat},
+          currCoord
+        ]
       })
       .flatten()
       .map(toChart)
