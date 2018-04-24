@@ -37,22 +37,10 @@ gulp.task('generate-charts', function () {
     .pipe(source('GSHHS_c_L1.json'))
     .pipe(gulp.dest(outputDir));
 
-  // Lakes
-  var l2Land = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L2.shp'))
-    .pipe(geoJsonStream.stringify())
-    .pipe(source('GSHHS_c_L2.json'))
-    .pipe(gulp.dest(outputDir));
-
   // Antarctica
   var l2Land = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L5.shp'))
     .pipe(geoJsonStream.stringify())
     .pipe(source('GSHHS_c_L5.json'))
-    .pipe(gulp.dest(outputDir));
-
-  // Border
-  var l2Land = (new mapJsonStream({}, 'data_src/WDBII_shp/c/WDBII_border_c_L1.shp'))
-    .pipe(geoJsonStream.stringify())
-    .pipe(source('WDBII_border_c_L1.json'))
     .pipe(gulp.dest(outputDir));
 
   return merge(l1Land, l2Land, l2Land);
