@@ -317,10 +317,8 @@
       })
     }
 
-    return [
-      _(shapes).map(function(shape) {
+    return _(shapes).map(function(shape) {
         return _.map(shape, toChart);
-      }).flatten().value()
-    ];
+      }).flatten().value();
   }
 })(module.exports);

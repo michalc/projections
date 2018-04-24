@@ -43,7 +43,6 @@
         return _.map(coordinates, rotate);
       })
       .map(_.partial(Mercator.getShapes, bounds))
-      .flatten()
       .map(function(shape, i) {
         var path = _.reduce(shape, function(path, chartCoord, i) {
             return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
