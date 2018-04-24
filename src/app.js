@@ -35,7 +35,7 @@
   function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
     for (var j = 0; j < charts.length; ++j) {
       var shape = Mercator.getShape(offsetLongitude, offsetLatitude, bounds, charts[j]);
-      var path = _.reduce(shape, function(path, chartCoord, i) {
+      var path = shape.reduce(function(path, chartCoord, i) {
           return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
       }, '') + 'z';
       var pathElement = getPath(svg, j);

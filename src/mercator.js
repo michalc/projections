@@ -1,8 +1,6 @@
 /* global exports */
 
 (function(Mercator) {
-  var _ = require('lodash');
-
   Mercator.toChart = toChart;
   Mercator.rotate = rotate;
   Mercator.getShape = getShape;
@@ -138,7 +136,7 @@
   function getShape(longRotationDegrees, latRotationDegrees, bounds, coords) {
     // Fairly performance critical
 
-    var rotatedCoords = _.map(coords, function(coord) {
+    var rotatedCoords = coords.map(function(coord) {
       return Mercator.rotate(longRotationDegrees, latRotationDegrees, coord);
     });
 
