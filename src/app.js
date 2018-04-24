@@ -22,9 +22,12 @@
   var pathPool = [];
   function getPath(svg, i) {
       var needed = Math.max(i + 1 - pathPool.length, 0);
+      var pathElement;
       for (var j = 0; j < needed; ++j) {
-        pathPool.push(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
-        svg.appendChild(pathPool[i]);
+        pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathElement.setAttributeNS(null, 'class', 'land');
+        pathPool.push(pathElement);
+        svg.appendChild(pathElement);
       }
       return pathPool[i];
   };
@@ -43,7 +46,6 @@
             return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
         }, '') + 'z';
         var pathElement = getPath(svg, i);
-        pathElement.setAttributeNS(null, 'class', 'land');
         pathElement.setAttributeNS(null, 'd', path);
       });
   }
