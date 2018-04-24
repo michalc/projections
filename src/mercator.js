@@ -136,9 +136,10 @@
   function getShape(longRotationDegrees, latRotationDegrees, bounds, coords) {
     // Fairly performance critical
 
-    var rotatedCoords = coords.map(function(coord) {
-      return Mercator.rotate(longRotationDegrees, latRotationDegrees, coord);
-    });
+    var rotatedCoords = []
+    for (var i = 0; i < coords.length; ++i) {
+      rotatedCoords.push(Mercator.rotate(longRotationDegrees, latRotationDegrees, coords[i]));
+    }
 
     var minLat = Infinity;
     var maxLat = -Infinity;
