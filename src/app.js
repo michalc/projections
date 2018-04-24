@@ -36,7 +36,6 @@
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
 
     _(charts)
-      .flatten()
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
       })
@@ -136,7 +135,7 @@
         .flatten()
         .value();
 
-      charts = [mostOfWorld, antarticaIslands, [antarticaProper]];
+      charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper]]);
       draw();
       document.body.removeAttribute('class');
     });
