@@ -28,16 +28,10 @@
       return pathPool[i];
   };
     
-  var g = null;
   function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
-    if (g) {
-      g.remove();
-      g = null;
-    }
-
     var rotate = _.partial(Mercator.rotate, offsetLongitude, offsetLatitude);
 
-    g = _(charts)
+    _(charts)
       .flatten()
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
@@ -52,12 +46,9 @@
         pathElement.setAttributeNS(null, 'd', path);
         return pathElement;
       })
-      .reduce(function(group, pathElement) {
-        group.appendChild(pathElement);
-        return group;
-      }, document.createElementNS('http://www.w3.org/2000/svg', 'g'));
-
-    svg.append(g);
+      .each(function(pathElement) {
+        svg.appendChild(pathElement);
+      });
   }
 
   window.addEventListener('load', function() {
