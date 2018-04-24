@@ -63,6 +63,13 @@
     };
   }
 
+  function coord(long, lat) {
+    return {
+      long: long,
+      lat: lat
+    };
+  }
+
   // latRotation rotates about y axis (line through earth along original equator)
   // longRotation rotates about z axis (line through earth pole to pole)
   function rotate(longRotationDegrees, latRotationDegrees, longLat) {
@@ -113,10 +120,7 @@
     else if (x_r2 < 0 && y_r2 >= 0) long_r2 = long_r2 + 180;
     var lat_r2 = toDegrees(phi_r2) - 90;
 
-    return {
-      long: long_r2,
-      lat: lat_r2
-    };
+    return coord(long_r2, lat_r2);
   }
 
   // Fudge to determine is 2 points are discontinuous
@@ -134,10 +138,14 @@
   function getShape(bounds, rotatedCoords) {
     var toChart = _.partial(Mercator.toChart, bounds);
 
-    var lats = _(rotatedCoords)
-      .map(function(coord) {return coord.lat;})
-    var minLat = lats.min();
-    var maxLat = lats.max();
+    // Fairly performance critical
+
+    var minLat = Infinity;
+    var maxLat = -Infinity;
+    for (var i = 0; i < rotatedCoords.length; ++i) {
+      minLat = Math.min(rotatedCoords[i].lat, minLat);
+      maxLat = Math.max(rotatedCoords[i].lat, maxLat);
+    }
 
     // Slight hack: pole is determined by the point closest
     var latDiffToSouthPole = Math.abs(-90 - minLat);
@@ -146,23 +154,22 @@
     var offLat = 88;
     var extraLong = 90;
 
-    return _(rotatedCoords)
-      .map(function(currCoord, i) {
-        var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
-        var direction = discontinuityDirection(prevCoord.long, currCoord.long);
+    var shape = []
+    for (var i = 0; i < rotatedCoords.length; ++i) {
+      var currCoord = rotatedCoords[i];
+      var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
+      var direction = discontinuityDirection(prevCoord.long, currCoord.long);
+      if (direction) {
+        shape.push(toChart(coord(currCoord.long - 360 * direction, currCoord.lat)));
+        shape.push(toChart(coord(currCoord.long - (360 + extraLong) * direction, currCoord.lat)));
+        shape.push(toChart(coord(currCoord.long - (360 + extraLong) * direction, offLat * pole)));
+        shape.push(toChart(coord(prevCoord.long + (360 + extraLong) * direction, offLat * pole)));
+        shape.push(toChart(coord(prevCoord.long + (360 + extraLong) * direction, prevCoord.lat)));
+        shape.push(toChart(coord(prevCoord.long + 360 * direction, prevCoord.lat)));
+      }
+      shape.push(toChart(currCoord));
+    }
 
-        return !direction ? [currCoord] : [
-          {long: currCoord.long - 360 * direction, lat: currCoord.lat},
-          {long: currCoord.long - (360 + extraLong) * direction, lat: currCoord.lat},
-          {long: currCoord.long - (360 + extraLong) * direction, lat: offLat * pole},
-          {long: prevCoord.long + (360 + extraLong) * direction, lat: offLat * pole},
-          {long: prevCoord.long + (360 + extraLong) * direction, lat: prevCoord.lat},
-          {long: prevCoord.long + 360 * direction, lat: prevCoord.lat},
-          currCoord
-        ]
-      })
-      .flatten()
-      .map(toChart)
-      .value();
+    return shape;
   }
 })(module.exports);
