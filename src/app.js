@@ -20,10 +20,11 @@
   }
 
   var pathPool = [];
-  function getPath(i) {
+  function getPath(svg, i) {
       var needed = Math.max(i + 1 - pathPool.length, 0);
       for (var j = 0; j < needed; ++j) {
         pathPool.push(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+        svg.appendChild(pathPool[i]);
       }
       return pathPool[i];
   };
@@ -37,17 +38,13 @@
         return _.map(coordinates, rotate);
       })
       .map(_.partial(Mercator.getShapes, bounds))
-      .map(function(shape, i) {
+      .each(function(shape, i) {
         var path = _.reduce(shape, function(path, chartCoord, i) {
             return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
         }, '') + 'z';
-        var pathElement = getPath(i);
+        var pathElement = getPath(svg, i);
         pathElement.setAttributeNS(null, 'class', 'land');
         pathElement.setAttributeNS(null, 'd', path);
-        return pathElement;
-      })
-      .each(function(pathElement) {
-        svg.appendChild(pathElement);
       });
   }
 
