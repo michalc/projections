@@ -121,8 +121,6 @@
   }
 
   function getShapes(bounds, rotatedCoords) {
-    var shapes = [];
-
     // 1 for -180 to 180, -1 for 180 to -180
     function discontinuityDirection(prev, curr) {
       return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
@@ -132,193 +130,46 @@
       return i == 0 ? length - 1 : i - 1;
     }
 
-    function next(length, i) {
-      return (i + 1) % length;
-    }
-
-    // Point after i that is continous with i
-    function continuousAfter(i) {
-      var atPoint = rotatedCoords[i];
-      var atAfter = rotatedCoords[next(rotatedCoords.length, i)];
-      var discon = discontinuityDirection(atPoint.long, atAfter.long);
-      var continous = {
-        long: atAfter.long - discon * 360,
-        lat: atAfter.lat
-      };
-      return continous;
-    }
-
-    // Point before i that is continous with i
-    function continousBefore(i) {
-      var atPoint = rotatedCoords[i];
-      var atBefore = rotatedCoords[prev(rotatedCoords.length, i)];
-      var discon = discontinuityDirection(atPoint.long, atBefore.long);
-      var continous = {
-        long: atBefore.long - discon * 360,
-        lat: atBefore.lat
-      };
-      return continous;
-    }
-
-    function segmentCoords(segment) {
-      var coords = [];
-      var i = segment.in;
-      do {
-        coords.push(rotatedCoords[i]);
-        i = next(rotatedCoords.length, i);
-      } while (i != segment.out);
-
-      // Add point before that is continous with first point in path
-      coords.unshift(continousBefore(segment.in))
-
-      // Add point after that is continous with last point in path
-      // Note: The out point is not included in the path
-      coords.push(continuousAfter(prev(rotatedCoords.length, segment.out)));
-
-      return coords;
-    }
-
     var toChart = _.partial(Mercator.toChart, bounds);
 
     // Fudge to determine is 2 points are discontinuous
     var DISCONTINUTY_THREASHOLD = 180;
 
-    // Array of objects describing discontinuities in the path
-    // described by the point after the discontinuity
-    //   index:     where in the path it occurs
-    //   longLat:   coords of the point
-    //   direction: 1 is -ve to +ve, -1 is +ve to -ve 
-    var discontinuities = [];
+    var minLat = _(rotatedCoords)
+      .minBy('lat').lat;
+    var maxLat = _(rotatedCoords)
+      .maxBy('lat').lat;
 
-    // Find discontinuities
-    rotatedCoords.forEach(function(longLat, i) {
-      var prevIndex = prev(rotatedCoords.length, i);
-      var prevLong = rotatedCoords[prevIndex].long;
-      var currLong = longLat.long;
-      var direction = discontinuityDirection(prevLong, currLong);
-      if (direction) {
-        discontinuities.push({
-          index: i,
-          longLat: longLat,
-          direction: direction
-        });
-      }
-    });
+    // Slight hack: pole is determined by the point closest
+    var latDiffToSouthPole = Math.abs(-90 - minLat);
+    var latDiffToNorthPole = Math.abs(90 - maxLat);
+    var pole = latDiffToSouthPole <= latDiffToNorthPole ? -1 : 1;
 
-    // Array of objects describing the types of segments in the path
-    //   type:       0 is simple with no discontinuities (must be the only one in path)
-    //               1 is one that goes all the way around the earth
-    //               2 shape that goes up to + beyond an edge
-    //   in:         index of in point
-    //   inCoords:   coords on in point,
-    //   inEdge:     +ve or -ve edge of inPoint
-    //   out:        index of out point (not inclusive)
-    //   outCoords:  coords of out point
-    //   coords:     set of all coords that make the path
-    var segments = [];
+    return _(rotatedCoords)
+      .map(function(currCoord, i) {
+        var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
+        var direction = discontinuityDirection(prevCoord.long, currCoord.long);
 
-    // No discontinuites mean the segment must be simple
-    if (!discontinuities.length) {
-      segments.push({
-        type: 0,
-        in: 0,
-        inCoords: rotatedCoords[0],
-        out: 0,
-        outCoords: rotatedCoords[0],
-        coords: rotatedCoords
-      });
-    }
-
-    // Find segment types by comparing discontinuities
-    discontinuities.forEach(function(discon, i) {
-      var prevIndex = prev(discontinuities.length, i);
-      var nextIndex = next(discontinuities.length, i);
-      var prevDiscon = discontinuities[prevIndex];
-      var currDiscon = discon;
-      var type = prevDiscon.direction === currDiscon.direction ? 1 : 2;
-      var segment = {
-        type: type,
-        in: prevDiscon.index,
-        out: currDiscon.index,
-        inCoords: prevDiscon.longLat,
-        outCoords: currDiscon.longLat,
-        coords: null
-      };
-      segment.coords = segmentCoords(segment);
-      segments.push(segment);
-    });
-
-    var endpointsLeft = [];
-    var endpointsRight = [];
-    segments.forEach(function(segment) {
-      if (segment.type === 0) return;
-      var inArray = segment.coords[0].long < 0 ? endpointsLeft : endpointsRight;
-      var inEndpoint = {
-        type: 'beginning',
-        side: inArray == endpointsLeft ? 'left' : 'right',
-        otherSide: null,
-        coords: segment.coords[0],
-        segment: segment
-      };
-      var outArray = segment.coords[segment.coords.length - 1].long < 0 ? endpointsLeft : endpointsRight;
-      var outEndpoint = {
-        type: 'end',
-        side: outArray == endpointsLeft ? 'left' : 'right',
-        otherSide: null,
-        coords: segment.coords[segment.coords.length - 1],
-        segment: segment
-      };
-      inEndpoint.otherSide = outEndpoint.side;
-      outEndpoint.otherSide = inEndpoint.side;
-
-      inArray.push(inEndpoint);
-    });
-
-    if (segments.length === 1 && segments[0].type == 0) {
-      shapes = [segments[0].coords]
-    } else {
-
-      // Walk along each side creating shapes
-      var leftShapeCoords = [];
-      endpointsLeft.forEach(function(endpoint) {
-        if (endpoint.side === endpoint.otherSide) {
-          leftShapeCoords = leftShapeCoords.concat(endpoint.segment.coords);
+        var coordsForPoint;
+        if (!direction) {
+          coordsForPoint = [currCoord];
+        } else {
+          var offLat = 88;
+          var extraLong = 90;
+          coordsForPoint = [
+            {long: currCoord.long - 360 * direction, lat: currCoord.lat},
+            {long: currCoord.long - (360 + extraLong) * direction, lat: currCoord.lat},
+            {long: currCoord.long - (360 + extraLong) * direction, lat: offLat * pole},
+            {long: prevCoord.long + (360 + extraLong) * direction, lat: offLat * pole},
+            {long: prevCoord.long + (360 + extraLong) * direction, lat: prevCoord.lat},
+            {long: prevCoord.long + 360 * direction, lat: prevCoord.lat},
+            currCoord
+          ]
         }
-      });
-
-      if (leftShapeCoords.length) {
-        shapes.push(leftShapeCoords)
-      }
-      var rightShapeCoords = [];
-      endpointsRight.forEach(function(endpoint) {
-        if (endpoint.side === endpoint.otherSide) {
-          rightShapeCoords = rightShapeCoords.concat(endpoint.segment.coords);
-        }
-      });
-      if (rightShapeCoords.length) {
-        shapes.push(rightShapeCoords);
-      }
-
-      endpointsLeft.concat(endpointsRight).forEach(function(endpoint) {
-        if (endpoint.side !== endpoint.otherSide) {
-          var first = endpoint.segment.coords[0];
-          var pole = first.lat < 0 ? -1 : 1;
-          endpoint.segment.coords.unshift({
-            long: first.long,
-            lat: 88 * pole
-          });
-          var last = endpoint.segment.coords[endpoint.segment.coords.length - 1];
-          endpoint.segment.coords.push({
-            long: last.long,
-            lat: 88 * pole
-          });
-          shapes.push(endpoint.segment.coords);
-        }
+        return coordsForPoint;
       })
-    }
-
-    return _(shapes).map(function(shape) {
-        return _.map(shape, toChart);
-      }).flatten().value();
+      .flatten()
+      .map(toChart)
+      .value();
   }
 })(module.exports);
