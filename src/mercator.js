@@ -120,20 +120,20 @@
     };
   }
 
+  // Fudge to determine is 2 points are discontinuous
+  var DISCONTINUTY_THREASHOLD = 180;
+
+  // 1 for -180 to 180, -1 for 180 to -180
+  function discontinuityDirection(prev, curr) {
+    return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
+  }
+
+  function prev(length, i) {
+    return i == 0 ? length - 1 : i - 1;
+  }
+
   function getShape(bounds, rotatedCoords) {
-    // 1 for -180 to 180, -1 for 180 to -180
-    function discontinuityDirection(prev, curr) {
-      return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
-    }
-
-    function prev(length, i) {
-      return i == 0 ? length - 1 : i - 1;
-    }
-
     var toChart = _.partial(Mercator.toChart, bounds);
-
-    // Fudge to determine is 2 points are discontinuous
-    var DISCONTINUTY_THREASHOLD = 180;
 
     var minLat = _(rotatedCoords)
       .minBy('lat').lat;
