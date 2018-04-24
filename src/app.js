@@ -63,13 +63,13 @@
 
     var latitude = parseFloat(latitudeInput.value);
     latitudeInput.addEventListener('input', function() {
-      latitude = latitudeInput.value;
+      latitude = parseFloat(latitudeInput.value);
       draw();
     });
 
     var longitude = parseFloat(longitudeInput.value);
     longitudeInput.addEventListener('input', function() {
-      longitude = longitudeInput.value;
+      longitude = parseFloat(longitudeInput.value);
       draw();
     });
 
