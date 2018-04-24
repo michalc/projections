@@ -46,7 +46,7 @@
       .flatten()
       .map(function(shape, i) {
         var path = _.reduce(shape, function(path, chartCoord, i) {
-            return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
+            return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
         }, '') + 'z';
         var pathElement = getPath(i);
         pathElement.setAttributeNS(null, 'class', 'land');

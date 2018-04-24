@@ -42,7 +42,7 @@
     return thetaToY(W, theta_top);
   }
 
-  function toChart(chartBounds, coords) {
+  function toChart(chartBounds, coords, i) {
     var long = coords.long;
     var lat = coords.lat;
     var W = chartBounds.screen.right - chartBounds.screen.left;
@@ -58,6 +58,7 @@
     var chartX = x;
 
     return {
+      type: i == 0 ? 'M' : 'L',
       x: Math.trunc(chartX),
       y: Math.trunc(chartY)
     };
@@ -269,8 +270,8 @@
       };
       inEndpoint.otherSide = outEndpoint.side;
       outEndpoint.otherSide = inEndpoint.side;
+
       inArray.push(inEndpoint);
-      outArray.push(outEndpoint);
     });
 
     if (segments.length === 1 && segments[0].type == 0) {
@@ -298,7 +299,7 @@
         shapes.push(rightShapeCoords);
       }
 
-      endpointsLeft.forEach(function(endpoint) {
+      endpointsLeft.concat(endpointsRight).forEach(function(endpoint) {
         if (endpoint.side !== endpoint.otherSide) {
           var first = endpoint.segment.coords[0];
           var pole = first.lat < 0 ? -1 : 1;
@@ -316,8 +317,10 @@
       })
     }
 
-    return _.map(shapes, function(shape) {
-      return _.map(shape, toChart);
-    });
+    return [
+      _(shapes).map(function(shape) {
+        return _.map(shape, toChart);
+      }).flatten().value()
+    ];
   }
 })(module.exports);
