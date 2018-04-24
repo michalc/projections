@@ -7,7 +7,6 @@ var buffer = require('gulp-buffer');
 var handlebars = require('gulp-compile-handlebars');
 var eslint = require('gulp-eslint');
 var changed = require('gulp-changed');
-var rev = require('gulp-rev');
 var _ = require('lodash');
 var merge = require('merge2');
 var source = require('vinyl-source-stream');
@@ -111,17 +110,10 @@ gulp.task('default', [], function() {
     .pipe(changed(dataDest))
     .pipe(gulp.dest(dataDest));
 
-  var manifestStream = browserify('src/app.js')
+  var javascriptStream = browserify('src/app.js')
     .plugin('tinyify', {})
-    .bundle()
-    .pipe(source('app.js'))
-    .pipe(buffer())
-    .pipe(rev())
-    .pipe(gulp.dest(dest))
-    .pipe(rev.manifest());
-  var manifest = streamToPromise(manifestStream).then(function(files) {
-    return JSON.parse(files[0].contents);
-  });
+    .bundle();
+  var javascript = streamToPromise(javascriptStream);
 
   var cssSrc = [
     'node_modules/normalize.css/normalize.css',
@@ -142,8 +134,8 @@ gulp.task('default', [], function() {
 
   var handlebarOpts = {
     helpers: {
-      assetPath: function (path, context) {
-        return context.data.root.manifest[path];
+      javascript: function(context) {
+        return new handlebars.Handlebars.SafeString(context.data.root.javascript);
       },
       css: function(context) {
         return new handlebars.Handlebars.SafeString(context.data.root.css);
@@ -153,12 +145,12 @@ gulp.task('default', [], function() {
   var htmlSrc = [
     'src/index.html'
   ];
-  var html = Promise.all([manifest, css]).then(function(results) {
-    var manifestContents = results[0];
+  var html = Promise.all([javascript, css]).then(function(results) {
+    var javascriptContents = results[0];
     var cssContents = results[1];
     var htmlStream = gulp.src(htmlSrc)
         .pipe(handlebars({
-          manifest: manifestContents,
+          javascript: javascriptContents,
           css: cssContents
         }, handlebarOpts))
         .pipe(gulp.dest(dest));
