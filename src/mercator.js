@@ -144,6 +144,8 @@
     var latDiffToSouthPole = Math.abs(-90 - minLat);
     var latDiffToNorthPole = Math.abs(90 - maxLat);
     var pole = latDiffToSouthPole <= latDiffToNorthPole ? -1 : 1;
+    var offLat = 88;
+    var extraLong = 90;
 
     return _(rotatedCoords)
       .map(function(currCoord, i) {
@@ -154,8 +156,6 @@
         if (!direction) {
           coordsForPoint = [currCoord];
         } else {
-          var offLat = 88;
-          var extraLong = 90;
           coordsForPoint = [
             {long: currCoord.long - 360 * direction, lat: currCoord.lat},
             {long: currCoord.long - (360 + extraLong) * direction, lat: currCoord.lat},
