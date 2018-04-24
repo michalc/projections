@@ -5,7 +5,7 @@
 
   Mercator.toChart = toChart;
   Mercator.rotate = rotate;
-  Mercator.getShapes = getShapes;
+  Mercator.getShape = getShape;
 
   // Points at infinity on the chart
   // get mapped to this
@@ -120,7 +120,7 @@
     };
   }
 
-  function getShapes(bounds, rotatedCoords) {
+  function getShape(bounds, rotatedCoords) {
     // 1 for -180 to 180, -1 for 180 to -180
     function discontinuityDirection(prev, curr) {
       return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;

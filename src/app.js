@@ -40,7 +40,7 @@
       .map(function(coordinates) {
         return _.map(coordinates, rotate);
       })
-      .map(_.partial(Mercator.getShapes, bounds))
+      .map(_.partial(Mercator.getShape, bounds))
       .each(function(shape, i) {
         var path = _.reduce(shape, function(path, chartCoord, i) {
             return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
