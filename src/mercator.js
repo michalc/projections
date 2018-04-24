@@ -135,10 +135,12 @@
     return i == 0 ? length - 1 : i - 1;
   }
 
-  function getShape(bounds, rotatedCoords) {
-    var toChart = _.partial(Mercator.toChart, bounds);
-
+  function getShape(longRotationDegrees, latRotationDegrees, bounds, coords) {
     // Fairly performance critical
+
+    var rotatedCoords = _.map(coords, function(coord) {
+      return Mercator.rotate(longRotationDegrees, latRotationDegrees, coord);
+    });
 
     var minLat = Infinity;
     var maxLat = -Infinity;
@@ -160,14 +162,14 @@
       var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
       var direction = discontinuityDirection(prevCoord.long, currCoord.long);
       if (direction) {
-        shape.push(toChart(coord(currCoord.long - 360 * direction, currCoord.lat)));
-        shape.push(toChart(coord(currCoord.long - (360 + extraLong) * direction, currCoord.lat)));
-        shape.push(toChart(coord(currCoord.long - (360 + extraLong) * direction, offLat * pole)));
-        shape.push(toChart(coord(prevCoord.long + (360 + extraLong) * direction, offLat * pole)));
-        shape.push(toChart(coord(prevCoord.long + (360 + extraLong) * direction, prevCoord.lat)));
-        shape.push(toChart(coord(prevCoord.long + 360 * direction, prevCoord.lat)));
+        shape.push(Mercator.toChart(bounds, coord(currCoord.long - 360 * direction, currCoord.lat)));
+        shape.push(Mercator.toChart(bounds, coord(currCoord.long - (360 + extraLong) * direction, currCoord.lat)));
+        shape.push(Mercator.toChart(bounds, coord(currCoord.long - (360 + extraLong) * direction, offLat * pole)));
+        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + (360 + extraLong) * direction, offLat * pole)));
+        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + (360 + extraLong) * direction, prevCoord.lat)));
+        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + 360 * direction, prevCoord.lat)));
       }
-      shape.push(toChart(currCoord));
+      shape.push(Mercator.toChart(bounds, currCoord));
     }
 
     return shape;
