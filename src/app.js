@@ -43,7 +43,7 @@
       .map(_.partial(Mercator.getShape, bounds))
       .each(function(shape, i) {
         var path = _.reduce(shape, function(path, chartCoord, i) {
-            return path + chartCoord.type + chartCoord.x + ',' + chartCoord.y;
+            return path + (i == 0 ? 'M' : 'L') + chartCoord.x + ',' + chartCoord.y;
         }, '') + 'z';
         var pathElement = getPath(svg, i);
         pathElement.setAttributeNS(null, 'd', path);

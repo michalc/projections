@@ -58,7 +58,6 @@
     var chartX = x;
 
     return {
-      type: i == 0 ? 'M' : 'L',
       x: Math.trunc(chartX),
       y: Math.trunc(chartY)
     };
