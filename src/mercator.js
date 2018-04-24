@@ -135,10 +135,10 @@
   function getShape(bounds, rotatedCoords) {
     var toChart = _.partial(Mercator.toChart, bounds);
 
-    var minLat = _(rotatedCoords)
-      .minBy('lat').lat;
-    var maxLat = _(rotatedCoords)
-      .maxBy('lat').lat;
+    var lats = _(rotatedCoords)
+      .map(function(coord) {return coord.lat;})
+    var minLat = lats.min();
+    var maxLat = lats.max();
 
     // Slight hack: pole is determined by the point closest
     var latDiffToSouthPole = Math.abs(-90 - minLat);
