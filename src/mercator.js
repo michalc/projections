@@ -70,7 +70,7 @@
 
   // latRotation rotates about y axis (line through earth along original equator)
   // longRotation rotates about z axis (line through earth pole to pole)
-  function rotate(longRotationDegrees, latRotationDegrees, longLat) {
+  function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, resultOffset) {
     var long = longLat[0];
     var lat = longLat[1];
 
@@ -118,7 +118,8 @@
     else if (x_r2 < 0 && y_r2 >= 0) long_r2 = long_r2 + 180;
     var lat_r2 = toDegrees(phi_r2) - 90;
 
-    return coord(long_r2, lat_r2);
+    resultArray[resultOffset] = long_r2;
+    resultArray[resultOffset + 1] = lat_r2;
   }
 
   // Fudge to determine is 2 points are discontinuous
@@ -133,19 +134,14 @@
     return i == 0 ? length - 1 : i - 1;
   }
 
-  function getShape(longRotationDegrees, latRotationDegrees, bounds, coords) {
+  function getShape(bounds, numCoords, rotatedCoords) {
     // Fairly performance critical
-
-    var rotatedCoords = []
-    for (var i = 0; i < coords.length; ++i) {
-      rotatedCoords.push(Mercator.rotate(longRotationDegrees, latRotationDegrees, coords[i]));
-    }
 
     var minLat = Infinity;
     var maxLat = -Infinity;
-    for (var i = 0; i < rotatedCoords.length; ++i) {
-      minLat = Math.min(rotatedCoords[i].lat, minLat);
-      maxLat = Math.max(rotatedCoords[i].lat, maxLat);
+    for (var i = 0; i < numCoords; ++i) {
+      minLat = Math.min(rotatedCoords[i*2+1], minLat);
+      maxLat = Math.max(rotatedCoords[i*2+1], maxLat);
     }
 
     // Slight hack: pole is determined by the point closest
@@ -156,19 +152,22 @@
     var extraLong = 90;
 
     var shape = []
-    for (var i = 0; i < rotatedCoords.length; ++i) {
-      var currCoord = rotatedCoords[i];
-      var prevCoord = rotatedCoords[prev(rotatedCoords.length, i)];
-      var direction = discontinuityDirection(prevCoord.long, currCoord.long);
+    for (var i = 0; i < numCoords; ++i) {
+      var currLong = rotatedCoords[i*2];
+      var currLat = rotatedCoords[i*2+1];
+      var prevIndex = prev(numCoords, i);
+      var prevLong = rotatedCoords[prevIndex*2];
+      var prevLat = rotatedCoords[prevIndex*2+1];
+      var direction = discontinuityDirection(prevLong, currLong);
       if (direction) {
-        shape.push(Mercator.toChart(bounds, coord(currCoord.long - 360 * direction, currCoord.lat)));
-        shape.push(Mercator.toChart(bounds, coord(currCoord.long - (360 + extraLong) * direction, currCoord.lat)));
-        shape.push(Mercator.toChart(bounds, coord(currCoord.long - (360 + extraLong) * direction, offLat * pole)));
-        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + (360 + extraLong) * direction, offLat * pole)));
-        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + (360 + extraLong) * direction, prevCoord.lat)));
-        shape.push(Mercator.toChart(bounds, coord(prevCoord.long + 360 * direction, prevCoord.lat)));
+        shape.push(Mercator.toChart(bounds, coord(currLong - 360 * direction, currLat)));
+        shape.push(Mercator.toChart(bounds, coord(currLong - (360 + extraLong) * direction, currLat)));
+        shape.push(Mercator.toChart(bounds, coord(currLong - (360 + extraLong) * direction, offLat * pole)));
+        shape.push(Mercator.toChart(bounds, coord(prevLong + (360 + extraLong) * direction, offLat * pole)));
+        shape.push(Mercator.toChart(bounds, coord(prevLong + (360 + extraLong) * direction, prevLat)));
+        shape.push(Mercator.toChart(bounds, coord(prevLong + 360 * direction, prevLat)));
       }
-      shape.push(Mercator.toChart(bounds, currCoord));
+      shape.push(Mercator.toChart(bounds, coord(currLong, currLat)));
     }
 
     return shape;
