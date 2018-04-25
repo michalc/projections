@@ -1,6 +1,8 @@
 /* global exports */
 
 (function(Mercator) {
+  'use strict';
+
   Mercator.toChart = toChart;
   Mercator.rotate = rotate;
   Mercator.getShape = getShape;
