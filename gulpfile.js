@@ -116,7 +116,6 @@ gulp.task('default', [], function() {
   var javascript = streamToPromise(javascriptStream);
 
   var cssSrc = [
-    'node_modules/normalize.css/normalize.css',
     'src/style.css'
   ];
   var cssStream = gulp.src(cssSrc)
