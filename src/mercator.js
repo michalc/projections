@@ -40,7 +40,7 @@
     return thetaToY(W, theta_top);
   }
 
-  function toChart(chartBounds, long, lat, i) {
+  function toChart(chartBounds, long, lat, out) {
     var W = chartBounds.screen.right - chartBounds.screen.left;
 
     var theta = toRadians(lat);
@@ -53,10 +53,8 @@
     var x = lambdaToX(W, lambda_0, lambda);
     var chartX = x;
 
-    return {
-      x: Math.trunc(chartX),
-      y: Math.trunc(chartY)
-    };
+    out[0] = Math.trunc(chartX);
+    out[1] = Math.trunc(chartY);
   }
 
   // latRotation rotates about y axis (line through earth along original equator)
@@ -125,6 +123,7 @@
     return i == 0 ? length - 1 : i - 1;
   }
 
+  var tempCoords = new Float64Array(8 * 2);
   function getShape(bounds, numCoords, rotatedCoords) {
     // Fairly performance critical
 
@@ -142,7 +141,7 @@
     var offLat = 88;
     var extraLong = 90;
 
-    var shape = []
+    var shape = ''
     for (var i = 0; i < numCoords; ++i) {
       var currLong = rotatedCoords[i*2];
       var currLat = rotatedCoords[i*2+1];
@@ -151,16 +150,28 @@
       var prevLat = rotatedCoords[prevIndex*2+1];
       var direction = discontinuityDirection(prevLong, currLong);
       if (direction) {
-        shape.push(Mercator.toChart(bounds, currLong - 360 * direction, currLat));
-        shape.push(Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, currLat));
-        shape.push(Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole));
-        shape.push(Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole));
-        shape.push(Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat));
-        shape.push(Mercator.toChart(bounds, prevLong + 360 * direction, prevLat));
+        Mercator.toChart(bounds, currLong - 360 * direction, currLat, tempCoords);
+        shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, currLong - 360 * direction, currLat, tempCoords)
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+        Mercator.toChart(bounds, currLong, currLat, tempCoords);
+        shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+      } else {
+        Mercator.toChart(bounds, currLong, currLat, tempCoords);
+        shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]    
       }
-      shape.push(Mercator.toChart(bounds, currLong, currLat));
     }
 
-    return shape;
+    return shape + 'z';
   }
 })(module.exports);

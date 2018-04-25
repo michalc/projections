@@ -48,13 +48,8 @@
       }
 
       var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
-      var path = '';
-      for (var i = 0; i < shape.length; ++i) {
-        path += (i == 0 ? 'M' : 'L') + shape[i].x + ',' + shape[i].y;
-      }
-      path += 'z';
       var pathElement = getPath(svg, j);
-      pathElement.setAttributeNS(null, 'd', path);
+      pathElement.setAttributeNS(null, 'd', shape);
     }
   }
 
