@@ -76,6 +76,7 @@ window.addEventListener('load', function() {
   });
 
   var svg = document.getElementById('svg');
+  var svgRect;
   function setSvgDimensions() {
     var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
     svg.setAttribute('width', screenBound);
@@ -93,10 +94,43 @@ window.addEventListener('load', function() {
     createChart(svg, charts, bounds, longitude, latitude);
   }
 
+  var mousedown = false;
+  var longitudeWhenMousedown;
+  var latitudeWhenMousedown;
+  var longitudeDragging;
+  var latitudeDragging;
+  document.body.addEventListener('mousemove', function(e) {
+    if (!svgRect || !mousedown) return;
+    var chartX = e.clientX - svgRect.left;
+    var chartY = e.clientY - svgRect.top;
+    var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
+    longitude = transformedEarth.long - longitudeDragging;
+    latitude = transformedEarth.lat - latitudeDragging;
+    longitudeInput.value = longitude;
+    latitudeInput.value = latitude;
+    draw();
+  });
+
+  svg.addEventListener('mousedown', function(e) {
+    mousedown = true;
+    var chartX = e.clientX - svgRect.left;
+    var chartY = e.clientY - svgRect.top;
+    var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
+    longitudeWhenMousedown = longitude;
+    latitudeWhenMousedown = latitude;
+    longitudeDragging = transformedEarth.long - longitudeWhenMousedown;
+    latitudeDragging = transformedEarth.lat - latitudeWhenMousedown;
+  });
+
+  document.body.addEventListener('mouseup', function(e) {
+    mousedown = false;
+  });
+
   fetch('data/data.json').then(function(results) {
     charts = results;
     initCharts(charts, svg);
     draw();
     document.body.removeAttribute('class');
+    svgRect = svg.getBoundingClientRect();
   });
 });

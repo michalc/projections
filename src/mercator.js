@@ -6,6 +6,7 @@ var Mercator = module.exports;
 
 Mercator.rotate = rotate;
 Mercator.getShape = getShape;
+Mercator.toEarth = toEarth;
 
 // Points at infinity on the chart
 // get mapped to this
@@ -57,6 +58,25 @@ function toChart(chartBounds, long, lat, out) {
 
   out[0] = Math.trunc(chartX);
   out[1] = Math.trunc(chartY);
+}
+
+function toEarth(chartBounds, chartX, chartY) {
+  var W = chartBounds.screen.right - chartBounds.screen.left;
+
+  var lambda_0 = toRadians(chartBounds.earth.left);
+  var x = chartX;
+  var lambda = xToLambda(W, lambda_0, x);
+  var long = toDegrees(lambda);
+
+  var y_top = getY_top(W, chartBounds);
+  var y = y_top - chartY;
+  var theta = 2 * Math.atan(Math.exp(y * 2 * Math.PI / W)) - Math.PI / 2;
+  var lat = toDegrees(theta); 
+
+  return {
+    long: long,
+    lat: lat
+  };
 }
 
 // latRotation rotates about y axis (line through earth along original equator)
