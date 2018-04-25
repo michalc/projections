@@ -113,7 +113,9 @@ gulp.task('default', [], function() {
   var javascriptStream = browserify('src/app.js')
     .plugin('tinyify', {})
     .bundle();
-  var javascript = streamToPromise(javascriptStream);
+  var javascript = streamToPromise(javascriptStream).then(function(jsBuffers) {
+    return Buffer.concat(jsBuffers);
+  });
 
   var cssSrc = [
     'src/style.css'
