@@ -31,21 +31,23 @@
       return pathPool[i];
   };
 
-  var rotatedCoordPool = [];
+  var rotatedCoords;
   function initCharts(charts) {
+    var maxLength = -Infinity;
     for (var i = 0; i < charts.length; ++i) {
-      rotatedCoordPool.push(new Float64Array(8 * 2 * charts[i].length));
+      maxLength = Math.max(charts[i].length, maxLength);
     }
+    rotatedCoords = new Float64Array(8 * 2 * maxLength);
   }
     
   function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
     for (var j = 0; j < charts.length; ++j) {
       // Fill rotatedCoords
       for (var i = 0; i < charts[j].length; ++i) {
-        Mercator.rotate(offsetLongitude, offsetLatitude, charts[j][i], rotatedCoordPool[j], i*2);
+        Mercator.rotate(offsetLongitude, offsetLatitude, charts[j][i], rotatedCoords, i*2);
       }
 
-      var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoordPool[j]);
+      var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
       var path = '';
       for (var i = 0; i < shape.length; ++i) {
         path += (i == 0 ? 'M' : 'L') + shape[i].x + ',' + shape[i].y;
