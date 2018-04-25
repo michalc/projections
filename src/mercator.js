@@ -85,27 +85,22 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
   var long = longLat[0];
   var lat = longLat[1];
 
+  // Rotate about z axis
+  var long_r1 = ((long + 180 + longRotationDegrees) % 360) - 180;
+
   // Convert to spherical-polar radian coordinates
-  var theeta = toRadians(long);
-  var phi = toRadians(lat + 90); // In usual spherical-polar coords, phi is 0 along z-axis
+  var theeta_r1 = toRadians(long_r1);
+  var phi_r1 = toRadians(lat + 90); // In usual spherical-polar coords, phi is 0 along z-axis
 
   // Convert to cartesian coordinates (assuming radius of Earth is 1)
   // http://mathworld.wolfram.com/SphericalCoordinates.html
-  var sinPhi = Math.sin(phi)
-  var x = Math.cos(theeta) * sinPhi;
-  var y = Math.sin(theeta) * sinPhi;
-  var z = Math.cos(phi);
+  var sinPhi = Math.sin(phi_r1)
+  var x_r1 = Math.cos(theeta_r1) * sinPhi;
+  var y_r1 = Math.sin(theeta_r1) * sinPhi;
+  var z_r1 = Math.cos(phi_r1);
 
   // Convert rotation angle to radians
-  var rotLong = toRadians(longRotationDegrees);
   var rotLat = toRadians(latRotationDegrees);
-
-  // Rotate about z axis
-  var sinRotLong = Math.sin(rotLong);
-  var cosRotLong = Math.cos(rotLong);
-  var x_r1 = x * cosRotLong - y * sinRotLong;
-  var y_r1 = x * sinRotLong + y * cosRotLong;
-  var z_r1 = z;
 
   // Rotate about y axis
   var sinRotLat = Math.sin(rotLat);
