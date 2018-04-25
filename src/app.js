@@ -19,23 +19,16 @@
   }
 
   var pathPool = [];
-  function getPath(svg, i) {
-      var needed = Math.max(i + 1 - pathPool.length, 0);
-      var pathElement;
-      for (var j = 0; j < needed; ++j) {
-        pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathElement.setAttributeNS(null, 'class', 'land');
-        pathPool.push(pathElement);
-        svg.appendChild(pathElement);
-      }
-      return pathPool[i];
-  };
-
   var rotatedCoords;
-  function initCharts(charts) {
+  function initCharts(charts, svg) {
     var maxLength = -Infinity;
     for (var i = 0; i < charts.length; ++i) {
       maxLength = Math.max(charts[i].length, maxLength);
+
+      var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      pathElement.setAttributeNS(null, 'class', 'land');
+      pathPool.push(pathElement);
+      svg.appendChild(pathElement);
     }
     rotatedCoords = new Float64Array(8 * 2 * maxLength);
   }
@@ -48,8 +41,7 @@
       }
 
       var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
-      var pathElement = getPath(svg, j);
-      pathElement.setAttributeNS(null, 'd', shape);
+      pathPool[j].setAttributeNS(null, 'd', shape);
     }
   }
 
@@ -104,7 +96,7 @@
 
     fetch('data/data.json').then(function(results) {
       charts = results;
-      initCharts(charts);
+      initCharts(charts, svg);
       draw();
       document.body.removeAttribute('class');
     });
