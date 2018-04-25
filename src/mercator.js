@@ -139,7 +139,7 @@
     var latDiffToNorthPole = Math.abs(90 - maxLat);
     var pole = latDiffToSouthPole <= latDiffToNorthPole ? -1 : 1;
     var offLat = 88;
-    var extraLong = 90;
+    var extraLong = 10;
 
     var shape = ''
     for (var i = 0; i < numCoords; ++i) {
