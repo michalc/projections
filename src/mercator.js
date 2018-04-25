@@ -40,9 +40,7 @@
     return thetaToY(W, theta_top);
   }
 
-  function toChart(chartBounds, coords, i) {
-    var long = coords.long;
-    var lat = coords.lat;
+  function toChart(chartBounds, long, lat, i) {
     var W = chartBounds.screen.right - chartBounds.screen.left;
 
     var theta = toRadians(lat);
@@ -58,13 +56,6 @@
     return {
       x: Math.trunc(chartX),
       y: Math.trunc(chartY)
-    };
-  }
-
-  function coord(long, lat) {
-    return {
-      long: long,
-      lat: lat
     };
   }
 
@@ -160,14 +151,14 @@
       var prevLat = rotatedCoords[prevIndex*2+1];
       var direction = discontinuityDirection(prevLong, currLong);
       if (direction) {
-        shape.push(Mercator.toChart(bounds, coord(currLong - 360 * direction, currLat)));
-        shape.push(Mercator.toChart(bounds, coord(currLong - (360 + extraLong) * direction, currLat)));
-        shape.push(Mercator.toChart(bounds, coord(currLong - (360 + extraLong) * direction, offLat * pole)));
-        shape.push(Mercator.toChart(bounds, coord(prevLong + (360 + extraLong) * direction, offLat * pole)));
-        shape.push(Mercator.toChart(bounds, coord(prevLong + (360 + extraLong) * direction, prevLat)));
-        shape.push(Mercator.toChart(bounds, coord(prevLong + 360 * direction, prevLat)));
+        shape.push(Mercator.toChart(bounds, currLong - 360 * direction, currLat));
+        shape.push(Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, currLat));
+        shape.push(Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole));
+        shape.push(Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole));
+        shape.push(Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat));
+        shape.push(Mercator.toChart(bounds, prevLong + 360 * direction, prevLat));
       }
-      shape.push(Mercator.toChart(bounds, coord(currLong, currLat)));
+      shape.push(Mercator.toChart(bounds, currLong, currLat));
     }
 
     return shape;
