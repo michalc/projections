@@ -4,7 +4,6 @@
 
 var Mercator = module.exports;
 
-Mercator.toChart = toChart;
 Mercator.rotate = rotate;
 Mercator.getShape = getShape;
 
@@ -153,24 +152,24 @@ function getShape(bounds, numCoords, rotatedCoords) {
     var prevLat = rotatedCoords[prevIndex*2+1];
     var direction = discontinuityDirection(prevLong, currLong);
     if (direction) {
-      Mercator.toChart(bounds, currLong - 360 * direction, currLat, tempCoords);
+      toChart(bounds, currLong - 360 * direction, currLat, tempCoords);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, currLong - 360 * direction, currLat, tempCoords)
+      toChart(bounds, currLong - 360 * direction, currLat, tempCoords)
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords);
+      toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords);
+      toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords);
+      toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords);
+      toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords);
+      toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      Mercator.toChart(bounds, currLong, currLat, tempCoords);
+      toChart(bounds, currLong, currLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
     } else {
-      Mercator.toChart(bounds, currLong, currLat, tempCoords);
+      toChart(bounds, currLong, currLat, tempCoords);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]    
     }
   }
