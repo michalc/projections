@@ -101,8 +101,6 @@ window.addEventListener('load', function() {
   }
 
   var mousedown = false;
-  var longitudeWhenMousedown;
-  var latitudeWhenMousedown;
   var longitudeDragging;
   var latitudeDragging;
   document.body.addEventListener('mousemove', function(e) {
@@ -122,10 +120,8 @@ window.addEventListener('load', function() {
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
-    longitudeWhenMousedown = longitude;
-    latitudeWhenMousedown = latitude;
-    longitudeDragging = transformedEarth.long - longitudeWhenMousedown;
-    latitudeDragging = transformedEarth.lat - latitudeWhenMousedown;
+    longitudeDragging = transformedEarth.long - longitude;
+    latitudeDragging = transformedEarth.lat - latitude;
   });
 
   document.body.addEventListener('mouseup', function(e) {
