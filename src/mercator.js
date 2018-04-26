@@ -118,10 +118,12 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
 
   var phi_r2 = Math.acos(z_r2);
 
-  // Convert to lat/long
-  var long_r2 = toDegrees(theeta_r2);
-  if      (x_r2 < 0 && y_r2 <= 0) long_r2 = long_r2 - 180;
-  else if (x_r2 < 0 && y_r2 >= 0) long_r2 = long_r2 + 180;
+  // Convert to long/lat
+  var long_r2 = toDegrees(theeta_r2) + (
+    (x_r2 < 0 && y_r2 <= 0) ? -180 :
+    (x_r2 < 0 && y_r2 >= 0) ?  180 :
+    0
+  );
   var lat_r2 = toDegrees(phi_r2) - 90;
 
   resultArray[resultOffset] = long_r2;
