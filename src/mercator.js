@@ -24,11 +24,10 @@ function thetaToY(W, theta) {
   // Fudge to be able to plot things at (/beyond) pole
   // this is useful since shapes might contain vertices
   // that are at infinity, but still want to plot the ones
-  // that aren't
-  var theta_adjusted = Math.PI/2 - theta;
+  // that aren'ts
   if (0       >= theta) return MAX_BOUND;
   if (Math.PI <= theta) return -MAX_BOUND;
-  return W / (2 * Math.PI) * Math.log(Math.tan(Math.PI / 4 + theta_adjusted / 2));
+  return W / (2 * Math.PI) * Math.log(Math.tan((Math.PI - theta) / 2));
 }
 
 function xToLambda(W, lambda_0, x) {
