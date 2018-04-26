@@ -20,14 +20,14 @@ function toDegrees(rad) {
   return rad * 180 / Math.PI;
 }
 
-function thetaToY(W, theta) {
+function phiToY(W, phi) {
   // Fudge to be able to plot things at (/beyond) pole
   // this is useful since shapes might contain vertices
   // that are at infinity, but still want to plot the ones
   // that aren'ts
-  if (0       >= theta) return MAX_BOUND;
-  if (Math.PI <= theta) return -MAX_BOUND;
-  return W / (2 * Math.PI) * Math.log(Math.tan((Math.PI - theta) / 2));
+  if (0       >= phi) return MAX_BOUND;
+  if (Math.PI <= phi) return -MAX_BOUND;
+  return W / (2 * Math.PI) * Math.log(Math.tan((Math.PI - phi) / 2));
 }
 
 function xToLambda(W, lambda_0, x) {
@@ -39,15 +39,15 @@ function lambdaToX(W, lambda_0, lambda) {
 }
 
 function getY_top(W, chartBounds) {
-  var theta_top = toRadians(90 - chartBounds.earth.top);
-  return thetaToY(W, theta_top);
+  var phi_top = toRadians(90 - chartBounds.earth.top);
+  return phiToY(W, phi_top);
 }
 
 function toChart(chartBounds, long, lat, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
-  var theta = toRadians(90 - lat);
-  var y = thetaToY(W, theta);
+  var phi = toRadians(90 - lat);
+  var y = phiToY(W, phi);
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
