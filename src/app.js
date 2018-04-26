@@ -38,13 +38,13 @@ function initCharts(charts, svg) {
 
 function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
   // Convert rotation angle to radians
-  var rotLong = toRadians(offsetLongitude);
-  var rotLat = toRadians(offsetLatitude);
+  var rotTheta = toRadians(offsetLongitude);
+  var rotPhi = toRadians(offsetLatitude);
 
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     for (var i = 0; i < charts[j].length; ++i) {
-      Mercator.rotate(rotLong, rotLat, charts[j][i], rotatedCoords, i*2);
+      Mercator.rotate(rotTheta, rotPhi, charts[j][i], rotatedCoords, i*2);
     }
 
     var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
