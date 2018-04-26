@@ -80,6 +80,7 @@ function rotate(longRotationDegrees, latRotationDegrees, thetaPhi, resultArray, 
 
   // Convert rotation angle to radians
   var rotLong = toRadians(longRotationDegrees);
+  var rotLat = toRadians(latRotationDegrees);
 
   // Rotate about z axis
   var theta_r1 = ((theta + Math.PI + rotLong) % (2*Math.PI)) - Math.PI;
@@ -91,9 +92,6 @@ function rotate(longRotationDegrees, latRotationDegrees, thetaPhi, resultArray, 
   var x_r1 = Math.cos(theta_r1) * sinPhi;
   var y_r1 = Math.sin(theta_r1) * sinPhi;
   var z_r1 = Math.cos(phi_r1);
-
-  // Convert rotation angle to radians
-  var rotLat = toRadians(latRotationDegrees);
 
   // Rotate about y axis
   var sinRotLat = Math.sin(rotLat);
