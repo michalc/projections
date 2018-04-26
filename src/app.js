@@ -52,9 +52,7 @@ window.addEventListener('load', function() {
   var bounds = {
     earth: {
       top: 83.6,
-      bottom: -83.6,
-      left: -180,
-      right: 180
+      left: -180
     },
     screen: {
       top: 0,
