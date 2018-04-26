@@ -74,39 +74,32 @@ function toEarth(chartBounds, chartX, chartY) {
 
 // longRotation rotates about z axis (line through earth pole to pole)
 // latRotation rotates about y axis (line through earth along original equator
-function rotate(rotLong, rotLat, thetaPhi, resultArray, resultOffset) {
-  var theta = thetaPhi[0];
-  var phi = thetaPhi[1];
-
-  // Rotate about z axis
-  var theta_r1 = ((theta + Math.PI + rotLong) % (2*Math.PI)) - Math.PI;
-  var phi_r1 = phi;
+function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
+  var theta = thetaPhiArray[thetaPhiOffset];
+  var phi = thetaPhiArray[thetaPhiOffset+1];
 
   // Convert to cartesian coordinates (assuming radius of Earth is 1)
   // http://mathworld.wolfram.com/SphericalCoordinates.html
-  var sinPhi = Math.sin(phi_r1)
-  var x_r1 = Math.cos(theta_r1) * sinPhi;
-  var y_r1 = Math.sin(theta_r1) * sinPhi;
-  var z_r1 = Math.cos(phi_r1);
+  var sinPhi = Math.sin(phi)
+  var x = Math.cos(theta) * sinPhi;
+  var y = Math.sin(theta) * sinPhi;
+  var z = Math.cos(phi);
 
-  // Rotate about y axis
-  var sinRotLat = Math.sin(rotLat);
-  var cosRotLat = Math.cos(rotLat);
-  var x_r2 = x_r1 * cosRotLat + z_r1 * sinRotLat;
-  var y_r2 = y_r1;
-  var z_r2 = z_r1 * cosRotLat - x_r1 * sinRotLat;
+  var x_r = rot[0] * x + rot[1] * y + rot[2] * z;
+  var y_r = rot[3] * x + rot[4] * y + rot[5] * z;
+  var z_r = rot[6] * x + rot[7] * y + rot[8] * z;
 
   // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
   // atan works for +- Infinity, but, 0 / 0 = NaN,
   // so we have to handle that case
-  var theta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan2(y_r2, x_r2) :
-                     Object.is(y_r2, -0) ? -Math.PI / 2 :
-                                            Math.PI / 2;
+  var theta_r = x_r != 0 || y_r != 0 ?  Math.atan2(y_r, x_r) :
+                  Object.is(y_r, -0) ? -Math.PI / 2 :
+                                        Math.PI / 2;
 
-  var phi_r2 = Math.acos(z_r2);
+  var phi_r = Math.acos(z_r);
 
-  resultArray[resultOffset] = theta_r2;
-  resultArray[resultOffset + 1] = phi_r2;
+  resultArray[resultOffset] = theta_r;
+  resultArray[resultOffset + 1] = phi_r;
 }
 
 // Fudge to determine is 2 points are discontinuous

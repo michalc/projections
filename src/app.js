@@ -36,15 +36,44 @@ function initCharts(charts, svg) {
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
 
+var rotationMatrixY = new Float64Array(8 * 9);
+var rotationMatrixZ = new Float64Array(8 * 9);
 function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
   // Convert rotation angle to radians
   var rotTheta = toRadians(offsetLongitude);
   var rotPhi = toRadians(offsetLatitude);
 
+  // By phi around y-axis
+  var cosPhi = Math.cos(rotPhi);
+  var sinPhi = Math.sin(rotPhi);
+  rotationMatrixY[0] = cosPhi;
+  rotationMatrixY[1] = 0;
+  rotationMatrixY[2] = sinPhi;
+  rotationMatrixY[3] = 0;
+  rotationMatrixY[4] = 1;
+  rotationMatrixY[5] = 0;
+  rotationMatrixY[6] = -sinPhi;
+  rotationMatrixY[7] = 0;
+  rotationMatrixY[8] = cosPhi;
+
+  // By theta around z-axis
+  var cosTheta = Math.cos(rotTheta);
+  var sinTheta = Math.sin(rotTheta);
+  rotationMatrixZ[0] = cosTheta;
+  rotationMatrixZ[1] = -sinTheta;
+  rotationMatrixZ[2] = 0
+  rotationMatrixZ[3] = sinTheta;
+  rotationMatrixZ[4] = cosTheta;
+  rotationMatrixZ[5] = 0;
+  rotationMatrixZ[6] = 0;
+  rotationMatrixZ[7] = 0;
+  rotationMatrixZ[8] = 1;
+
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     for (var i = 0; i < charts[j].length; ++i) {
-      Mercator.rotate(rotTheta, rotPhi, charts[j][i], rotatedCoords, i*2);
+      Mercator.rotate(rotationMatrixY, charts[j][i], 0, rotatedCoords, i*2);
+      Mercator.rotate(rotationMatrixZ, rotatedCoords, i*2, rotatedCoords, i*2);
     }
 
     var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
