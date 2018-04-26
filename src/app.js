@@ -46,14 +46,14 @@ function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
   var sinPhi = Math.sin(rotPhi);
   var cosTheta = Math.cos(rotTheta);
   var sinTheta = Math.sin(rotTheta);
-  rotationMatrix[0] = cosTheta * cosPhi;
-  rotationMatrix[1] = -sinTheta
-  rotationMatrix[2] = cosTheta * sinPhi;
-  rotationMatrix[3] = sinTheta * cosPhi;
+  rotationMatrix[0] = cosPhi * cosTheta;
+  rotationMatrix[1] = -cosPhi * sinTheta;
+  rotationMatrix[2] = sinPhi;
+  rotationMatrix[3] = sinTheta;
   rotationMatrix[4] = cosTheta;
-  rotationMatrix[5] = sinTheta * sinPhi;
-  rotationMatrix[6] = -sinPhi;
-  rotationMatrix[7] = 0;
+  rotationMatrix[5] = 0
+  rotationMatrix[6] = -sinPhi * cosTheta;
+  rotationMatrix[7] = sinPhi * sinTheta;
   rotationMatrix[8] = cosPhi;
 
   for (var j = 0; j < charts.length; ++j) {
