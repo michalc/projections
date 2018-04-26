@@ -34,8 +34,8 @@ function xToLambda(W, lambda_0, x) {
   return lambda_0 + x * 2 * Math.PI / W; 
 }
 
-function lambdaToX(W, lambda_0, lambda) {
-  return W / (2 * Math.PI) * (lambda - lambda_0);
+function thetaToX(W, theta_0, theta) {
+  return W / (2 * Math.PI) * (theta - theta_0);
 }
 
 function getY_top(W, chartBounds) {
@@ -51,9 +51,9 @@ function toChart(chartBounds, long, lat, out, outOffset) {
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
-  var lambda = toRadians(long);
-  var lambda_0 = toRadians(chartBounds.earth.left);
-  var x = lambdaToX(W, lambda_0, lambda);
+  var theta = toRadians(long);
+  var theta_0 = toRadians(chartBounds.earth.left);
+  var x = thetaToX(W, theta_0, theta);
   var chartX = x;
 
   out[outOffset] = Math.trunc(chartX);
