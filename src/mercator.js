@@ -76,13 +76,9 @@ function toEarth(chartBounds, chartX, chartY) {
 
 // longRotation rotates about z axis (line through earth pole to pole)
 // latRotation rotates about y axis (line through earth along original equator
-function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, resultOffset) {
-  var long = longLat[0];
-  var lat = longLat[1];
-
-  // Convert to spherical-polar radian coordinates
-  var theta = toRadians(long);
-  var phi = toRadians(90 - lat); // In usual spherical-polar coords, phi is 0 along z-axis
+function rotate(longRotationDegrees, latRotationDegrees, thetaPhi, resultArray, resultOffset) {
+  var theta = thetaPhi[0];
+  var phi = thetaPhi[1];
 
   // Convert rotation angle to radians
   var rotLong = toRadians(longRotationDegrees);

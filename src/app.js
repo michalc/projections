@@ -127,7 +127,15 @@ window.addEventListener('load', function() {
   });
 
   fetch('data/data.json').then(function(results) {
-    charts = results;
+    charts = results.map(function(shape) {
+      return shape.map(function(coord) {
+        var long = coord[0];
+        var lat = coord[1];
+        var theeta = toRadians(long);
+        var phi = toRadians(90 - lat);
+        return [theeta, phi];
+      });
+    });
     initCharts(charts, svg);
     draw();
     document.body.removeAttribute('class');
