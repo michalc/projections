@@ -39,15 +39,13 @@ function getY_top(W, chartBounds) {
   return phiToY(W, phi_top);
 }
 
-function toChart(chartBounds, long, lat, out, outOffset) {
+function toChart(chartBounds, theta, phi, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
-  var phi = toRadians(90 - lat);
   var y = phiToY(W, phi);
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
-  var theta = toRadians(long);
   var theta_0 = toRadians(chartBounds.earth.left);
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
@@ -107,26 +105,18 @@ function rotate(longRotationDegrees, latRotationDegrees, thetaPhi, resultArray, 
   // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
   // atan works for +- Infinity, but, 0 / 0 = NaN,
   // so we have to handle that case
-  var theta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan(y_r2 / x_r2) :
+  var theta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan2(y_r2, x_r2) :
                      Object.is(y_r2, -0) ? -Math.PI / 2 :
                                             Math.PI / 2;
 
   var phi_r2 = Math.acos(z_r2);
 
-  // Convert to long/lat
-  var long_r2 = toDegrees(theta_r2) + (
-    (x_r2 < 0 && y_r2 <= 0) ? -180 :
-    (x_r2 < 0 && y_r2 >= 0) ?  180 :
-    0
-  );
-  var lat_r2 = 90 - toDegrees(phi_r2);
-
-  resultArray[resultOffset] = long_r2;
-  resultArray[resultOffset + 1] = lat_r2;
+  resultArray[resultOffset] = theta_r2;
+  resultArray[resultOffset + 1] = phi_r2;
 }
 
 // Fudge to determine is 2 points are discontinuous
-var DISCONTINUTY_THREASHOLD = 180;
+var DISCONTINUTY_THREASHOLD = Math.PI;
 
 // 1 for -180 to 180, -1 for 180 to -180
 function discontinuityDirection(prev, curr) {
@@ -141,36 +131,35 @@ var tempCoords = new Float64Array(8 * 2 * 7);
 function getShape(bounds, numCoords, rotatedCoords) {
   // Fairly performance critical
 
-  var minLat = Infinity;
-  var maxLat = -Infinity;
+  var minPhi = Infinity;
+  var maxPhi = -Infinity;
   for (var i = 0; i < numCoords; ++i) {
-    minLat = Math.min(rotatedCoords[i*2+1], minLat);
-    maxLat = Math.max(rotatedCoords[i*2+1], maxLat);
+    minPhi = Math.min(rotatedCoords[i*2+1], minPhi);
+    maxPhi = Math.max(rotatedCoords[i*2+1], maxPhi);
   }
 
   // Slight hack: pole is determined by the point closest
-  var latDiffToSouthPole = Math.abs(-90 - minLat);
-  var latDiffToNorthPole = Math.abs(90 - maxLat);
-  var pole = latDiffToSouthPole <= latDiffToNorthPole ? -1 : 1;
-  var offLat = 88;
-  var extraLong = 10;
+  var latDiffToSouthPole = Math.abs(Math.PI - maxPhi);
+  var latDiffToNorthPole = Math.abs(minPhi);
+  var offPhi = latDiffToSouthPole <= latDiffToNorthPole ? toRadians(90 + 88) : toRadians(90 - 88);
+  var extraTheta = toRadians(10);
 
   var shape = ''
   for (var i = 0; i < numCoords; ++i) {
-    var currLong = rotatedCoords[i*2];
-    var currLat = rotatedCoords[i*2+1];
+    var currTheta = rotatedCoords[i*2];
+    var currPhi = rotatedCoords[i*2+1];
     var prevIndex = prev(numCoords, i);
-    var prevLong = rotatedCoords[prevIndex*2];
-    var prevLat = rotatedCoords[prevIndex*2+1];
-    var direction = discontinuityDirection(prevLong, currLong);
+    var prevTheta = rotatedCoords[prevIndex*2];
+    var prevPhi = rotatedCoords[prevIndex*2+1];
+    var direction = discontinuityDirection(prevTheta, currTheta);
     if (direction) {
-      toChart(bounds, currLong - 360 * direction, currLat, tempCoords, 0);
-      toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords, 2);
-      toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords, 4);
-      toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords, 6);
-      toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords, 8);
-      toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords, 10);
-      toChart(bounds, currLong, currLat, tempCoords, 12);
+      toChart(bounds, currTheta - 2*Math.PI * direction, currPhi, tempCoords, 0);
+      toChart(bounds, currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, 2);
+      toChart(bounds, currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 4);
+      toChart(bounds, prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 6);
+      toChart(bounds, prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, 8);
+      toChart(bounds, prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, 10);
+      toChart(bounds, currTheta, currPhi, tempCoords, 12);
       shape += (i == 0 ? 'M' : 'L') +
               tempCoords[0]  + ',' + tempCoords[1]  +
         'L' + tempCoords[2]  + ',' + tempCoords[3]  +
@@ -180,7 +169,7 @@ function getShape(bounds, numCoords, rotatedCoords) {
         'L' + tempCoords[10] + ',' + tempCoords[11] +
         'L' + tempCoords[12] + ',' + tempCoords[13];
     } else {
-      toChart(bounds, currLong, currLat, tempCoords, 0);
+      toChart(bounds, currTheta, currPhi, tempCoords, 0);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1];
     }
   }
