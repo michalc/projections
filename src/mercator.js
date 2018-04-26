@@ -171,8 +171,6 @@ function getShape(bounds, numCoords, rotatedCoords) {
     if (direction) {
       toChart(bounds, currLong - 360 * direction, currLat, tempCoords);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, currLong - 360 * direction, currLat, tempCoords)
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
       toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
       toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords);
