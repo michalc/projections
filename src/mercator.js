@@ -182,12 +182,12 @@ function getShape(bounds, numCoords, rotatedCoords) {
       toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords);
       shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
       toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+      shape += 'L' + tempCoords[0] + ',' + tempCoords[1];
       toChart(bounds, currLong, currLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
+      shape += 'L' + tempCoords[0] + ',' + tempCoords[1];
     } else {
       toChart(bounds, currLong, currLat, tempCoords);
-      shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]    
+      shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1];
     }
   }
 
