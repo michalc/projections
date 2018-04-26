@@ -26,8 +26,8 @@ function thetaToY(W, theta) {
   // that are at infinity, but still want to plot the ones
   // that aren't
   var theta_adjusted = Math.PI/2 - theta;
-  if (theta_adjusted >= Math.PI / 2) return MAX_BOUND;
-  if (theta_adjusted <= -Math.PI / 2) return -MAX_BOUND;
+  if (0       >= theta) return MAX_BOUND;
+  if (Math.PI <= theta) return -MAX_BOUND;
   return W / (2 * Math.PI) * Math.log(Math.tan(Math.PI / 4 + theta_adjusted / 2));
 }
 
