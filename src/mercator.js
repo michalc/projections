@@ -84,14 +84,14 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
   var long_r1 = ((long + 180 + longRotationDegrees) % 360) - 180;
 
   // Convert to spherical-polar radian coordinates
-  var theeta_r1 = toRadians(long_r1);
+  var theta_r1 = toRadians(long_r1);
   var phi_r1 = toRadians(90 - lat); // In usual spherical-polar coords, phi is 0 along z-axis
 
   // Convert to cartesian coordinates (assuming radius of Earth is 1)
   // http://mathworld.wolfram.com/SphericalCoordinates.html
   var sinPhi = Math.sin(phi_r1)
-  var x_r1 = Math.cos(theeta_r1) * sinPhi;
-  var y_r1 = Math.sin(theeta_r1) * sinPhi;
+  var x_r1 = Math.cos(theta_r1) * sinPhi;
+  var y_r1 = Math.sin(theta_r1) * sinPhi;
   var z_r1 = Math.cos(phi_r1);
 
   // Convert rotation angle to radians
@@ -107,14 +107,14 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
   // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
   // atan works for +- Infinity, but, 0 / 0 = NaN,
   // so we have to handle that case
-  var theeta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan(y_r2 / x_r2) : 
+  var theta_r2 = x_r2 != 0 || y_r2 != 0 ?  Math.atan(y_r2 / x_r2) :
                      Object.is(y_r2, -0) ? -Math.PI / 2 :
                                             Math.PI / 2;
 
   var phi_r2 = Math.acos(z_r2);
 
   // Convert to long/lat
-  var long_r2 = toDegrees(theeta_r2) + (
+  var long_r2 = toDegrees(theta_r2) + (
     (x_r2 < 0 && y_r2 <= 0) ? -180 :
     (x_r2 < 0 && y_r2 >= 0) ?  180 :
     0
