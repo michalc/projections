@@ -39,15 +39,15 @@ function lambdaToX(W, lambda_0, lambda) {
 }
 
 function getY_top(W, chartBounds) {
-  var theta_top = toRadians(chartBounds.earth.top);
-  return thetaToY(W, theta_top);
+  var theta_top = toRadians(90 - chartBounds.earth.top);
+  return thetaToY(W, Math.PI/2 - theta_top);
 }
 
 function toChart(chartBounds, long, lat, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
-  var theta = toRadians(lat);
-  var y = thetaToY(W, theta);
+  var theta = toRadians(90 - lat);
+  var y = thetaToY(W, Math.PI/2 - theta);
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
