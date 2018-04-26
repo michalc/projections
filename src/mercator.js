@@ -80,12 +80,16 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
   var long = longLat[0];
   var lat = longLat[1];
 
-  // Rotate about z axis
-  var long_r1 = ((long + 180 + longRotationDegrees) % 360) - 180;
-
   // Convert to spherical-polar radian coordinates
-  var theta_r1 = toRadians(long_r1);
-  var phi_r1 = toRadians(90 - lat); // In usual spherical-polar coords, phi is 0 along z-axis
+  var theta = toRadians(long);
+  var phi = toRadians(90 - lat); // In usual spherical-polar coords, phi is 0 along z-axis
+
+  // Convert rotation angle to radians
+  var rotLong = toRadians(longRotationDegrees);
+
+  // Rotate about z axis
+  var theta_r1 = ((theta + Math.PI + rotLong) % (2*Math.PI)) - Math.PI;
+  var phi_r1 = phi;
 
   // Convert to cartesian coordinates (assuming radius of Earth is 1)
   // http://mathworld.wolfram.com/SphericalCoordinates.html
