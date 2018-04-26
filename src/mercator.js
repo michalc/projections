@@ -43,7 +43,7 @@ function getY_top(W, chartBounds) {
   return thetaToY(W, theta_top);
 }
 
-function toChart(chartBounds, long, lat, out) {
+function toChart(chartBounds, long, lat, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
   var theta = toRadians(lat);
@@ -56,8 +56,8 @@ function toChart(chartBounds, long, lat, out) {
   var x = lambdaToX(W, lambda_0, lambda);
   var chartX = x;
 
-  out[0] = Math.trunc(chartX);
-  out[1] = Math.trunc(chartY);
+  out[outOffset] = Math.trunc(chartX);
+  out[outOffset + 1] = Math.trunc(chartY);
 }
 
 function toEarth(chartBounds, chartX, chartY) {
@@ -142,7 +142,7 @@ function prev(length, i) {
   return i == 0 ? length - 1 : i - 1;
 }
 
-var tempCoords = new Float64Array(8 * 2);
+var tempCoords = new Float64Array(8 * 2 * 7);
 function getShape(bounds, numCoords, rotatedCoords) {
   // Fairly performance critical
 
@@ -169,22 +169,23 @@ function getShape(bounds, numCoords, rotatedCoords) {
     var prevLat = rotatedCoords[prevIndex*2+1];
     var direction = discontinuityDirection(prevLong, currLong);
     if (direction) {
-      toChart(bounds, currLong - 360 * direction, currLat, tempCoords);
-      shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1]
-      toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1];
-      toChart(bounds, currLong, currLat, tempCoords);
-      shape += 'L' + tempCoords[0] + ',' + tempCoords[1];
+      toChart(bounds, currLong - 360 * direction, currLat, tempCoords, 0);
+      toChart(bounds, currLong - (360 + extraLong) * direction, currLat, tempCoords, 2);
+      toChart(bounds, currLong - (360 + extraLong) * direction, offLat * pole, tempCoords, 4);
+      toChart(bounds, prevLong + (360 + extraLong) * direction, offLat * pole, tempCoords, 6);
+      toChart(bounds, prevLong + (360 + extraLong) * direction, prevLat, tempCoords, 8);
+      toChart(bounds, prevLong + 360 * direction, prevLat, tempCoords, 10);
+      toChart(bounds, currLong, currLat, tempCoords, 12);
+      shape += (i == 0 ? 'M' : 'L') +
+              tempCoords[0]  + ',' + tempCoords[1]  +
+        'L' + tempCoords[2]  + ',' + tempCoords[3]  +
+        'L' + tempCoords[4]  + ',' + tempCoords[5]  +
+        'L' + tempCoords[6]  + ',' + tempCoords[7]  +
+        'L' + tempCoords[8]  + ',' + tempCoords[9]  +
+        'L' + tempCoords[10] + ',' + tempCoords[11] +
+        'L' + tempCoords[12] + ',' + tempCoords[13];
     } else {
-      toChart(bounds, currLong, currLat, tempCoords);
+      toChart(bounds, currLong, currLat, tempCoords, 0);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1];
     }
   }
