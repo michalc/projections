@@ -109,7 +109,7 @@ window.addEventListener('load', function() {
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
     longitude = transformedEarth.long - longitudeDragging;
-    latitude = transformedEarth.lat - latitudeDragging;
+    latitude = latitudeDragging - transformedEarth.lat;
     longitudeInput.value = longitude;
     latitudeInput.value = latitude;
     draw();
