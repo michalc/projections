@@ -79,8 +79,8 @@ function toEarth(chartBounds, chartX, chartY) {
   };
 }
 
-// latRotation rotates about y axis (line through earth along original equator)
 // longRotation rotates about z axis (line through earth pole to pole)
+// latRotation rotates about y axis (line through earth along original equator
 function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, resultOffset) {
   var long = longLat[0];
   var lat = longLat[1];
