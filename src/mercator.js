@@ -90,7 +90,7 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
 
   // Convert to spherical-polar radian coordinates
   var theeta_r1 = toRadians(long_r1);
-  var phi_r1 = toRadians(lat + 90); // In usual spherical-polar coords, phi is 0 along z-axis
+  var phi_r1 = toRadians(90 - lat); // In usual spherical-polar coords, phi is 0 along z-axis
 
   // Convert to cartesian coordinates (assuming radius of Earth is 1)
   // http://mathworld.wolfram.com/SphericalCoordinates.html
@@ -124,7 +124,7 @@ function rotate(longRotationDegrees, latRotationDegrees, longLat, resultArray, r
     (x_r2 < 0 && y_r2 >= 0) ?  180 :
     0
   );
-  var lat_r2 = toDegrees(phi_r2) - 90;
+  var lat_r2 = 90 - toDegrees(phi_r2);
 
   resultArray[resultOffset] = long_r2;
   resultArray[resultOffset + 1] = lat_r2;
