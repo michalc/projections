@@ -35,7 +35,7 @@ function xToLambda(W, lambda_0, x) {
 }
 
 function getY_top(W, chartBounds) {
-  var phi_top = toRadians(90 - chartBounds.earth.top);
+  var phi_top = chartBounds.earth.top;
   return phiToY(W, phi_top);
 }
 
@@ -46,7 +46,7 @@ function toChart(chartBounds, theta, phi, out, outOffset) {
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
-  var theta_0 = toRadians(chartBounds.earth.left);
+  var theta_0 = chartBounds.earth.left;
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
@@ -56,7 +56,7 @@ function toChart(chartBounds, theta, phi, out, outOffset) {
 function toEarth(chartBounds, chartX, chartY) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
-  var lambda_0 = toRadians(chartBounds.earth.left);
+  var lambda_0 = chartBounds.earth.left;
   var x = chartX;
   var lambda = xToLambda(W, lambda_0, x);
   var long = toDegrees(lambda);

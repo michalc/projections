@@ -51,8 +51,8 @@ function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
 window.addEventListener('load', function() {
   var bounds = {
     earth: {
-      top: 83.6,
-      left: -180
+      top: toRadians(90 - 83.6),
+      left: toRadians(-180)
     },
     screen: {
       top: 0,
