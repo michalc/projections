@@ -25,9 +25,10 @@ function thetaToY(W, theta) {
   // this is useful since shapes might contain vertices
   // that are at infinity, but still want to plot the ones
   // that aren't
-  if (theta >= Math.PI / 2) return MAX_BOUND;
-  if (theta <= -Math.PI / 2) return -MAX_BOUND;
-  return W / (2 * Math.PI) * Math.log(Math.tan(Math.PI / 4 + theta / 2));
+  var theta_adjusted = Math.PI/2 - theta;
+  if (theta_adjusted >= Math.PI / 2) return MAX_BOUND;
+  if (theta_adjusted <= -Math.PI / 2) return -MAX_BOUND;
+  return W / (2 * Math.PI) * Math.log(Math.tan(Math.PI / 4 + theta_adjusted / 2));
 }
 
 function xToLambda(W, lambda_0, x) {
@@ -40,14 +41,14 @@ function lambdaToX(W, lambda_0, lambda) {
 
 function getY_top(W, chartBounds) {
   var theta_top = toRadians(90 - chartBounds.earth.top);
-  return thetaToY(W, Math.PI/2 - theta_top);
+  return thetaToY(W, theta_top);
 }
 
 function toChart(chartBounds, long, lat, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
   var theta = toRadians(90 - lat);
-  var y = thetaToY(W, Math.PI/2 - theta);
+  var y = thetaToY(W, theta);
   var y_top = getY_top(W, chartBounds);
   var chartY = y_top - y;
 
