@@ -4,6 +4,10 @@
 
 var Mercator = require('./mercator');
 
+function toRadians(deg) {
+  return deg * Math.PI / 180;
+}
+
 function fetch(url) {
   return new Promise(function(resolve, reject) {
     function reqListener() {
