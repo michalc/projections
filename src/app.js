@@ -123,7 +123,6 @@ window.addEventListener('load', function() {
     onUp();
   });
 
-
   fetch('data/data.json').then(function(results) {
     charts = results.map(function(shape) {
       var shapeCoords = new Float64Array(shape.length * 2);
