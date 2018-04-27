@@ -54,8 +54,7 @@ function fetch(url) {
 function initCharts() {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
-    maxLength = Math.max(charts[i].length, maxLength);
-
+    maxLength = Math.max(charts[i].length / 2, maxLength);
     var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     pathElement.setAttributeNS(null, 'class', 'land');
     pathPool.push(pathElement);
@@ -109,11 +108,11 @@ function fillRotationMatrixFromTo(a, b) {
 function createChart(svg, charts, bounds) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
-    for (var i = 0; i < charts[j].length; ++i) {
-      Mercator.rotate(rotationMatrix, charts[j][i], 0, rotatedCoords, i*2);
+    var numCoords = charts[j].length / 2;
+    for (var i = 0; i < numCoords; ++i) {
+      Mercator.rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
     }
-
-    var shape = Mercator.getShape(bounds, charts[j].length, rotatedCoords);
+    var shape = Mercator.getShape(bounds, numCoords, rotatedCoords);
     pathPool[j].setAttributeNS(null, 'd', shape);
   }
 }
@@ -133,7 +132,6 @@ function drawFromTo() {
 }
 
 window.addEventListener('load', function() {
-  longitudeInput = document.getElementById('longitude-input');
   svg = document.getElementById('svg');
 
   window.addEventListener('resize', setSvgDimensions);
@@ -196,13 +194,16 @@ window.addEventListener('load', function() {
 
   fetch('data/data.json').then(function(results) {
     charts = results.map(function(shape) {
-      return shape.map(function(coord) {
-        var long = coord[0];
-        var lat = coord[1];
-        var theeta = toRadians(long);
+      var shapeCoords = new Float64Array(shape.length * 2);
+      for (var i = 0; i < shape.length; ++i) {
+        var long = shape[i][0];
+        var lat = shape[i][1];
+        var theta = toRadians(long);
         var phi = toRadians(90 - lat);
-        return [theeta, phi];
-      });
+        shapeCoords[i*2] = theta;
+        shapeCoords[i*2 + 1] = phi;
+      }
+      return shapeCoords;
     });
     initCharts();
     drawFromTo();
