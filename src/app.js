@@ -17,7 +17,7 @@ var bounds = {
   }
 };
 
-var charts;
+var loaded = false;
 var rotationMatrix = new Float64Array(9);
 var inverseRotationMatrix = new Float64Array(9);
 
@@ -58,7 +58,7 @@ function setSvgDimensions() {
 }
 
 function drawFromTo() {
-  if (!charts) return;
+  if (!loaded) return;
   Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
   Mercator.draw(svg, bounds, rotationMatrix);
 }
@@ -71,7 +71,7 @@ window.addEventListener('load', function() {
   setSvgDimensions();
 
   function onMove(x, y) {
-    if (!svgRect || !mousedown) return;
+    if (!loaded || !mousedown) return;
     var chartX = x - svgRect.left;
     var chartY = y - svgRect.top;
     Mercator.toEarth(bounds, chartX, chartY, draggingPointTo, 0);
@@ -124,10 +124,10 @@ window.addEventListener('load', function() {
   });
 
   fetch('data/data.json').then(function(latLongCharts) {
-    charts = latLongCharts;
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
     Mercator.init(latLongCharts, svg);
+    loaded = true;
     drawFromTo();
   });
 });
