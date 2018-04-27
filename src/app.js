@@ -24,6 +24,7 @@ var rotationMatrix = new Float64Array(8 * 9);
 var latitudeInput;
 var longitudeInput;
 var svg;
+var svgRect;
 
 var latitude;
 var longitude;
@@ -105,7 +106,6 @@ window.addEventListener('load', function() {
     draw();
   });
 
-  var svgRect;
   function setSvgDimensions() {
     var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
     svg.setAttribute('width', screenBound);
