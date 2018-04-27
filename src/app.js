@@ -24,6 +24,7 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', function() {
     var dimension = Math.min(window.innerWidth, window.innerHeight);
     Mercator.setBounds(dimension, dimension);
+    svgRect = svg.getBoundingClientRect();
   });
 
   document.body.addEventListener('mousemove', function(e) {
