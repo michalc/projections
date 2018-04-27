@@ -5,7 +5,7 @@
 var Mercator = module.exports;
 
 Mercator.rotate = rotate;
-Mercator.createChart = createChart;
+Mercator.draw = draw;
 Mercator.toEarth = toEarth;
 Mercator.fillRotationMatrixFromTo = fillRotationMatrixFromTo;
 
@@ -203,7 +203,7 @@ function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
-function createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
+function draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;

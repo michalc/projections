@@ -74,7 +74,7 @@ function setSvgDimensions() {
 function drawFromTo() {
   if (!charts) return;
   Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  Mercator.createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool);
+  Mercator.draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool);
 }
 
 window.addEventListener('load', function() {
