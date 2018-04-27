@@ -4,26 +4,6 @@
 
 var Mercator = require('./mercator');
 
-var bounds = {
-  earth: {
-    top: toRadians(90 - 83.6),
-    left: toRadians(-180)
-  },
-  screen: {
-    top: 0,
-    bottom: 740,
-    left: 0,
-    right: 800
-  }
-};
-
-var svg;
-var svgRect;
-
-function toRadians(deg) {
-  return deg * Math.PI / 180;
-}
-
 function fetch(url) {
   return new Promise(function(resolve, reject) {
     function reqListener() {
@@ -37,24 +17,14 @@ function fetch(url) {
   });
 }
 
-function setSvgDimensions(width, height) {
-  svg.setAttribute('width', width);
-  svg.setAttribute('height', height);
-  bounds.screen.right = width;
-  bounds.screen.bottom = height;
-  Mercator.setBounds(bounds);
-}
-
 window.addEventListener('load', function() {
-  svg = document.getElementById('svg');
+  var svg = document.getElementById('svg');
+  var svgRect;
 
   window.addEventListener('resize', function() {
-    var dimension = Math.min(window.innerWidth, window.innerHeight)
-    setSvgDimensions(dimension, dimension);
-    Mercator.drawFromTo()
-  })
-  var dimension = Math.min(window.innerWidth, window.innerHeight);
-  setSvgDimensions(dimension, dimension);
+    var dimension = Math.min(window.innerWidth, window.innerHeight);
+    Mercator.setBounds(dimension, dimension);
+  });
 
   document.body.addEventListener('mousemove', function(e) {
     Mercator.onMove(e.clientX, e.clientY, svgRect);
@@ -84,7 +54,9 @@ window.addEventListener('load', function() {
 
   fetch('data/data.json').then(function(latLongCharts) {
     document.body.removeAttribute('class');
-    svgRect = svg.getBoundingClientRect();
     Mercator.init(latLongCharts, svg);
+    var dimension = Math.min(window.innerWidth, window.innerHeight);
+    Mercator.setBounds(dimension, dimension);
+    svgRect = svg.getBoundingClientRect();
   });
 });

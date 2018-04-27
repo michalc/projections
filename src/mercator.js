@@ -8,11 +8,23 @@ Mercator.onUp = onUp;
 Mercator.onMove = onMove;
 Mercator.onDown = onDown;
 Mercator.setBounds = setBounds;
-Mercator.drawFromTo = drawFromTo;
 
 // Points at infinity on the chart
 // get mapped to this
 var MAX_BOUND = 99999;
+
+var bounds = {
+  earth: {
+    top: toRadians(90 - 83.6),
+    left: toRadians(-180)
+  },
+  screen: {
+    top: 0,
+    bottom: 740,
+    left: 0,
+    right: 800
+  }
+};
 
 var rotationMatrix = new Float64Array(9);
 var inverseRotationMatrix = new Float64Array(9);
@@ -263,8 +275,12 @@ function onUp() {
   mousedown = false;
 }
 
-function setBounds(newBounds) {
-  bounds = newBounds;
+function setBounds(width, height) {
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+  bounds.screen.right = width;
+  bounds.screen.bottom = height;
+  drawFromTo();
 }
 
 function init(latLongCharts, svg) {
@@ -290,6 +306,4 @@ function init(latLongCharts, svg) {
     svg.appendChild(pathElement);
   }
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
-
-  drawFromTo();
 }
