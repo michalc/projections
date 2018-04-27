@@ -63,7 +63,7 @@ window.addEventListener('load', function() {
   });
   svg.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    onDown(e.clientX, e.clientY);
+    onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   });
 
   function onUp() {
