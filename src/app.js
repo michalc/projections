@@ -55,7 +55,7 @@ function fetch(url) {
   });
 }
 
-function initCharts(charts, svg) {
+function initCharts() {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length, maxLength);
@@ -94,6 +94,14 @@ function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   }
 }
 
+function setSvgDimensions() {
+  var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
+  svg.setAttribute('width', screenBound);
+  svg.setAttribute('height', screenBound);
+  bounds.screen.right = screenBound;
+  bounds.screen.bottom = screenBound;
+}
+
 window.addEventListener('load', function() {
   latitudeInput = document.getElementById('latitude-input');
   longitudeInput = document.getElementById('longitude-input');
@@ -111,13 +119,6 @@ window.addEventListener('load', function() {
     draw();
   });
 
-  function setSvgDimensions() {
-    var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
-    svg.setAttribute('width', screenBound);
-    svg.setAttribute('height', screenBound);
-    bounds.screen.right = screenBound;
-    bounds.screen.bottom = screenBound;
-  }
   window.addEventListener('resize', setSvgDimensions);
   window.addEventListener('resize', draw);
   setSvgDimensions();
@@ -174,7 +175,7 @@ window.addEventListener('load', function() {
         return [theeta, phi];
       });
     });
-    initCharts(charts, svg);
+    initCharts();
     draw();
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
