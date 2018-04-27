@@ -59,16 +59,14 @@ function toEarth(chartBounds, chartX, chartY) {
   var theta_0 = chartBounds.earth.left;
   var x = chartX;
   var theta = xToTheta(W, theta_0, x);
-  var long = toDegrees(theta);
 
   var y_top = getY_top(W, chartBounds);
   var y = y_top - chartY;
   var phi = Math.PI - 2 * Math.atan(Math.exp(y * 2 * Math.PI / W));
-  var lat = toDegrees(Math.PI/2 - phi); 
 
   return {
-    long: long,
-    lat: lat
+    theta: theta,
+    phi: phi
   };
 }
 

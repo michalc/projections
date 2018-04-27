@@ -8,6 +8,10 @@ function toRadians(deg) {
   return deg * Math.PI / 180;
 }
 
+function toDegrees(rad) {
+  return rad * 180 / Math.PI;
+}
+
 function fetch(url) {
   return new Promise(function(resolve, reject) {
     function reqListener() {
@@ -37,6 +41,7 @@ function initCharts(charts, svg) {
 }
 
 var rotationMatrix = new Float64Array(8 * 9);
+var inverseRotationMatrix = new Float64Array(8 * 9);
 function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   var cosPhi = Math.cos(rotPhi);
   var sinPhi = Math.sin(rotPhi);
@@ -112,15 +117,16 @@ window.addEventListener('load', function() {
   }
 
   var mousedown = false;
-  var longitudeDragging;
-  var latitudeDragging;
+  var draggingPoint = new Float64Array(2);
   document.body.addEventListener('mousemove', function(e) {
     if (!svgRect || !mousedown) return;
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
-    longitude = transformedEarth.long - longitudeDragging;
-    latitude = latitudeDragging - transformedEarth.lat;
+    var rotTheta = transformedEarth.theta - draggingPoint[0];
+    var rotPhi = transformedEarth.phi - draggingPoint[1];
+    longitude = toDegrees(rotTheta);
+    latitude = toDegrees(rotPhi);
     longitudeInput.value = longitude;
     latitudeInput.value = latitude;
     draw();
@@ -131,8 +137,18 @@ window.addEventListener('load', function() {
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
-    longitudeDragging = transformedEarth.long - longitude;
-    latitudeDragging = transformedEarth.lat - latitude;
+    inverseRotationMatrix[0] = rotationMatrix[0];
+    inverseRotationMatrix[1] = rotationMatrix[3];
+    inverseRotationMatrix[2] = rotationMatrix[6];
+    inverseRotationMatrix[3] = rotationMatrix[1];
+    inverseRotationMatrix[4] = rotationMatrix[4];
+    inverseRotationMatrix[5] = rotationMatrix[5];
+    inverseRotationMatrix[6] = rotationMatrix[2];
+    inverseRotationMatrix[7] = rotationMatrix[7];
+    inverseRotationMatrix[8] = rotationMatrix[8];
+    draggingPoint[0] = transformedEarth.theta;
+    draggingPoint[1] = transformedEarth.phi;
+    Mercator.rotate(inverseRotationMatrix, draggingPoint, 0, draggingPoint, 0);
   });
 
   document.body.addEventListener('mouseup', function(e) {
