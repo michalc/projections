@@ -32,7 +32,8 @@ var latitude;
 var longitude;
 
 var mousedown = false;
-var draggingPoint = new Float64Array(2);
+var draggingPointFrom = new Float64Array(2);
+var draggingPointTo = new Float64Array(2);
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -84,6 +85,49 @@ function fillRotationMatrix(rotTheta, rotPhi) {
   rotationMatrix[8] = cosPhi;
 }
 
+function fillRotationMatrixFromTo(a, b) {
+  var a_theta = a[0];
+  var a_phi = a[1];
+  var a_sinPhi = Math.sin(a_phi)
+  var a_1 = Math.cos(a_theta) * a_sinPhi;
+  var a_2 = Math.sin(a_theta) * a_sinPhi;
+  var a_3 = Math.cos(a_phi);
+
+  var b_theta = b[0];
+  var b_phi = b[1];
+  var b_sinPhi = Math.sin(b_phi)
+  var b_1 = Math.cos(b_theta) * b_sinPhi;
+  var b_2 = Math.sin(b_theta) * b_sinPhi;
+  var b_3 = Math.cos(b_phi);
+
+  // Dot product
+  var c = a_1 * b_1 + a_2 * b_2 + a_3 * b_3;
+  var c_coef = 1 / (1 + c);
+
+  // Cross product
+  var v_1 = a_2 * b_3 - a_3 * b_2;
+  var v_2 = a_3 * b_1 - a_1 * b_3;
+  var v_3 = a_1 * b_2 - a_2 * b_1;
+
+  var v_1_v_1 = v_1 * v_1;
+  var v_1_v_2 = v_1 * v_2;
+  var v_1_v_3 = v_1 * v_3;
+  var v_2_v_2 = v_2 * v_2;
+  var v_2_v_3 = v_2 * v_3;
+  var v_3_v_3 = v_3 * v_3;
+
+  rotationMatrix[0] = 1    + c_coef * (-v_3_v_3 - v_2_v_2);
+  rotationMatrix[1] = -v_3 + c_coef * v_1_v_2;
+  rotationMatrix[2] = v_2  + c_coef * v_1_v_3;
+  rotationMatrix[3] = v_3  + c_coef * v_1_v_2;
+  rotationMatrix[4] = 1    + c_coef * (-v_3_v_3 - v_1_v_1);
+  rotationMatrix[5] = -v_1 + c_coef * v_2_v_3;
+  rotationMatrix[6] = -v_2 + c_coef * v_1_v_3;
+  rotationMatrix[7] = v_1  + c_coef * v_2_v_3;
+  rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
+  //console.log(rotationMatrix);
+}
+
 function createChart(svg, charts, bounds) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
@@ -107,6 +151,12 @@ function setSvgDimensions() {
 function draw() {
   if (!charts) return;
   fillRotationMatrix(toRadians(longitude), toRadians(latitude))
+  createChart(svg, charts, bounds);
+}
+
+function drawFromTo() {
+  if (!charts) return;
+  fillRotationMatrixFromTo(draggingPointFrom, draggingPointTo);
   createChart(svg, charts, bounds);
 }
 
@@ -136,13 +186,9 @@ window.addEventListener('load', function() {
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
-    var rotTheta = transformedEarth.theta - draggingPoint[0];
-    var rotPhi = transformedEarth.phi - draggingPoint[1];
-    longitude = toDegrees(rotTheta);
-    latitude = toDegrees(rotPhi);
-    longitudeInput.value = longitude;
-    latitudeInput.value = latitude;
-    draw();
+    draggingPointTo[0] = transformedEarth.theta;
+    draggingPointTo[1] = transformedEarth.phi;
+    drawFromTo();
   });
 
   svg.addEventListener('mousedown', function(e) {
@@ -159,8 +205,8 @@ window.addEventListener('load', function() {
     inverseRotationMatrix[6] = rotationMatrix[2];
     inverseRotationMatrix[7] = rotationMatrix[7];
     inverseRotationMatrix[8] = rotationMatrix[8];
-    draggingPoint[0] = transformedEarth.theta;
-    draggingPoint[1] = transformedEarth.phi;
+    draggingPointFrom[0] = transformedEarth.theta;
+    draggingPointFrom[1] = transformedEarth.phi;
   });
 
   document.body.addEventListener('mouseup', function(e) {
