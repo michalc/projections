@@ -104,7 +104,6 @@ function fillRotationMatrixFromTo(a, b) {
   rotationMatrix[6] = -v_2 + c_coef * v_1_v_3;
   rotationMatrix[7] = v_1  + c_coef * v_2_v_3;
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
-  //console.log(rotationMatrix);
 }
 
 function createChart(svg, charts, bounds) {
