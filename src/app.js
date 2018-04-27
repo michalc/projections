@@ -181,22 +181,24 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', draw);
   setSvgDimensions();
 
-  function onMove(e) {
+  function onMove(x, y) {
     if (!svgRect || !mousedown) return;
-    var chartX = e.clientX - svgRect.left;
-    var chartY = e.clientY - svgRect.top;
+    var chartX = x - svgRect.left;
+    var chartY = y - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
     draggingPointTo[0] = transformedEarth.theta;
     draggingPointTo[1] = transformedEarth.phi;
     drawFromTo();   
   }
-  document.body.addEventListener('mousemove', onMove);
+  document.body.addEventListener('mousemove', function(e) {
+    onMove(e.clientX, e.clientY);
+  });
 
-  function onDown(e) {
+  function onDown(x, y) {
     if (mousedown) return;
     mousedown = true;
-    var chartX = e.clientX - svgRect.left;
-    var chartY = e.clientY - svgRect.top;
+    var chartX = x - svgRect.left;
+    var chartY = y - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
     inverseRotationMatrix[0] = rotationMatrix[0];
     inverseRotationMatrix[1] = rotationMatrix[3];
@@ -211,7 +213,9 @@ window.addEventListener('load', function() {
     draggingPointFrom[1] = transformedEarth.phi;
     Mercator.rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
   }
-  document.body.addEventListener('mousedown', onDown);
+  document.body.addEventListener('mousedown', function(e) {
+    onDown(e.clientX, e.clientY);
+  });
 
   function onUp(e) {
     mousedown = false;
