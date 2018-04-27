@@ -4,6 +4,30 @@
 
 var Mercator = require('./mercator');
 
+var bounds = {
+  earth: {
+    top: toRadians(90 - 83.6),
+    left: toRadians(-180)
+  },
+  screen: {
+    top: 0,
+    bottom: 740,
+    left: 0,
+    right: 800
+  }
+};
+
+var pathPool = [];
+var rotatedCoords;
+var rotationMatrix = new Float64Array(8 * 9);
+
+var latitudeInput;
+var longitudeInput;
+var svg;
+
+var latitude;
+var longitude;
+
 function toRadians(deg) {
   return deg * Math.PI / 180;
 }
@@ -25,8 +49,6 @@ function fetch(url) {
   });
 }
 
-var pathPool = [];
-var rotatedCoords;
 function initCharts(charts, svg) {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
@@ -40,7 +62,6 @@ function initCharts(charts, svg) {
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
 
-var rotationMatrix = new Float64Array(8 * 9);
 function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   var cosPhi = Math.cos(rotPhi);
   var sinPhi = Math.sin(rotPhi);
@@ -68,35 +89,22 @@ function createChart(svg, charts, bounds, rotTheta, rotPhi) {
 }
 
 window.addEventListener('load', function() {
-  var bounds = {
-    earth: {
-      top: toRadians(90 - 83.6),
-      left: toRadians(-180)
-    },
-    screen: {
-      top: 0,
-      bottom: 740,
-      left: 0,
-      right: 800
-    }
-  };
+  latitudeInput = document.getElementById('latitude-input');
+  longitudeInput = document.getElementById('longitude-input');
+  svg = document.getElementById('svg');
 
-  var latitudeInput = document.getElementById('latitude-input');
-  var longitudeInput = document.getElementById('longitude-input');
-
-  var latitude = parseFloat(latitudeInput.value);
+  latitude = parseFloat(latitudeInput.value);
   latitudeInput.addEventListener('input', function() {
     latitude = parseFloat(latitudeInput.value);
     draw();
   });
 
-  var longitude = parseFloat(longitudeInput.value);
+  longitude = parseFloat(longitudeInput.value);
   longitudeInput.addEventListener('input', function() {
     longitude = parseFloat(longitudeInput.value);
     draw();
   });
 
-  var svg = document.getElementById('svg');
   var svgRect;
   function setSvgDimensions() {
     var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
