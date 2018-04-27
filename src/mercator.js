@@ -30,8 +30,8 @@ function phiToY(W, phi) {
   return W / (2 * Math.PI) * Math.log(Math.tan((Math.PI - phi) / 2));
 }
 
-function xToLambda(W, lambda_0, x) {
-  return lambda_0 + x * 2 * Math.PI / W; 
+function xToTheta(W, theta_0, x) {
+  return theta_0 + x * 2 * Math.PI / W;
 }
 
 function getY_top(W, chartBounds) {
@@ -56,15 +56,15 @@ function toChart(chartBounds, theta, phi, out, outOffset) {
 function toEarth(chartBounds, chartX, chartY) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
-  var lambda_0 = chartBounds.earth.left;
+  var theta_0 = chartBounds.earth.left;
   var x = chartX;
-  var lambda = xToLambda(W, lambda_0, x);
-  var long = toDegrees(lambda);
+  var theta = xToTheta(W, theta_0, x);
+  var long = toDegrees(theta);
 
   var y_top = getY_top(W, chartBounds);
   var y = y_top - chartY;
-  var theta = 2 * Math.atan(Math.exp(y * 2 * Math.PI / W)) - Math.PI / 2;
-  var lat = toDegrees(theta); 
+  var phi = 2 * Math.atan(Math.exp(y * 2 * Math.PI / W)) - Math.PI / 2;
+  var lat = toDegrees(phi); 
 
   return {
     long: long,
