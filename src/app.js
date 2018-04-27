@@ -70,7 +70,7 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', drawFromTo);
   setSvgDimensions();
 
-  function onMove(x, y) {
+  function onMove(x, y, svgRect) {
     if (!loaded || !mousedown) return;
     var chartX = x - svgRect.left;
     var chartY = y - svgRect.top;
@@ -78,14 +78,14 @@ window.addEventListener('load', function() {
     drawFromTo();   
   }
   document.body.addEventListener('mousemove', function(e) {
-    onMove(e.clientX, e.clientY);
+    onMove(e.clientX, e.clientY, svgRect);
   });
   document.body.addEventListener('touchmove', function(e) {
     e.preventDefault();
-    onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
   });
 
-  function onDown(x, y) {
+  function onDown(x, y, svgRect) {
     if (mousedown) return;
     mousedown = true;
     var chartX = x - svgRect.left;
