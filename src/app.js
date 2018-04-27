@@ -64,22 +64,6 @@ function initCharts() {
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
 
-function fillRotationMatrix(rotTheta, rotPhi) {
-  var cosPhi = Math.cos(rotPhi);
-  var sinPhi = Math.sin(rotPhi);
-  var cosTheta = Math.cos(rotTheta);
-  var sinTheta = Math.sin(rotTheta);
-  rotationMatrix[0] = cosPhi * cosTheta;
-  rotationMatrix[1] = -cosPhi * sinTheta;
-  rotationMatrix[2] = sinPhi;
-  rotationMatrix[3] = sinTheta;
-  rotationMatrix[4] = cosTheta;
-  rotationMatrix[5] = 0
-  rotationMatrix[6] = -sinPhi * cosTheta;
-  rotationMatrix[7] = sinPhi * sinTheta;
-  rotationMatrix[8] = cosPhi;
-}
-
 function fillRotationMatrixFromTo(a, b) {
   var a_theta = a[0];
   var a_phi = a[1];
