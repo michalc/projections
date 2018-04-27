@@ -7,6 +7,7 @@ var Mercator = module.exports;
 Mercator.rotate = rotate;
 Mercator.createChart = createChart;
 Mercator.toEarth = toEarth;
+Mercator.fillRotationMatrixFromTo = fillRotationMatrixFromTo;
 
 // Points at infinity on the chart
 // get mapped to this
@@ -158,6 +159,48 @@ function getShape(bounds, numCoords, rotatedCoords) {
   }
 
   return shape + 'z';
+}
+
+function fillRotationMatrixFromTo(rotationMatrix, a, b) {
+  var a_theta = a[0];
+  var a_phi = a[1];
+  var a_sinPhi = Math.sin(a_phi)
+  var a_1 = Math.cos(a_theta) * a_sinPhi;
+  var a_2 = Math.sin(a_theta) * a_sinPhi;
+  var a_3 = Math.cos(a_phi);
+
+  var b_theta = b[0];
+  var b_phi = b[1];
+  var b_sinPhi = Math.sin(b_phi)
+  var b_1 = Math.cos(b_theta) * b_sinPhi;
+  var b_2 = Math.sin(b_theta) * b_sinPhi;
+  var b_3 = Math.cos(b_phi);
+
+  // Dot product
+  var c = a_1 * b_1 + a_2 * b_2 + a_3 * b_3;
+  var c_coef = 1 / (1 + c);
+
+  // Cross product
+  var v_1 = a_2 * b_3 - a_3 * b_2;
+  var v_2 = a_3 * b_1 - a_1 * b_3;
+  var v_3 = a_1 * b_2 - a_2 * b_1;
+
+  var v_1_v_1 = v_1 * v_1;
+  var v_1_v_2 = v_1 * v_2;
+  var v_1_v_3 = v_1 * v_3;
+  var v_2_v_2 = v_2 * v_2;
+  var v_2_v_3 = v_2 * v_3;
+  var v_3_v_3 = v_3 * v_3;
+
+  rotationMatrix[0] = 1    + c_coef * (-v_3_v_3 - v_2_v_2);
+  rotationMatrix[1] = -v_3 + c_coef * v_1_v_2;
+  rotationMatrix[2] = v_2  + c_coef * v_1_v_3;
+  rotationMatrix[3] = v_3  + c_coef * v_1_v_2;
+  rotationMatrix[4] = 1    + c_coef * (-v_3_v_3 - v_1_v_1);
+  rotationMatrix[5] = -v_1 + c_coef * v_2_v_3;
+  rotationMatrix[6] = -v_2 + c_coef * v_1_v_3;
+  rotationMatrix[7] = v_1  + c_coef * v_2_v_3;
+  rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
 function createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
