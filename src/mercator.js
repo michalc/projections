@@ -14,6 +14,8 @@ Mercator.initSvg = initSvg;
 // get mapped to this
 var MAX_BOUND = 99999;
 
+var pathPool = [];
+
 function toRadians(deg) {
   return deg * Math.PI / 180;
 }
@@ -204,7 +206,7 @@ function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
-function draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
+function draw(svg, charts, bounds, rotationMatrix, rotatedCoords) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;
@@ -216,7 +218,7 @@ function draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
   }
 }
 
-function initSvg(charts, pathPool, svg) {
+function initSvg(charts, svg) {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 2, maxLength);

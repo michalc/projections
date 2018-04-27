@@ -18,7 +18,6 @@ var bounds = {
 };
 
 var charts;
-var pathPool = [];
 var rotatedCoords;
 var rotationMatrix = new Float64Array(9);
 var inverseRotationMatrix = new Float64Array(9);
@@ -62,7 +61,7 @@ function setSvgDimensions() {
 function drawFromTo() {
   if (!charts) return;
   Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  Mercator.draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool);
+  Mercator.draw(svg, charts, bounds, rotationMatrix, rotatedCoords);
 }
 
 window.addEventListener('load', function() {
@@ -139,7 +138,7 @@ window.addEventListener('load', function() {
       }
       return shapeCoords;
     });
-    var maxLength = Mercator.initSvg(charts, pathPool, svg);
+    var maxLength = Mercator.initSvg(charts, svg);
     rotatedCoords = new Float64Array(8 * 2 * maxLength);
     drawFromTo();
     document.body.removeAttribute('class');
