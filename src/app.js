@@ -139,7 +139,7 @@ window.addEventListener('load', function() {
       }
       return shapeCoords;
     });
-    var maxLength = Mercator.initCharts(charts, pathPool, svg);
+    var maxLength = Mercator.initSvg(charts, pathPool, svg);
     rotatedCoords = new Float64Array(8 * 2 * maxLength);
     drawFromTo();
     document.body.removeAttribute('class');

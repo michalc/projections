@@ -8,7 +8,7 @@ Mercator.rotate = rotate;
 Mercator.draw = draw;
 Mercator.toEarth = toEarth;
 Mercator.fillRotationMatrixFromTo = fillRotationMatrixFromTo;
-Mercator.initCharts = initCharts;
+Mercator.initSvg = initSvg;
 
 // Points at infinity on the chart
 // get mapped to this
@@ -216,7 +216,7 @@ function draw(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
   }
 }
 
-function initCharts(charts, pathPool, svg) {
+function initSvg(charts, pathPool, svg) {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 2, maxLength);
