@@ -193,6 +193,10 @@ window.addEventListener('load', function() {
   document.body.addEventListener('mousemove', function(e) {
     onMove(e.clientX, e.clientY);
   });
+  document.body.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  });
 
   function onDown(x, y) {
     if (mousedown) return;
@@ -216,11 +220,19 @@ window.addEventListener('load', function() {
   document.body.addEventListener('mousedown', function(e) {
     onDown(e.clientX, e.clientY);
   });
+  document.body.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  });
 
   function onUp(e) {
     mousedown = false;
   }
   document.body.addEventListener('mouseup', onUp);
+  document.body.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    onUp();
+  });
 
   fetch('data/data.json').then(function(results) {
     charts = results.map(function(shape) {

@@ -66,4 +66,5 @@ input[type=range]::-moz-range-thumb {
 svg {
   display: block;
   margin: 0 auto;
+  touch-action: none;
 }
