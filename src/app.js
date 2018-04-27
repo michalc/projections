@@ -51,18 +51,6 @@ function fetch(url) {
   });
 }
 
-function initCharts(charts, pathPool, svg) {
-  var maxLength = -Infinity;
-  for (var i = 0; i < charts.length; ++i) {
-    maxLength = Math.max(charts[i].length / 2, maxLength);
-    var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    pathElement.setAttributeNS(null, 'class', 'land');
-    pathPool.push(pathElement);
-    svg.appendChild(pathElement);
-  }
-  rotatedCoords = new Float64Array(8 * 2 * maxLength);
-}
-
 function setSvgDimensions() {
   var screenBound = Math.min(window.innerWidth, window.innerHeight);
   svg.setAttribute('width', screenBound);
@@ -151,7 +139,8 @@ window.addEventListener('load', function() {
       }
       return shapeCoords;
     });
-    initCharts(charts, pathPool, svg);
+    var maxLength = Mercator.initCharts(charts, pathPool, svg);
+    rotatedCoords = new Float64Array(8 * 2 * maxLength);
     drawFromTo();
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
