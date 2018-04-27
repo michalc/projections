@@ -193,6 +193,7 @@ window.addEventListener('load', function() {
   document.body.addEventListener('mousemove', onMove);
 
   function onDown(e) {
+    if (mousedown) return;
     mousedown = true;
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
