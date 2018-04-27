@@ -201,12 +201,13 @@ window.addEventListener('load', function() {
     inverseRotationMatrix[2] = rotationMatrix[6];
     inverseRotationMatrix[3] = rotationMatrix[1];
     inverseRotationMatrix[4] = rotationMatrix[4];
-    inverseRotationMatrix[5] = rotationMatrix[5];
+    inverseRotationMatrix[5] = rotationMatrix[7];
     inverseRotationMatrix[6] = rotationMatrix[2];
-    inverseRotationMatrix[7] = rotationMatrix[7];
+    inverseRotationMatrix[7] = rotationMatrix[5];
     inverseRotationMatrix[8] = rotationMatrix[8];
     draggingPointFrom[0] = transformedEarth.theta;
     draggingPointFrom[1] = transformedEarth.phi;
+    Mercator.rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
   });
 
   document.body.addEventListener('mouseup', function(e) {
