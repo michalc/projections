@@ -58,10 +58,10 @@ window.addEventListener('load', function() {
     Mercator.onDown(x, y, svgRect);
   }
 
-  document.body.addEventListener('mousedown', function(e) {
+  svg.addEventListener('mousedown', function(e) {
     onDown(e.clientX, e.clientY);
   });
-  document.body.addEventListener('touchstart', function(e) {
+  svg.addEventListener('touchstart', function(e) {
     e.preventDefault();
     onDown(e.clientX, e.clientY);
   });
