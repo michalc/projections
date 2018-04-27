@@ -23,13 +23,8 @@ var rotatedCoords;
 var rotationMatrix = new Float64Array(9);
 var inverseRotationMatrix = new Float64Array(9);
 
-var latitudeInput;
-var longitudeInput;
 var svg;
 var svgRect;
-
-var latitude;
-var longitude;
 
 var mousedown = false;
 var draggingPointFrom = new Float64Array(2);
@@ -141,17 +136,11 @@ function createChart(svg, charts, bounds) {
 }
 
 function setSvgDimensions() {
-  var screenBound = Math.min(window.innerWidth, window.innerHeight - 40);
+  var screenBound = Math.min(window.innerWidth, window.innerHeight);
   svg.setAttribute('width', screenBound);
   svg.setAttribute('height', screenBound);
   bounds.screen.right = screenBound;
   bounds.screen.bottom = screenBound;
-}
-
-function draw() {
-  if (!charts) return;
-  fillRotationMatrix(toRadians(longitude), toRadians(latitude))
-  createChart(svg, charts, bounds);
 }
 
 function drawFromTo() {
@@ -161,24 +150,11 @@ function drawFromTo() {
 }
 
 window.addEventListener('load', function() {
-  latitudeInput = document.getElementById('latitude-input');
   longitudeInput = document.getElementById('longitude-input');
   svg = document.getElementById('svg');
 
-  latitude = parseFloat(latitudeInput.value);
-  latitudeInput.addEventListener('input', function() {
-    latitude = parseFloat(latitudeInput.value);
-    draw();
-  });
-
-  longitude = parseFloat(longitudeInput.value);
-  longitudeInput.addEventListener('input', function() {
-    longitude = parseFloat(longitudeInput.value);
-    draw();
-  });
-
   window.addEventListener('resize', setSvgDimensions);
-  window.addEventListener('resize', draw);
+  window.addEventListener('resize', drawFromTo);
   setSvgDimensions();
 
   function onMove(x, y) {
@@ -250,7 +226,7 @@ window.addEventListener('load', function() {
       });
     });
     initCharts();
-    draw();
+    drawFromTo();
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
   });
