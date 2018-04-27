@@ -181,17 +181,18 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', draw);
   setSvgDimensions();
 
-  document.body.addEventListener('mousemove', function(e) {
+  function onMove(e) {
     if (!svgRect || !mousedown) return;
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
     var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
     draggingPointTo[0] = transformedEarth.theta;
     draggingPointTo[1] = transformedEarth.phi;
-    drawFromTo();
-  });
+    drawFromTo();   
+  }
+  document.body.addEventListener('mousemove', onMove);
 
-  svg.addEventListener('mousedown', function(e) {
+  function onDown(e) {
     mousedown = true;
     var chartX = e.clientX - svgRect.left;
     var chartY = e.clientY - svgRect.top;
@@ -208,11 +209,13 @@ window.addEventListener('load', function() {
     draggingPointFrom[0] = transformedEarth.theta;
     draggingPointFrom[1] = transformedEarth.phi;
     Mercator.rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
-  });
+  }
+  document.body.addEventListener('mousedown', onDown);
 
-  document.body.addEventListener('mouseup', function(e) {
+  function onUp(e) {
     mousedown = false;
-  });
+  }
+  document.body.addEventListener('mouseup', onUp);
 
   fetch('data/data.json').then(function(results) {
     charts = results.map(function(shape) {
