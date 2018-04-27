@@ -18,7 +18,6 @@ var bounds = {
 };
 
 var charts;
-var rotatedCoords;
 var rotationMatrix = new Float64Array(9);
 var inverseRotationMatrix = new Float64Array(9);
 
@@ -61,7 +60,7 @@ function setSvgDimensions() {
 function drawFromTo() {
   if (!charts) return;
   Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  Mercator.draw(svg, charts, bounds, rotationMatrix, rotatedCoords);
+  Mercator.draw(svg, charts, bounds, rotationMatrix);
 }
 
 window.addEventListener('load', function() {
@@ -140,8 +139,7 @@ window.addEventListener('load', function() {
     });
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
-    var maxLength = Mercator.init(charts, svg);
-    rotatedCoords = new Float64Array(8 * 2 * maxLength);
+    Mercator.init(charts, svg);
     drawFromTo();
   });
 });
