@@ -68,7 +68,7 @@ function initCharts() {
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
 
-function createChart(svg, charts, bounds, rotTheta, rotPhi) {
+function fillRotationMatrix(rotTheta, rotPhi) {
   var cosPhi = Math.cos(rotPhi);
   var sinPhi = Math.sin(rotPhi);
   var cosTheta = Math.cos(rotTheta);
@@ -82,7 +82,9 @@ function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   rotationMatrix[6] = -sinPhi * cosTheta;
   rotationMatrix[7] = sinPhi * sinTheta;
   rotationMatrix[8] = cosPhi;
+}
 
+function createChart(svg, charts, bounds) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     for (var i = 0; i < charts[j].length; ++i) {
@@ -104,7 +106,8 @@ function setSvgDimensions() {
 
 function draw() {
   if (!charts) return;
-  createChart(svg, charts, bounds, toRadians(longitude), toRadians(latitude));
+  fillRotationMatrix(toRadians(longitude), toRadians(latitude))
+  createChart(svg, charts, bounds);
 }
 
 window.addEventListener('load', function() {
@@ -158,7 +161,6 @@ window.addEventListener('load', function() {
     inverseRotationMatrix[8] = rotationMatrix[8];
     draggingPoint[0] = transformedEarth.theta;
     draggingPoint[1] = transformedEarth.phi;
-    Mercator.rotate(inverseRotationMatrix, draggingPoint, 0, draggingPoint, 0);
   });
 
   document.body.addEventListener('mouseup', function(e) {
