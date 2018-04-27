@@ -63,7 +63,7 @@ function toEarth(chartBounds, chartX, chartY) {
 
   var y_top = getY_top(W, chartBounds);
   var y = y_top - chartY;
-  var phi = Math.PI/2 - (2 * Math.atan(Math.exp(y * 2 * Math.PI / W)) - Math.PI / 2);
+  var phi = Math.PI - 2 * Math.atan(Math.exp(y * 2 * Math.PI / W));
   var lat = toDegrees(Math.PI/2 - phi); 
 
   return {
