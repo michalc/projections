@@ -37,11 +37,7 @@ function initCharts(charts, svg) {
 }
 
 var rotationMatrix = new Float64Array(8 * 9);
-function createChart(svg, charts, bounds, offsetLongitude, offsetLatitude) {
-  // Convert rotation angle to radians
-  var rotTheta = toRadians(offsetLongitude);
-  var rotPhi = toRadians(offsetLatitude);
-
+function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   var cosPhi = Math.cos(rotPhi);
   var sinPhi = Math.sin(rotPhi);
   var cosTheta = Math.cos(rotTheta);
@@ -112,7 +108,7 @@ window.addEventListener('load', function() {
   var charts;
   function draw() {
     if (!charts) return;
-    createChart(svg, charts, bounds, longitude, latitude);
+    createChart(svg, charts, bounds, toRadians(longitude), toRadians(latitude));
   }
 
   var mousedown = false;
