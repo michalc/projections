@@ -233,6 +233,11 @@ window.addEventListener('load', function() {
     e.preventDefault();
     onUp();
   });
+  document.body.addEventListener('touchcancel', function(e) {
+    e.preventDefault();
+    onUp();
+  });
+
 
   fetch('data/data.json').then(function(results) {
     charts = results.map(function(shape) {
