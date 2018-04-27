@@ -41,7 +41,6 @@ function initCharts(charts, svg) {
 }
 
 var rotationMatrix = new Float64Array(8 * 9);
-var inverseRotationMatrix = new Float64Array(8 * 9);
 function createChart(svg, charts, bounds, rotTheta, rotPhi) {
   var cosPhi = Math.cos(rotPhi);
   var sinPhi = Math.sin(rotPhi);
@@ -132,6 +131,7 @@ window.addEventListener('load', function() {
     draw();
   });
 
+  var inverseRotationMatrix = new Float64Array(8 * 9);
   svg.addEventListener('mousedown', function(e) {
     mousedown = true;
     var chartX = e.clientX - svgRect.left;
