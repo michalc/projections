@@ -51,7 +51,7 @@ function fetch(url) {
   });
 }
 
-function initCharts() {
+function initCharts(charts, pathPool, svg) {
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 2, maxLength);
@@ -151,7 +151,7 @@ window.addEventListener('load', function() {
       }
       return shapeCoords;
     });
-    initCharts();
+    initCharts(charts, pathPool, svg);
     drawFromTo();
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
