@@ -102,6 +102,11 @@ function setSvgDimensions() {
   bounds.screen.bottom = screenBound;
 }
 
+function draw() {
+  if (!charts) return;
+  createChart(svg, charts, bounds, toRadians(longitude), toRadians(latitude));
+}
+
 window.addEventListener('load', function() {
   latitudeInput = document.getElementById('latitude-input');
   longitudeInput = document.getElementById('longitude-input');
@@ -122,11 +127,6 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', setSvgDimensions);
   window.addEventListener('resize', draw);
   setSvgDimensions();
-
-  function draw() {
-    if (!charts) return;
-    createChart(svg, charts, bounds, toRadians(longitude), toRadians(latitude));
-  }
 
   document.body.addEventListener('mousemove', function(e) {
     if (!svgRect || !mousedown) return;
