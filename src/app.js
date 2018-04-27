@@ -37,21 +37,24 @@ function fetch(url) {
   });
 }
 
-function setSvgDimensions() {
-  var screenBound = Math.min(window.innerWidth, window.innerHeight);
-  svg.setAttribute('width', screenBound);
-  svg.setAttribute('height', screenBound);
-  bounds.screen.right = screenBound;
-  bounds.screen.bottom = screenBound;
+function setSvgDimensions(width, height) {
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
+  bounds.screen.right = width;
+  bounds.screen.bottom = height;
   Mercator.setBounds(bounds);
 }
 
 window.addEventListener('load', function() {
   svg = document.getElementById('svg');
 
-  window.addEventListener('resize', setSvgDimensions);
-  window.addEventListener('resize', Mercator.drawFromTo);
-  setSvgDimensions();
+  window.addEventListener('resize', function() {
+    var dimension = Math.min(window.innerWidth, window.innerHeight)
+    setSvgDimensions(dimension, dimension);
+    Mercator.drawFromTo()
+  })
+  var dimension = Math.min(window.innerWidth, window.innerHeight);
+  setSvgDimensions(dimension, dimension);
 
   document.body.addEventListener('mousemove', function(e) {
     Mercator.onMove(e.clientX, e.clientY, svgRect);
