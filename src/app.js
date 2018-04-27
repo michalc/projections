@@ -19,6 +19,7 @@ function fetch(url) {
 
 window.addEventListener('load', function() {
   var svg = document.getElementById('svg');
+  var instructions = document.getElementById('instructions');
   var svgRect;
 
   window.addEventListener('resize', function() {
@@ -27,30 +28,51 @@ window.addEventListener('load', function() {
     svgRect = svg.getBoundingClientRect();
   });
 
+  var hidden = false;
+  var isDown = false;
+  function onMove(x, y) {
+    if (!hidden && isDown) {
+      window.setTimeout(function() {
+        instructions.setAttribute('class', 'hide');
+      }, 2000);
+      hidden = true;
+    }
+    Mercator.onMove(x, y, svgRect);
+  }
+
   document.body.addEventListener('mousemove', function(e) {
-    Mercator.onMove(e.clientX, e.clientY, svgRect);
+    onMove(e.clientX, e.clientY);
   });
   document.body.addEventListener('touchmove', function(e) {
     e.preventDefault();
-    Mercator.onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
+    onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   });
 
+  function onDown(x, y) {
+    isDown = true;
+    Mercator.onDown(x, y, svgRect);
+  }
+
   document.body.addEventListener('mousedown', function(e) {
-    Mercator.onDown(e.clientX, e.clientY, svgRect);
+    onDown(e.clientX, e.clientY);
   });
   document.body.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    Mercator.onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
+    onDown(e.clientX, e.clientY);
   });
 
-  document.body.addEventListener('mouseup', Mercator.onUp);
+  function onUp() {
+    isDown = false;
+    Mercator.onUp();
+  }
+  document.body.addEventListener('mouseup', onUp);
   document.body.addEventListener('touchend', function(e) {
     e.preventDefault();
-    Mercator.onUp();
+    onUp();
   });
   document.body.addEventListener('touchcancel', function(e) {
     e.preventDefault();
-    Mercator.onUp();
+    onUp();
   });
 
   fetch('data/data.json').then(function(latLongCharts) {

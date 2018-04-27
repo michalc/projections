@@ -6,6 +6,7 @@ body {
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -21,4 +22,22 @@ svg {
   display: block;
   margin: 0 auto;
   touch-action: none;
+}
+
+p {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  background: white;
+  color: #068dc5;
+  border-top: 1px solid #068dc5;
+  border-bottom: 1px solid #068dc5;
+  padding: 5px 10px;
+  font-size: 15px;
+  transition: opacity 1s;
+  opacity: 1;
+}
+
+.hide {
+  opacity: 0;
 }
