@@ -27,7 +27,13 @@ var bounds = {
 };
 
 var rotationMatrix = new Float64Array(9);
-var inverseRotationMatrix = new Float64Array(9);
+rotationMatrix[0] = 1;
+rotationMatrix[4] = 1;
+rotationMatrix[8] = 1;
+
+var rotationMatrixExtra = new Float64Array(9);
+var rotationMatrixCombined = new Float64Array(9);
+
 var draggingPointFrom = new Float64Array(2);
 var draggingPointTo = new Float64Array(2);
 var pathPool = [];
@@ -227,6 +233,18 @@ function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
+function multiply(target, b, a) {
+  target[0] = b[0]*a[0] + b[1]*a[3] + b[2]*a[6];
+  target[1] = b[0]*a[1] + b[1]*a[4] + b[2]*a[7];
+  target[2] = b[0]*a[2] + b[1]*a[5] + b[2]*a[8];
+  target[3] = b[3]*a[0] + b[4]*a[3] + b[5]*a[6];
+  target[4] = b[3]*a[1] + b[4]*a[4] + b[5]*a[7];
+  target[5] = b[3]*a[2] + b[4]*a[5] + b[5]*a[8];
+  target[6] = b[6]*a[0] + b[7]*a[3] + b[8]*a[6];
+  target[7] = b[6]*a[1] + b[7]*a[4] + b[8]*a[7];
+  target[8] = b[6]*a[2] + b[7]*a[5] + b[8]*a[8];
+}
+
 function draw(svg, rotationMatrix) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
@@ -241,8 +259,9 @@ function draw(svg, rotationMatrix) {
 
 function drawFromTo() {
   if (!charts) return;
-  fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  draw(svg, rotationMatrix);
+  fillRotationMatrixFromTo(rotationMatrixExtra, draggingPointFrom, draggingPointTo);
+  multiply(rotationMatrixCombined, rotationMatrixExtra, rotationMatrix);
+  draw(svg, rotationMatrixCombined);
 }
 
 function onMove(x, y, svgRect) {
@@ -258,21 +277,13 @@ function onDown(x, y, svgRect) {
   mousedown = true;
   var chartX = x - svgRect.left;
   var chartY = y - svgRect.top;
-  inverseRotationMatrix[0] = rotationMatrix[0];
-  inverseRotationMatrix[1] = rotationMatrix[3];
-  inverseRotationMatrix[2] = rotationMatrix[6];
-  inverseRotationMatrix[3] = rotationMatrix[1];
-  inverseRotationMatrix[4] = rotationMatrix[4];
-  inverseRotationMatrix[5] = rotationMatrix[7];
-  inverseRotationMatrix[6] = rotationMatrix[2];
-  inverseRotationMatrix[7] = rotationMatrix[5];
-  inverseRotationMatrix[8] = rotationMatrix[8];
   toEarth(chartX, chartY, draggingPointFrom, 0);
-  rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
 }
 
 function onUp() {
   mousedown = false;
+  rotationMatrix.set(rotationMatrixCombined);
+  draggingPointFrom.set(draggingPointTo);
 }
 
 function setBounds(width, height) {
