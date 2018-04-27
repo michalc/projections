@@ -3,20 +3,27 @@
 'use strict';
 
 var Mercator = module.exports;
-
-Mercator.rotate = rotate;
-Mercator.draw = draw;
-Mercator.toEarth = toEarth;
-Mercator.fillRotationMatrixFromTo = fillRotationMatrixFromTo;
 Mercator.init = init;
+Mercator.onUp = onUp;
+Mercator.onMove = onMove;
+Mercator.onDown = onDown;
+Mercator.setBounds = setBounds;
+Mercator.drawFromTo = drawFromTo;
 
 // Points at infinity on the chart
 // get mapped to this
 var MAX_BOUND = 99999;
 
+var rotationMatrix = new Float64Array(9);
+var inverseRotationMatrix = new Float64Array(9);
+var draggingPointFrom = new Float64Array(2);
+var draggingPointTo = new Float64Array(2);
 var pathPool = [];
+var bounds;
 var rotatedCoords;
 var charts;
+
+var mousedown = false;
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -40,33 +47,33 @@ function xToTheta(W, theta_0, x) {
   return theta_0 + x * 2 * Math.PI / W;
 }
 
-function getY_top(W, chartBounds) {
-  var phi_top = chartBounds.earth.top;
+function getY_top(W) {
+  var phi_top = bounds.earth.top;
   return phiToY(W, phi_top);
 }
 
-function toChart(chartBounds, theta, phi, out, outOffset) {
-  var W = chartBounds.screen.right - chartBounds.screen.left;
+function toChart(theta, phi, out, outOffset) {
+  var W = bounds.screen.right - bounds.screen.left;
 
   var y = phiToY(W, phi);
-  var y_top = getY_top(W, chartBounds);
+  var y_top = getY_top(W);
   var chartY = y_top - y;
 
-  var theta_0 = chartBounds.earth.left;
+  var theta_0 = bounds.earth.left;
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
   out[outOffset + 1] = Math.trunc(chartY);
 }
 
-function toEarth(chartBounds, chartX, chartY, out, outOffset) {
-  var W = chartBounds.screen.right - chartBounds.screen.left;
+function toEarth(chartX, chartY, out, outOffset) {
+  var W = bounds.screen.right - bounds.screen.left;
 
-  var theta_0 = chartBounds.earth.left;
+  var theta_0 = bounds.earth.left;
   var x = chartX;
   var theta = xToTheta(W, theta_0, x);
 
-  var y_top = getY_top(W, chartBounds);
+  var y_top = getY_top(W);
   var y = y_top - chartY;
   var phi = Math.PI - 2 * Math.atan(Math.exp(y * 2 * Math.PI / W));
 
@@ -117,7 +124,7 @@ function prev(length, i) {
 }
 
 var tempCoords = new Float64Array(8 * 2 * 7);
-function getShape(bounds, numCoords, rotatedCoords) {
+function getShape(numCoords, rotatedCoords) {
   // Fairly performance critical
 
   var minPhi = Infinity;
@@ -142,13 +149,13 @@ function getShape(bounds, numCoords, rotatedCoords) {
     var prevPhi = rotatedCoords[prevIndex*2+1];
     var direction = discontinuityDirection(prevTheta, currTheta);
     if (direction) {
-      toChart(bounds, currTheta - 2*Math.PI * direction, currPhi, tempCoords, 0);
-      toChart(bounds, currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, 2);
-      toChart(bounds, currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 4);
-      toChart(bounds, prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 6);
-      toChart(bounds, prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, 8);
-      toChart(bounds, prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, 10);
-      toChart(bounds, currTheta, currPhi, tempCoords, 12);
+      toChart(currTheta - 2*Math.PI * direction, currPhi, tempCoords, 0);
+      toChart(currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, 2);
+      toChart(currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 4);
+      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 6);
+      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, 8);
+      toChart(prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, 10);
+      toChart(currTheta, currPhi, tempCoords, 12);
       shape += (i == 0 ? 'M' : 'L') +
               tempCoords[0]  + ',' + tempCoords[1]  +
         'L' + tempCoords[2]  + ',' + tempCoords[3]  +
@@ -158,7 +165,7 @@ function getShape(bounds, numCoords, rotatedCoords) {
         'L' + tempCoords[10] + ',' + tempCoords[11] +
         'L' + tempCoords[12] + ',' + tempCoords[13];
     } else {
-      toChart(bounds, currTheta, currPhi, tempCoords, 0);
+      toChart(currTheta, currPhi, tempCoords, 0);
       shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1];
     }
   }
@@ -208,16 +215,56 @@ function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
-function draw(svg, bounds, rotationMatrix) {
+function draw(svg, rotationMatrix) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;
     for (var i = 0; i < numCoords; ++i) {
       rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
     }
-    var shape = getShape(bounds, numCoords, rotatedCoords);
+    var shape = getShape(numCoords, rotatedCoords);
     pathPool[j].setAttributeNS(null, 'd', shape);
   }
+}
+
+function drawFromTo() {
+  if (!charts) return;
+  fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
+  draw(svg, rotationMatrix);
+}
+
+function onMove(x, y, svgRect) {
+  if (!charts || !mousedown) return;
+  var chartX = x - svgRect.left;
+  var chartY = y - svgRect.top;
+  toEarth(chartX, chartY, draggingPointTo, 0);
+  drawFromTo();   
+}
+
+function onDown(x, y, svgRect) {
+  if (mousedown) return;
+  mousedown = true;
+  var chartX = x - svgRect.left;
+  var chartY = y - svgRect.top;
+  inverseRotationMatrix[0] = rotationMatrix[0];
+  inverseRotationMatrix[1] = rotationMatrix[3];
+  inverseRotationMatrix[2] = rotationMatrix[6];
+  inverseRotationMatrix[3] = rotationMatrix[1];
+  inverseRotationMatrix[4] = rotationMatrix[4];
+  inverseRotationMatrix[5] = rotationMatrix[7];
+  inverseRotationMatrix[6] = rotationMatrix[2];
+  inverseRotationMatrix[7] = rotationMatrix[5];
+  inverseRotationMatrix[8] = rotationMatrix[8];
+  toEarth(chartX, chartY, draggingPointFrom, 0);
+  rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
+}
+
+function onUp() {
+  mousedown = false;
+}
+
+function setBounds(newBounds) {
+  bounds = newBounds;
 }
 
 function init(latLongCharts, svg) {
@@ -243,4 +290,6 @@ function init(latLongCharts, svg) {
     svg.appendChild(pathElement);
   }
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
+
+  drawFromTo();
 }

@@ -17,23 +17,11 @@ var bounds = {
   }
 };
 
-var loaded = false;
-var rotationMatrix = new Float64Array(9);
-var inverseRotationMatrix = new Float64Array(9);
-
 var svg;
 var svgRect;
 
-var mousedown = false;
-var draggingPointFrom = new Float64Array(2);
-var draggingPointTo = new Float64Array(2);
-
 function toRadians(deg) {
   return deg * Math.PI / 180;
-}
-
-function toDegrees(rad) {
-  return rad * 180 / Math.PI;
 }
 
 function fetch(url) {
@@ -55,79 +43,45 @@ function setSvgDimensions() {
   svg.setAttribute('height', screenBound);
   bounds.screen.right = screenBound;
   bounds.screen.bottom = screenBound;
-}
-
-function drawFromTo() {
-  if (!loaded) return;
-  Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  Mercator.draw(svg, bounds, rotationMatrix);
+  Mercator.setBounds(bounds);
 }
 
 window.addEventListener('load', function() {
   svg = document.getElementById('svg');
 
   window.addEventListener('resize', setSvgDimensions);
-  window.addEventListener('resize', drawFromTo);
+  window.addEventListener('resize', Mercator.drawFromTo);
   setSvgDimensions();
 
-  function onMove(x, y, svgRect) {
-    if (!loaded || !mousedown) return;
-    var chartX = x - svgRect.left;
-    var chartY = y - svgRect.top;
-    Mercator.toEarth(bounds, chartX, chartY, draggingPointTo, 0);
-    drawFromTo();   
-  }
   document.body.addEventListener('mousemove', function(e) {
-    onMove(e.clientX, e.clientY, svgRect);
+    Mercator.onMove(e.clientX, e.clientY, svgRect);
   });
   document.body.addEventListener('touchmove', function(e) {
     e.preventDefault();
-    onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
+    Mercator.onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
   });
 
-  function onDown(x, y, svgRect) {
-    if (mousedown) return;
-    mousedown = true;
-    var chartX = x - svgRect.left;
-    var chartY = y - svgRect.top;
-    inverseRotationMatrix[0] = rotationMatrix[0];
-    inverseRotationMatrix[1] = rotationMatrix[3];
-    inverseRotationMatrix[2] = rotationMatrix[6];
-    inverseRotationMatrix[3] = rotationMatrix[1];
-    inverseRotationMatrix[4] = rotationMatrix[4];
-    inverseRotationMatrix[5] = rotationMatrix[7];
-    inverseRotationMatrix[6] = rotationMatrix[2];
-    inverseRotationMatrix[7] = rotationMatrix[5];
-    inverseRotationMatrix[8] = rotationMatrix[8];
-    Mercator.toEarth(bounds, chartX, chartY, draggingPointFrom, 0);
-    Mercator.rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
-  }
   document.body.addEventListener('mousedown', function(e) {
-    onDown(e.clientX, e.clientY);
+    Mercator.onDown(e.clientX, e.clientY, svgRect);
   });
   document.body.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+    Mercator.onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY, svgRect);
   });
 
-  function onUp(e) {
-    mousedown = false;
-  }
-  document.body.addEventListener('mouseup', onUp);
+  document.body.addEventListener('mouseup', Mercator.onUp);
   document.body.addEventListener('touchend', function(e) {
     e.preventDefault();
-    onUp();
+    Mercator.onUp();
   });
   document.body.addEventListener('touchcancel', function(e) {
     e.preventDefault();
-    onUp();
+    Mercator.onUp();
   });
 
   fetch('data/data.json').then(function(latLongCharts) {
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
     Mercator.init(latLongCharts, svg);
-    loaded = true;
-    drawFromTo();
   });
 });
