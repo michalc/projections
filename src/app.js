@@ -63,7 +63,7 @@ function initCharts() {
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
 
-function fillRotationMatrixFromTo(a, b) {
+function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   var a_theta = a[0];
   var a_phi = a[1];
   var a_sinPhi = Math.sin(a_phi)
@@ -115,7 +115,7 @@ function setSvgDimensions() {
 
 function drawFromTo() {
   if (!charts) return;
-  fillRotationMatrixFromTo(draggingPointFrom, draggingPointTo);
+  fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
   Mercator.createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool);
 }
 
