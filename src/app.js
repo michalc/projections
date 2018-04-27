@@ -105,18 +105,6 @@ function fillRotationMatrixFromTo(a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
-function createChart(svg, charts, bounds) {
-  for (var j = 0; j < charts.length; ++j) {
-    // Fill rotatedCoords
-    var numCoords = charts[j].length / 2;
-    for (var i = 0; i < numCoords; ++i) {
-      Mercator.rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
-    }
-    var shape = Mercator.getShape(bounds, numCoords, rotatedCoords);
-    pathPool[j].setAttributeNS(null, 'd', shape);
-  }
-}
-
 function setSvgDimensions() {
   var screenBound = Math.min(window.innerWidth, window.innerHeight);
   svg.setAttribute('width', screenBound);
@@ -128,7 +116,7 @@ function setSvgDimensions() {
 function drawFromTo() {
   if (!charts) return;
   fillRotationMatrixFromTo(draggingPointFrom, draggingPointTo);
-  createChart(svg, charts, bounds);
+  Mercator.createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool);
 }
 
 window.addEventListener('load', function() {

@@ -5,7 +5,7 @@
 var Mercator = module.exports;
 
 Mercator.rotate = rotate;
-Mercator.getShape = getShape;
+Mercator.createChart = createChart;
 Mercator.toEarth = toEarth;
 
 // Points at infinity on the chart
@@ -158,4 +158,16 @@ function getShape(bounds, numCoords, rotatedCoords) {
   }
 
   return shape + 'z';
+}
+
+function createChart(svg, charts, bounds, rotationMatrix, rotatedCoords, pathPool) {
+  for (var j = 0; j < charts.length; ++j) {
+    // Fill rotatedCoords
+    var numCoords = charts[j].length / 2;
+    for (var i = 0; i < numCoords; ++i) {
+      rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
+    }
+    var shape = getShape(bounds, numCoords, rotatedCoords);
+    pathPool[j].setAttributeNS(null, 'd', shape);
+  }
 }
