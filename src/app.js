@@ -161,9 +161,7 @@ window.addEventListener('load', function() {
     if (!svgRect || !mousedown) return;
     var chartX = x - svgRect.left;
     var chartY = y - svgRect.top;
-    var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
-    draggingPointTo[0] = transformedEarth.theta;
-    draggingPointTo[1] = transformedEarth.phi;
+    Mercator.toEarth(bounds, chartX, chartY, draggingPointTo, 0);
     drawFromTo();   
   }
   document.body.addEventListener('mousemove', function(e) {
@@ -179,7 +177,6 @@ window.addEventListener('load', function() {
     mousedown = true;
     var chartX = x - svgRect.left;
     var chartY = y - svgRect.top;
-    var transformedEarth = Mercator.toEarth(bounds, chartX, chartY);
     inverseRotationMatrix[0] = rotationMatrix[0];
     inverseRotationMatrix[1] = rotationMatrix[3];
     inverseRotationMatrix[2] = rotationMatrix[6];
@@ -189,8 +186,7 @@ window.addEventListener('load', function() {
     inverseRotationMatrix[6] = rotationMatrix[2];
     inverseRotationMatrix[7] = rotationMatrix[5];
     inverseRotationMatrix[8] = rotationMatrix[8];
-    draggingPointFrom[0] = transformedEarth.theta;
-    draggingPointFrom[1] = transformedEarth.phi;
+    Mercator.toEarth(bounds, chartX, chartY, draggingPointFrom, 0);
     Mercator.rotate(inverseRotationMatrix, draggingPointFrom, 0, draggingPointFrom, 0);
   }
   document.body.addEventListener('mousedown', function(e) {

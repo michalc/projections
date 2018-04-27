@@ -53,7 +53,7 @@ function toChart(chartBounds, theta, phi, out, outOffset) {
   out[outOffset + 1] = Math.trunc(chartY);
 }
 
-function toEarth(chartBounds, chartX, chartY) {
+function toEarth(chartBounds, chartX, chartY, out, outOffset) {
   var W = chartBounds.screen.right - chartBounds.screen.left;
 
   var theta_0 = chartBounds.earth.left;
@@ -64,10 +64,8 @@ function toEarth(chartBounds, chartX, chartY) {
   var y = y_top - chartY;
   var phi = Math.PI - 2 * Math.atan(Math.exp(y * 2 * Math.PI / W));
 
-  return {
-    theta: theta,
-    phi: phi
-  };
+  out[outOffset] = theta;
+  out[outOffset + 1] = phi;
 }
 
 // longRotation rotates about z axis (line through earth pole to pole)
