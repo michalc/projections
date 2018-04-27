@@ -20,6 +20,7 @@ var bounds = {
 var pathPool = [];
 var rotatedCoords;
 var rotationMatrix = new Float64Array(8 * 9);
+var inverseRotationMatrix = new Float64Array(8 * 9);
 
 var latitudeInput;
 var longitudeInput;
@@ -139,7 +140,6 @@ window.addEventListener('load', function() {
     draw();
   });
 
-  var inverseRotationMatrix = new Float64Array(8 * 9);
   svg.addEventListener('mousedown', function(e) {
     mousedown = true;
     var chartX = e.clientX - svgRect.left;
