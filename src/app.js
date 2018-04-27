@@ -140,7 +140,7 @@ window.addEventListener('load', function() {
     });
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
-    var maxLength = Mercator.initSvg(charts, svg);
+    var maxLength = Mercator.init(charts, svg);
     rotatedCoords = new Float64Array(8 * 2 * maxLength);
     drawFromTo();
   });
