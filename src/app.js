@@ -60,7 +60,7 @@ function setSvgDimensions() {
 function drawFromTo() {
   if (!charts) return;
   Mercator.fillRotationMatrixFromTo(rotationMatrix, draggingPointFrom, draggingPointTo);
-  Mercator.draw(svg, charts, bounds, rotationMatrix);
+  Mercator.draw(svg, bounds, rotationMatrix);
 }
 
 window.addEventListener('load', function() {
@@ -123,22 +123,11 @@ window.addEventListener('load', function() {
     onUp();
   });
 
-  fetch('data/data.json').then(function(results) {
-    charts = results.map(function(shape) {
-      var shapeCoords = new Float64Array(shape.length * 2);
-      for (var i = 0; i < shape.length; ++i) {
-        var long = shape[i][0];
-        var lat = shape[i][1];
-        var theta = toRadians(long);
-        var phi = toRadians(90 - lat);
-        shapeCoords[i*2] = theta;
-        shapeCoords[i*2 + 1] = phi;
-      }
-      return shapeCoords;
-    });
+  fetch('data/data.json').then(function(latLongCharts) {
+    charts = latLongCharts;
     document.body.removeAttribute('class');
     svgRect = svg.getBoundingClientRect();
-    Mercator.init(charts, svg);
+    Mercator.init(latLongCharts, svg);
     drawFromTo();
   });
 });

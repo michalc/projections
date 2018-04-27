@@ -16,6 +16,7 @@ var MAX_BOUND = 99999;
 
 var pathPool = [];
 var rotatedCoords;
+var charts;
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -207,7 +208,7 @@ function fillRotationMatrixFromTo(rotationMatrix, a, b) {
   rotationMatrix[8] = 1    + c_coef * (-v_2_v_2 - v_1_v_1);
 }
 
-function draw(svg, charts, bounds, rotationMatrix) {
+function draw(svg, bounds, rotationMatrix) {
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;
@@ -219,7 +220,20 @@ function draw(svg, charts, bounds, rotationMatrix) {
   }
 }
 
-function init(charts, svg) {
+function init(latLongCharts, svg) {
+  charts = latLongCharts.map(function(shape) {
+    var shapeCoords = new Float64Array(shape.length * 2);
+    for (var i = 0; i < shape.length; ++i) {
+      var long = shape[i][0];
+      var lat = shape[i][1];
+      var theta = toRadians(long);
+      var phi = toRadians(90 - lat);
+      shapeCoords[i*2] = theta;
+      shapeCoords[i*2 + 1] = phi;
+    }
+    return shapeCoords;
+  });
+
   var maxLength = -Infinity;
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 2, maxLength);
