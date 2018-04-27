@@ -17,6 +17,7 @@ var bounds = {
   }
 };
 
+var charts;
 var pathPool = [];
 var rotatedCoords;
 var rotationMatrix = new Float64Array(8 * 9);
@@ -29,6 +30,9 @@ var svgRect;
 
 var latitude;
 var longitude;
+
+var mousedown = false;
+var draggingPoint = new Float64Array(2);
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -118,14 +122,11 @@ window.addEventListener('load', function() {
   window.addEventListener('resize', draw);
   setSvgDimensions();
 
-  var charts;
   function draw() {
     if (!charts) return;
     createChart(svg, charts, bounds, toRadians(longitude), toRadians(latitude));
   }
 
-  var mousedown = false;
-  var draggingPoint = new Float64Array(2);
   document.body.addEventListener('mousemove', function(e) {
     if (!svgRect || !mousedown) return;
     var chartX = e.clientX - svgRect.left;
