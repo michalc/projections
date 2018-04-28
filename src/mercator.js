@@ -141,7 +141,8 @@ function prev(length, i) {
   return i == 0 ? length - 1 : i - 1;
 }
 
-var tempCoords = new Float64Array(8 * 2 * 7);
+// Needs to be able to handle a single shape's coords
+var tempCoords = new Float64Array(1024 * 10);
 function getShape(numCoords, rotatedCoords) {
   // Fairly performance critical
 
@@ -158,7 +159,7 @@ function getShape(numCoords, rotatedCoords) {
   var offPhi = latDiffToSouthPole <= latDiffToNorthPole ? toRadians(90 + 88) : toRadians(90 - 88);
   var extraTheta = toRadians(10);
 
-  var shape = ''
+  var tempCoordsOffset = 0;
   for (var i = 0; i < numCoords; ++i) {
     var currTheta = rotatedCoords[i*2];
     var currPhi = rotatedCoords[i*2+1];
@@ -167,25 +168,32 @@ function getShape(numCoords, rotatedCoords) {
     var prevPhi = rotatedCoords[prevIndex*2+1];
     var direction = discontinuityDirection(prevTheta, currTheta);
     if (direction) {
-      toChart(currTheta - 2*Math.PI * direction, currPhi, tempCoords, 0);
-      toChart(currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, 2);
-      toChart(currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 4);
-      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, 6);
-      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, 8);
-      toChart(prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, 10);
-      toChart(currTheta, currPhi, tempCoords, 12);
-      shape += (i == 0 ? 'M' : 'L') +
-              tempCoords[0]  + ',' + tempCoords[1]  +
-        'L' + tempCoords[2]  + ',' + tempCoords[3]  +
-        'L' + tempCoords[4]  + ',' + tempCoords[5]  +
-        'L' + tempCoords[6]  + ',' + tempCoords[7]  +
-        'L' + tempCoords[8]  + ',' + tempCoords[9]  +
-        'L' + tempCoords[10] + ',' + tempCoords[11] +
-        'L' + tempCoords[12] + ',' + tempCoords[13];
+      toChart(currTheta - 2*Math.PI * direction, currPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
+      toChart(currTheta, currPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
     } else {
-      toChart(currTheta, currPhi, tempCoords, 0);
-      shape += (i == 0 ? 'M' : 'L') + tempCoords[0] + ',' + tempCoords[1];
+      toChart(currTheta, currPhi, tempCoords, tempCoordsOffset);
+      tempCoordsOffset += 2;
     }
+  }
+
+  var newNumCoords = tempCoordsOffset / 2;
+  var shape = ''
+  tempCoordsOffset = 0;
+  for (var i = 0; i < newNumCoords; ++i) {
+    shape += (i == 0 ? 'M' : 'L') + tempCoords[tempCoordsOffset]  + ',' + tempCoords[tempCoordsOffset + 1];
+    tempCoordsOffset += 2;
   }
 
   return shape + 'z';
