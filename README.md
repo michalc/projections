@@ -24,7 +24,7 @@ and most relevant for this project,
 
 To experiment with and learn about map projections, 3D transformations, SVG, and real-time low-garbage Javascript in a web-context.
 
-## Some of the code looks like Fortran. Why not use <library or technique>?
+## Some of the code looks like Fortran. Why not use &lt;library or technique&gt;?
 
 To keep garbage to a reasonable minimum to make the transformations, which happen in real time in response to user interaction, as jank-free as possible. This often means
 
