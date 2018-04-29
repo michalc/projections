@@ -1,6 +1,7 @@
 html,
 body {
   margin: 0;
+  height: 100%;
 }
 
 html {
@@ -11,7 +12,9 @@ html {
 
 body {
   background: #068dc5;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loading {
@@ -19,13 +22,12 @@ body {
 }
 
 svg {
-  display: block;
-  margin: 0 auto;
   touch-action: none;
 }
 
 p {
   position: absolute;
+  left: 0;
   top: 20px;
   padding: 5px 10px;
   font-size: 15px;
