@@ -28,7 +28,7 @@ To experiment with and learn about map projections, 3D transformations, SVG, and
 
 ## Some of the code looks like Fortran. Why not use &lt;library or technique&gt;?
 
-To keep garbage to a reasonable minimum to make the transformations, which happen in real time in response to user interaction, as jank-free as possible. If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code and then change the code accordingly, is important to acheive the above, so all things being equal, fewer layers of code is better than more.
+To keep garbage to a reasonable minimum to make the transformations, which happen in real time in response to user interaction, as jank-free as possible. If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code and then change the code accordingly, is important to acheive high performance, so all things being equal, fewer layers of code is better than more.
 
 ## Optimisations Used
 
