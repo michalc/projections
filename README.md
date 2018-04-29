@@ -28,13 +28,41 @@ To experiment with and learn about map projections, 3D transformations, SVG, and
 
 ## Some of the code looks like Fortran. Why not use &lt;library or technique&gt;?
 
-To keep garbage to a reasonable minimum to make the transformations, which happen in real time in response to user interaction, as jank-free as possible. This often means
+To keep garbage to a reasonable minimum to make the transformations, which happen in real time in response to user interaction, as jank-free as possible. If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code and then change the code accordingly, is important to acheive the above, so all things being equal, fewer layers of code is better than more.
 
-  - avoiding creating new objects;
-  - avoiding creating new arrays;
-  - mutating typed arrays.
+## Optimisations Used
 
-If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code and then change the code accordingly, is important to acheive the above, so all things being equal, fewer layers of code is better than more.
+A lot of these are based on measurements (in Chrome), but some are based on experience/knowledge/educated guesswork, so may have made things worse.
+
+### Javascript
+
+- For loops used instead of native or library `map` or `reduce`.
+- Functions called from inside for loops are defined the same scope as the for loop, i.e. calling `functionName()` rather than `someObject.functionName()`.
+- Typed arrays are mutated rather than creating objects or arrays.
+- Nested standard arrays are flattened to typed arrays.
+- `+=` used instead of array join...
+- `+` is used over `+=` where possible
+
+### DOM
+
+- Number of element are minimised. Specifically, a single `path` element is used for the map rather than a `path` element per land mass.
+- *Adding/removing elements from the DOM are minimised
+- *DOM attribute modification is limited. [This was also more important when]
+- *Hammering layout is avoided, i.e. chains of making modifications to layout, then reading layout.
+
+*These were more important in previous versions when there were multiple `path` elements.
+
+### CSS
+
+- No unused CSS, i.e. no framework
+- CSS selectors are kept simple, avoiding (what some think to be) expensive selectors
+
+### Coordinate transformations
+
+- The conversion from latitude/longitude to spherical polar is done once
+- The rotation matrix calculated when dragging doesn't use any trigonometric functions, other than to convert the points dragging to cartesian coordinates.
+
+[I would like there to be fewer calls to trigonometic functions, as well as fewer transformations to/from cartesian coordinates.]
 
 ## Licences
 
