@@ -263,7 +263,6 @@ function draw(svg, rotationMatrix) {
     }
     shape += getShape(numCoords, rotatedCoords);
   }
-  shape += 'z';
   path.setAttributeNS(null, 'd', shape);
 }
 
