@@ -4,7 +4,7 @@ Source for http://projections.charemza.name/
 
 ## What does this do?
 
-By dragging a point on the map, the world is rotated before the (spherical) Mercator projection is applied.
+It shows the world using a spherical Mercator projection, but allows the world to be rotated first, by dragging.
 
 ## Why do this?
 
