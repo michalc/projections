@@ -117,11 +117,8 @@ function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
   var z_r = rot[6] * x + rot[7] * y + rot[8] * z;
 
   // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
-  // atan works for +- Infinity, but, 0 / 0 = NaN,
-  // so we have to handle that case
-  var theta_r = x_r != 0 || y_r != 0 ?  Math.atan2(y_r, x_r) :
-                  Object.is(y_r, -0) ? -Math.PI / 2 :
-                                        Math.PI / 2;
+  // atan2 works for +- Infinity
+  var theta_r = Math.atan2(y_r, x_r);
 
   var phi_r = Math.acos(z_r);
 
