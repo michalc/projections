@@ -36,7 +36,7 @@ var rotationMatrixCombined = new Float64Array(9);
 
 var draggingPointFrom = new Float64Array(2);
 var draggingPointTo = new Float64Array(2);
-var pathPool = [];
+var path;
 var bounds;
 var rotatedCoords;
 var charts;
@@ -254,15 +254,17 @@ function multiply(target, b, a) {
 }
 
 function draw(svg, rotationMatrix) {
+  var shape = '';
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;
     for (var i = 0; i < numCoords; ++i) {
       rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
     }
-    var shape = getShape(numCoords, rotatedCoords);
-    pathPool[j].setAttributeNS(null, 'd', shape);
+    shape += getShape(numCoords, rotatedCoords);
   }
+  shape += 'z';
+  path.setAttributeNS(null, 'd', shape);
 }
 
 function drawFromTo() {
@@ -317,12 +319,11 @@ function init(latLongCharts, svg) {
   });
 
   var maxLength = -Infinity;
+  path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttributeNS(null, 'class', 'land');
+  svg.appendChild(path);
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 2, maxLength);
-    var pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    pathElement.setAttributeNS(null, 'class', 'land');
-    pathPool.push(pathElement);
-    svg.appendChild(pathElement);
   }
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
