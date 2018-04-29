@@ -47,7 +47,7 @@ A lot of these are based on measurements (in Chrome), but some are based on expe
 
 - Number of element are minimised. Specifically, a single `path` element is used for the map rather than a `path` element per land mass.
 - *Adding/removing elements from the DOM are minimised
-- *DOM attribute modification is limited. [This was also more important when]
+- *DOM attribute modification is limited.
 - *Hammering layout is avoided, i.e. chains of making modifications to layout, then reading layout.
 
 *These were more important in previous versions when there were multiple `path` elements.
