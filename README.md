@@ -12,6 +12,7 @@ I enjoy thinking "what if?", especially if "if" is something that challenges vie
 
   - regions are shown as though they have a larger area near the poles;
   - shapes are stretched near the poles;
+  - it's impossible to show all of the Earth on the map at once;
   - it's not obvious that the regions on the left are close to the regions on the right;
   - it's not obvious that regions at the top are all close to each other, or that the regions at the bottom are close to each other;
   - it's not obvious that the shortest distance between two points is often not a straight line;
