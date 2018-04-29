@@ -34,7 +34,7 @@ To keep garbage to a reasonable minimum to make the transformations, which happe
   - avoiding creating new arrays;
   - mutating typed arrays.
 
-If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code is important to acheive the above, so all things being equal, fewer layers of code is better than more.
+If there are better ways to keep garbage low and performance high, ideas are very welcome! Note that ability to profile and reason about the code and then change the code accordingly, is important to acheive the above, so all things being equal, fewer layers of code is better than more.
 
 ## Licences
 
