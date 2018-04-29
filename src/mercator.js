@@ -129,15 +129,6 @@ function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
 // Fudge to determine is 2 points are discontinuous
 var DISCONTINUTY_THREASHOLD = Math.PI;
 
-// 1 for -180 to 180, -1 for 180 to -180
-function discontinuityDirection(prev, curr) {
-  return Math.abs(prev - curr) > DISCONTINUTY_THREASHOLD && prev * curr < 0 ? (prev < curr ? 1 : -1) : 0;
-}
-
-function prev(length, i) {
-  return i == 0 ? length - 1 : i - 1;
-}
-
 // Needs to be able to handle a single shape's coords
 var tempCoords = new Float64Array(1024 * 10);
 function getShape(numCoords, rotatedCoords) {
@@ -160,10 +151,12 @@ function getShape(numCoords, rotatedCoords) {
   for (var i = 0; i < numCoords; ++i) {
     var currTheta = rotatedCoords[i*2];
     var currPhi = rotatedCoords[i*2+1];
-    var prevIndex = prev(numCoords, i);
+    var prevIndex = i == 0 ? numCoords - 1 : i - 1;
     var prevTheta = rotatedCoords[prevIndex*2];
     var prevPhi = rotatedCoords[prevIndex*2+1];
-    var direction = discontinuityDirection(prevTheta, currTheta);
+
+    // 1 for -180 to 180, -1 for 180 to -180
+    var direction = Math.abs(prevTheta - currTheta) > DISCONTINUTY_THREASHOLD && prevTheta * currTheta < 0 ? (prevTheta < currTheta ? 1 : -1) : 0;
     if (direction) {
       toChart(currTheta - 2*Math.PI * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
