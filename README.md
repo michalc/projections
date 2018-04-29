@@ -8,13 +8,14 @@ By dragging a point on the map, the world is rotated before the (spherical) Merc
 
 ## Why do this?
 
-I enjoy thinking "What if?", especially if "if" is something that challenges views that are somewhat arbitrary, limit thinking, or are misleading. The view of the world that the Mercator projection promotes is a good example:
+I enjoy thinking "what if?", especially if "if" is something that challenges views that are somewhat arbitrary, limit thinking, or are misleading. The view of the world that the Mercator projection promotes is a good example:
 
   - regions are shown as though they have a larger area near the poles;
   - shapes are stretched near the poles;
   - it's not obvious that the regions on the left are close to the regions on the right;
   - it's not obvious that regions at the top are all close to each other, or that the regions at the bottom are close to each other;
   - it's not obvious that the shortest distance between two points is often not a straight line;
+  - the usual orientation, i.e. with what we know as the geographic poles at the top at the bottom, is just as right as any other (although it is handy for navigation to have the top and bottom close to the magnetic poles),
 
 and most relevant for this project,
 
