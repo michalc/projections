@@ -144,11 +144,13 @@ function getShape(numCoords, rotatedCoords) {
 
   var tempCoordsOffset = 0;
   for (var i = 0; i < numCoords; ++i) {
-    var currTheta = rotatedCoords[i*2];
-    var currPhi = rotatedCoords[i*2+1];
+    var offset = i * 2;
+    var currTheta = rotatedCoords[offset];
+    var currPhi = rotatedCoords[offset+1];
     var prevIndex = i == 0 ? numCoords - 1 : i - 1;
-    var prevTheta = rotatedCoords[prevIndex*2];
-    var prevPhi = rotatedCoords[prevIndex*2+1];
+    var prevOffset = prevIndex*2;
+    var prevTheta = rotatedCoords[prevOffset];
+    var prevPhi = rotatedCoords[prevOffset+1];
 
     // 1 for -180 to 180, -1 for 180 to -180
     var direction = Math.abs(prevTheta - currTheta) > DISCONTINUTY_THREASHOLD && prevTheta * currTheta < 0 ? (prevTheta < currTheta ? 1 : -1) : 0;
