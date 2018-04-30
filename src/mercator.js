@@ -13,18 +13,13 @@ Mercator.setBounds = setBounds;
 // get mapped to this
 var MAX_BOUND = 99999;
 
-var bounds = {
-  earth: {
-    top: toRadians(90 - 83.6),
-    left: toRadians(-180)
-  },
-  screen: {
-    top: 0,
-    bottom: 740,
-    left: 0,
-    right: 800
-  }
-};
+var BOUNDS_EARTH_TOP = toRadians(90 - 83.6);
+var BOUNDS_EARTH_LEFT = toRadians(-180);
+var BOUNDS_SCREEN_TOP = 0;
+var BOUNDS_SCREEN_BOTTOM;
+var BOUNDS_SCREEN_LEFT = 0;
+var BOUNDS_SCREEN_RIGHT;
+
 
 var rotationMatrix = new Float64Array(9);
 rotationMatrix[0] = 1;
@@ -66,18 +61,18 @@ function xToTheta(W, theta_0, x) {
 }
 
 function getY_top(W) {
-  var phi_top = bounds.earth.top;
+  var phi_top = BOUNDS_EARTH_TOP
   return phiToY(W, phi_top);
 }
 
 function toChart(theta, phi, out, outOffset) {
-  var W = bounds.screen.right - bounds.screen.left;
+  var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
 
   var y = phiToY(W, phi);
   var y_top = getY_top(W);
   var chartY = y_top - y;
 
-  var theta_0 = bounds.earth.left;
+  var theta_0 = BOUNDS_EARTH_LEFT;
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
@@ -85,9 +80,9 @@ function toChart(theta, phi, out, outOffset) {
 }
 
 function toEarth(chartX, chartY, out, outOffset) {
-  var W = bounds.screen.right - bounds.screen.left;
+  var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
 
-  var theta_0 = bounds.earth.left;
+  var theta_0 = BOUNDS_EARTH_LEFT;
   var x = chartX;
   var theta = xToTheta(W, theta_0, x);
 
@@ -288,8 +283,8 @@ function onUp() {
 function setBounds(width, height) {
   svg.setAttribute('width', width);
   svg.setAttribute('height', height);
-  bounds.screen.right = width;
-  bounds.screen.bottom = height;
+  BOUNDS_SCREEN_RIGHT = width;
+  BOUNDS_SCREEN_BOTTOM = height;
   drawFromTo();
 }
 
