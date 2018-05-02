@@ -75,8 +75,8 @@ function toChart(theta, phi, out, outOffset) {
   var theta_0 = BOUNDS_EARTH_LEFT;
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
-  out[outOffset] = Math.trunc(chartX);
-  out[outOffset + 1] = Math.trunc(chartY);
+  out[outOffset] = Math.round(chartX * 100) / 100;
+  out[outOffset + 1] = Math.round(chartY * 100) / 100;
 }
 
 function toEarth(chartX, chartY, out, outOffset) {
