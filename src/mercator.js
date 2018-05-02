@@ -171,10 +171,7 @@ function getShape(numCoords, rotatedCoords) {
       tempCoordsOffset += 2;
     } else {
       toChart(currTheta, currPhi, tempCoords, tempCoordsOffset);
-      // No need for duplicate points
-      if (tempCoords[tempCoordsOffset] != tempCoords[tempCoordsOffset-2] || tempCoords[tempCoordsOffset+1] != tempCoords[tempCoordsOffset-1] || tempCoordsOffset == 0) {
-        tempCoordsOffset += 2;
-      }
+      tempCoordsOffset += 2;
     }
   }
 
