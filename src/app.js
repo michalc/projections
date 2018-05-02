@@ -80,7 +80,7 @@ window.addEventListener('load', function() {
     onUp();
   });
 
-  fetch('data/data.json').then(function(latLongCharts) {
+  fetch('data/data-v2.json').then(function(latLongCharts) {
     removeClass(document.body, 'loading');
     Mercator.init(latLongCharts, svg);
     var dimension = Math.min(window.innerWidth, window.innerHeight);

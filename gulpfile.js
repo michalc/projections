@@ -39,7 +39,15 @@ gulp.task('generate-charts', function () {
   var antarticaStream = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L5.shp'))
     .pipe(geoJsonStream.stringify());
 
-  return Promise.all([streamToPromise(mostOfWorldStream), streamToPromise(antarticaStream)]).then(function(collections) {
+  // Lackes
+  var lakesStream = (new mapJsonStream({}, 'data_src/GSHHS_shp/c/GSHHS_c_L2.shp'))
+    .pipe(geoJsonStream.stringify());
+
+  return Promise.all([
+    streamToPromise(mostOfWorldStream),
+    streamToPromise(antarticaStream),
+    streamToPromise(lakesStream),
+  ]).then(function(collections) {
     var mostOfWorldFeatures = JSON.parse(collections[0]).features;
     var mostOfWorld = _(mostOfWorldFeatures)
       .map(function(feature) {
@@ -78,11 +86,19 @@ gulp.task('generate-charts', function () {
       .flatten()
       .value();
 
-    charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper]]);
+    var lakesFeatures = JSON.parse(collections[2]).features;
+    var lakes = _(lakesFeatures)
+      .map(function(feature) {
+        // Reverse so lakaes are holes in the shape
+        return _.reverse(feature.geometry.coordinates[0]);
+      })
+      .value();
+
+    charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper], lakes]);
     chartsString = JSON.stringify(charts);
 
     var saveStream = new stream.Readable()
-    saveStream.pipe(source('data.json'))
+    saveStream.pipe(source('data-v2.json'))
       .pipe(gulp.dest(outputDir));
 
     saveStream.push(chartsString) 
