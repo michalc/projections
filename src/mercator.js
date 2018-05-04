@@ -26,7 +26,6 @@ var BOUNDS_SCREEN_BOTTOM;
 var BOUNDS_SCREEN_LEFT = 0;
 var BOUNDS_SCREEN_RIGHT;
 
-
 var rotationMatrix = new Float64Array(9);
 rotationMatrix[0] = 1;
 rotationMatrix[4] = 1;
@@ -43,6 +42,17 @@ var rotatedCoords;
 var charts;
 
 var mousedown = false;
+
+var coordsString = new Uint8Array(200000);
+var decoder = new TextDecoder();
+var digitsReversed = new Uint8Array(6);
+var ASCII_ZERO = 48;
+var ASCII_MINUS = 45;
+var ASCII_M = 77;
+var ASCII_L = 76;
+var ASCII_z = 122;
+var ASCII_comma = 44;
+
 
 function toRadians(deg) {
   return deg * Math.PI / 180;
@@ -127,12 +137,38 @@ function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
   resultArray[resultOffset + 1] = phi_r;
 }
 
+function concatInteger(integer, string, stringOffset) {
+  var asciiValue = 0;
+  var digitValue = 0;
+  var offset = 0;
+  if (integer < 0) {
+    string[stringOffset] = ASCII_MINUS;
+    ++stringOffset;
+  }
+  integer = Math.abs(integer);
+
+  while (integer > 0 || offset == 0) {
+    digitValue = integer % 10;
+    asciiValue = ASCII_ZERO + digitValue;
+    digitsReversed[offset] = asciiValue;
+    ++offset;
+    integer = (integer/10)|0;
+  }
+
+  for (var i = 0; i < offset; ++i) {
+    string[stringOffset] = digitsReversed[offset - i - 1];
+    ++stringOffset
+  }
+
+  return stringOffset;
+}
+
 // Fudge to determine is 2 points are discontinuous
 var DISCONTINUTY_THREASHOLD = Math.PI;
 
 // Needs to be able to handle a single shape's coords
 var tempCoords = new Float64Array(1024 * 10);
-function getShape(numCoords, rotatedCoords) {
+function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
   // Fairly performance critical
 
   var minPhi = Infinity;
@@ -182,14 +218,21 @@ function getShape(numCoords, rotatedCoords) {
   }
 
   var newNumCoords = tempCoordsOffset / 2;
-  var shape = ''
   tempCoordsOffset = 0;
   for (var i = 0; i < newNumCoords; ++i) {
-    shape += (i == 0 ? 'M' : 'L') + tempCoords[tempCoordsOffset]  + ',' + tempCoords[tempCoordsOffset + 1];
-    tempCoordsOffset += 2;
+    coordsString[coordsStringOffset] = (i == 0) ? ASCII_M : ASCII_L;
+    ++coordsStringOffset;
+    coordsStringOffset = concatInteger(tempCoords[tempCoordsOffset], coordsString, coordsStringOffset);
+    ++tempCoordsOffset;
+    coordsString[coordsStringOffset] = ASCII_comma
+    ++coordsStringOffset;
+    coordsStringOffset = concatInteger(tempCoords[tempCoordsOffset], coordsString, coordsStringOffset);
+    ++tempCoordsOffset;
   }
+  coordsString[coordsStringOffset] = ASCII_z;
+  ++coordsStringOffset;
 
-  return shape + 'z';
+  return coordsStringOffset
 }
 
 function fillRotationMatrixFromTo(rotationMatrix, a, b) {
@@ -247,16 +290,16 @@ function multiply(target, b, a) {
 }
 
 function draw(svg, rotationMatrix) {
-  var shape = '';
+  var coordsStringOffset = 0;
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
     var numCoords = charts[j].length / 2;
     for (var i = 0; i < numCoords; ++i) {
       rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
     }
-    shape += getShape(numCoords, rotatedCoords);
+    coordsStringOffset = getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset);
   }
-  path.setAttributeNS(null, 'd', shape);
+  path.setAttributeNS(null, 'd', decoder.decode(new Uint8Array(coordsString.buffer, 0, coordsStringOffset)));
 }
 
 function drawFromTo() {
