@@ -9,6 +9,8 @@ Mercator.onMove = onMove;
 Mercator.onDown = onDown;
 Mercator.setBounds = setBounds;
 
+var PI = Math.PI;
+
 // SVG coordinates are only output as integers. To allow sub-pixel rendering
 // for small features, we multiply the viewbox by this factor.
 // An alternative would be to allow non-integer SVG coordinates, but
@@ -53,9 +55,8 @@ var ASCII_L = 76;
 var ASCII_z = 122;
 var ASCII_comma = 44;
 
-
 function toRadians(deg) {
-  return deg * Math.PI / 180;
+  return deg * PI / 180;
 }
 
 function phiToY(W, phi) {
@@ -64,12 +65,12 @@ function phiToY(W, phi) {
   // that are at infinity, but still want to plot the ones
   // that aren'ts
   if (0       >= phi) return MAX_BOUND;
-  if (Math.PI <= phi) return -MAX_BOUND;
-  return W / (2 * Math.PI) * Math.log(Math.tan((Math.PI - phi) / 2));
+  if (PI <= phi) return -MAX_BOUND;
+  return W / (2 * PI) * Math.log(Math.tan((PI - phi) / 2));
 }
 
 function xToTheta(W, theta_0, x) {
-  return theta_0 + x * 2 * Math.PI / W;
+  return theta_0 + x * 2 * PI / W;
 }
 
 function getY_top(W) {
@@ -85,7 +86,7 @@ function toChart(theta, phi, out, outOffset) {
   var chartY = y_top - y;
 
   var theta_0 = BOUNDS_EARTH_LEFT;
-  var chartX = W / (2 * Math.PI) * (theta - theta_0);
+  var chartX = W / (2 * PI) * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
   out[outOffset + 1] = Math.trunc(chartY);
@@ -100,7 +101,7 @@ function toEarth(chartX, chartY, out, outOffset) {
 
   var y_top = getY_top(W);
   var y = y_top - chartY;
-  var phi = Math.PI - 2 * Math.atan(Math.exp(y * 2 * Math.PI / W));
+  var phi = PI - 2 * Math.atan(Math.exp(y * 2 * PI / W));
 
   out[outOffset] = theta;
   out[outOffset + 1] = phi;
@@ -156,7 +157,7 @@ function concatInteger(integer, string, stringOffset) {
 }
 
 // Fudge to determine is 2 points are discontinuous
-var DISCONTINUTY_THREASHOLD = Math.PI;
+var DISCONTINUTY_THREASHOLD = PI;
 
 // Needs to be able to handle a single shape's coords
 var tempCoords = new Int32Array(1024 * 10);
@@ -171,7 +172,7 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
   }
 
   // Slight hack: pole is determined by the point closest
-  var latDiffToSouthPole = Math.abs(Math.PI - maxPhi);
+  var latDiffToSouthPole = Math.abs(PI - maxPhi);
   var latDiffToNorthPole = Math.abs(minPhi);
   var offPhi = latDiffToSouthPole <= latDiffToNorthPole ? toRadians(90 + 88) : toRadians(90 - 88);
   var extraTheta = toRadians(10);
@@ -189,17 +190,17 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
     // 1 for -180 to 180, -1 for 180 to -180
     var direction = Math.abs(prevTheta - currTheta) > DISCONTINUTY_THREASHOLD && prevTheta * currTheta < 0 ? (prevTheta < currTheta ? 1 : -1) : 0;
     if (direction) {
-      toChart(currTheta - 2*Math.PI * direction, currPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - 2*PI * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (2*Math.PI + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - (2*PI + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - (2*PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + (2*PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (2*Math.PI + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + (2*PI + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + 2*Math.PI * direction, prevPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + 2*PI * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
       toChart(currTheta, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
