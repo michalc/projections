@@ -163,7 +163,7 @@ function concatInteger(integer, string, stringOffset) {
 var DISCONTINUTY_THREASHOLD = Math.PI;
 
 // Needs to be able to handle a single shape's coords
-var tempCoords = new Float64Array(1024 * 10);
+var tempCoords = new Int32Array(1024 * 10);
 function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
   // Fairly performance critical
 
