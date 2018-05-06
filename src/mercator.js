@@ -10,6 +10,7 @@ Mercator.onDown = onDown;
 Mercator.setBounds = setBounds;
 
 var PI = Math.PI;
+var PI_2 = PI * 2;
 
 // SVG coordinates are only output as integers. To allow sub-pixel rendering
 // for small features, we multiply the viewbox by this factor.
@@ -66,11 +67,11 @@ function phiToY(W, phi) {
   // that aren'ts
   if (0       >= phi) return MAX_BOUND;
   if (PI <= phi) return -MAX_BOUND;
-  return W / (2 * PI) * Math.log(Math.tan((PI - phi) / 2));
+  return W / PI_2 * Math.log(Math.tan((PI - phi) / 2));
 }
 
 function xToTheta(W, theta_0, x) {
-  return theta_0 + x * 2 * PI / W;
+  return theta_0 + x * PI_2 / W;
 }
 
 function getY_top(W) {
@@ -86,7 +87,7 @@ function toChart(theta, phi, out, outOffset) {
   var chartY = y_top - y;
 
   var theta_0 = BOUNDS_EARTH_LEFT;
-  var chartX = W / (2 * PI) * (theta - theta_0);
+  var chartX = W / PI_2 * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
   out[outOffset + 1] = Math.trunc(chartY);
@@ -101,7 +102,7 @@ function toEarth(chartX, chartY, out, outOffset) {
 
   var y_top = getY_top(W);
   var y = y_top - chartY;
-  var phi = PI - 2 * Math.atan(Math.exp(y * 2 * PI / W));
+  var phi = PI - 2 * Math.atan(Math.exp(y * PI_2 / W));
 
   out[outOffset] = theta;
   out[outOffset + 1] = phi;
@@ -190,17 +191,17 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
     // 1 for -180 to 180, -1 for 180 to -180
     var direction = Math.abs(prevTheta - currTheta) > DISCONTINUTY_THREASHOLD && prevTheta * currTheta < 0 ? (prevTheta < currTheta ? 1 : -1) : 0;
     if (direction) {
-      toChart(currTheta - 2*PI * direction, currPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - PI_2 * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (2*PI + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - (PI_2 + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (2*PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - (PI_2+ extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (2*PI + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + (PI_2 + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (2*PI + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + (PI_2 + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + 2*PI * direction, prevPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + PI_2 * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
       toChart(currTheta, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
