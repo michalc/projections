@@ -58,10 +58,6 @@ function toRadians(deg) {
   return deg * Math.PI / 180;
 }
 
-function toDegrees(rad) {
-  return rad * 180 / Math.PI;
-}
-
 function phiToY(W, phi) {
   // Fudge to be able to plot things at (/beyond) pole
   // this is useful since shapes might contain vertices
