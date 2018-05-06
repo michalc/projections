@@ -138,8 +138,6 @@ function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
 }
 
 function concatInteger(integer, string, stringOffset) {
-  var asciiValue = 0;
-  var digitValue = 0;
   var offset = 0;
   if (integer < 0) {
     string[stringOffset] = ASCII_MINUS;
@@ -148,9 +146,7 @@ function concatInteger(integer, string, stringOffset) {
   integer = Math.abs(integer);
 
   while (integer > 0 || offset == 0) {
-    digitValue = integer % 10;
-    asciiValue = ASCII_ZERO + digitValue;
-    digitsReversed[offset] = asciiValue;
+    digitsReversed[offset] = ASCII_ZERO + integer % 10;
     ++offset;
     integer = (integer/10)|0;
   }
