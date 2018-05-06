@@ -9,6 +9,12 @@ Mercator.onMove = onMove;
 Mercator.onDown = onDown;
 Mercator.setBounds = setBounds;
 
+// SVG coordinates are only output as integers. To allow sub-pixel rendering
+// for small features, we multiply the viewbox by this factor.
+// An alternative would be to allow non-integer SVG coordinates, but
+// float -> string is _much_ slower than int -> string
+var SVG_SCALE = 100;
+
 // Points at infinity on the chart
 // get mapped to this
 var MAX_BOUND = 99999;
@@ -75,8 +81,8 @@ function toChart(theta, phi, out, outOffset) {
   var theta_0 = BOUNDS_EARTH_LEFT;
   var chartX = W / (2 * Math.PI) * (theta - theta_0);
 
-  out[outOffset] = Math.round(chartX * 100) / 100;
-  out[outOffset + 1] = Math.round(chartY * 100) / 100;
+  out[outOffset] = Math.trunc(chartX);
+  out[outOffset + 1] = Math.trunc(chartY);
 }
 
 function toEarth(chartX, chartY, out, outOffset) {
@@ -262,8 +268,8 @@ function drawFromTo() {
 
 function onMove(x, y, svgRect) {
   if (!charts || !mousedown) return;
-  var chartX = x - svgRect.left;
-  var chartY = y - svgRect.top;
+  var chartX = (x - svgRect.left) * SVG_SCALE;
+  var chartY = (y - svgRect.top) * SVG_SCALE;
   toEarth(chartX, chartY, draggingPointTo, 0);
   drawFromTo();   
 }
@@ -271,8 +277,8 @@ function onMove(x, y, svgRect) {
 function onDown(x, y, svgRect) {
   if (mousedown) return;
   mousedown = true;
-  var chartX = x - svgRect.left;
-  var chartY = y - svgRect.top;
+  var chartX = (x - svgRect.left) * SVG_SCALE;
+  var chartY = (y - svgRect.top) * SVG_SCALE;
   toEarth(chartX, chartY, draggingPointFrom, 0);
 }
 
@@ -285,8 +291,9 @@ function onUp() {
 function setBounds(width, height) {
   svg.setAttribute('width', width);
   svg.setAttribute('height', height);
-  BOUNDS_SCREEN_RIGHT = width;
-  BOUNDS_SCREEN_BOTTOM = height;
+  svg.setAttribute('viewBox', '0 0 ' + (width * SVG_SCALE) + ' ' + (height * SVG_SCALE));
+  BOUNDS_SCREEN_RIGHT = width * SVG_SCALE;
+  BOUNDS_SCREEN_BOTTOM = height * SVG_SCALE;
   drawFromTo();
 }
 

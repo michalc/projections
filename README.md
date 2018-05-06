@@ -42,6 +42,7 @@ A lot of these are based on measurements (in Chrome), but some are based on expe
 - Nested standard arrays are flattened to typed arrays.
 - `+=` used instead of array join...
 - `+` is used over `+=` where possible
+- Use integer SVG coordinates to avoid converting floating points to strings, which is slow, while keeping SVG sub-pixel rendering for small features.
 
 ### DOM
 
