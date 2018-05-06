@@ -142,9 +142,9 @@ function concatInteger(integer, string, stringOffset) {
     integer = (integer/10)|0;
   }
 
-  for (var i = 0; i < offset; ++i) {
-    string[stringOffset] = digitsReversed[offset - i - 1];
-    ++stringOffset
+  var maxOffset = stringOffset + offset;
+  for (; stringOffset < maxOffset; ++stringOffset) {
+    string[stringOffset] = digitsReversed[maxOffset - stringOffset - 1];
   }
 
   return stringOffset;
