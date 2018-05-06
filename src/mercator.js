@@ -11,6 +11,8 @@ Mercator.setBounds = setBounds;
 
 var PI = Math.PI;
 var PI_2 = PI * 2;
+var W_over_PI_2;
+var PI_2_over_W;
 
 // SVG coordinates are only output as integers. To allow sub-pixel rendering
 // for small features, we multiply the viewbox by this factor.
@@ -60,49 +62,47 @@ function toRadians(deg) {
   return deg * PI / 180;
 }
 
-function phiToY(W, phi) {
+function phiToY(phi) {
   // Fudge to be able to plot things at (/beyond) pole
   // this is useful since shapes might contain vertices
   // that are at infinity, but still want to plot the ones
   // that aren'ts
   if (0       >= phi) return MAX_BOUND;
   if (PI <= phi) return -MAX_BOUND;
-  return W / PI_2 * Math.log(Math.tan((PI - phi) / 2));
+  return W_over_PI_2 * Math.log(Math.tan((PI - phi) / 2));
 }
 
-function xToTheta(W, theta_0, x) {
-  return theta_0 + x * PI_2 / W;
+function xToTheta(theta_0, x) {
+  return theta_0 + x * PI_2_over_W;
 }
 
-function getY_top(W) {
+function getY_top() {
   var phi_top = BOUNDS_EARTH_TOP
-  return phiToY(W, phi_top);
+  return phiToY(phi_top);
 }
 
 function toChart(theta, phi, out, outOffset) {
   var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
 
-  var y = phiToY(W, phi);
-  var y_top = getY_top(W);
+  var y = phiToY(phi);
+  var y_top = getY_top();
   var chartY = y_top - y;
 
   var theta_0 = BOUNDS_EARTH_LEFT;
-  var chartX = W / PI_2 * (theta - theta_0);
+  var chartX = W_over_PI_2 * (theta - theta_0);
 
   out[outOffset] = Math.trunc(chartX);
   out[outOffset + 1] = Math.trunc(chartY);
 }
 
 function toEarth(chartX, chartY, out, outOffset) {
-  var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
-
   var theta_0 = BOUNDS_EARTH_LEFT;
   var x = chartX;
-  var theta = xToTheta(W, theta_0, x);
+  var theta = xToTheta(theta_0, x);
 
-  var y_top = getY_top(W);
+  var y_top = getY_top();
   var y = y_top - chartY;
-  var phi = PI - 2 * Math.atan(Math.exp(y * PI_2 / W));
+  var phi = PI - 2 * Math.atan(Math.exp(y * PI_2_over_W));
 
   out[outOffset] = theta;
   out[outOffset + 1] = phi;
@@ -331,6 +331,10 @@ function setBounds(width, height) {
   svg.setAttribute('viewBox', '0 0 ' + (width * SVG_SCALE) + ' ' + (height * SVG_SCALE));
   BOUNDS_SCREEN_RIGHT = width * SVG_SCALE;
   BOUNDS_SCREEN_BOTTOM = height * SVG_SCALE;
+  W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
+  PI_2_over_W = PI_2 / W;
+  W_over_PI_2 = W / PI_2;
+
   drawFromTo();
 }
 
