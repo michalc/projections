@@ -76,16 +76,11 @@ function xToTheta(theta_0, x) {
   return theta_0 + x * PI_2_over_W;
 }
 
-function getY_top() {
-  var phi_top = BOUNDS_EARTH_TOP
-  return phiToY(phi_top);
-}
-
 function toChart(theta, phi, out, outOffset) {
   var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
 
   var y = phiToY(phi);
-  var y_top = getY_top();
+  var y_top = phiToY(BOUNDS_EARTH_TOP);
   var chartY = y_top - y;
 
   var theta_0 = BOUNDS_EARTH_LEFT;
@@ -100,7 +95,7 @@ function toEarth(chartX, chartY, out, outOffset) {
   var x = chartX;
   var theta = xToTheta(theta_0, x);
 
-  var y_top = getY_top();
+  var y_top = phiToY(BOUNDS_EARTH_TOP);
   var y = y_top - chartY;
   var phi = PI - 2 * Math.atan(Math.exp(y * PI_2_over_W));
 
