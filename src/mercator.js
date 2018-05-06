@@ -77,8 +77,6 @@ function xToTheta(theta_0, x) {
 }
 
 function toChart(theta, phi, out, outOffset) {
-  var W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
-
   var y = phiToY(phi);
   var y_top = phiToY(BOUNDS_EARTH_TOP);
   var chartY = y_top - y;
