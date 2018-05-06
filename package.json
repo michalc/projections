@@ -1,7 +1,7 @@
 {
   "name": "projections",
   "repository": "https://github.com/michalc/projections/",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "dependencies": {
     "browserify": "^16.2.0",
     "browserify-istanbul": "^3.0.1",
