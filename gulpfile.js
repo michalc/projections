@@ -5,7 +5,7 @@ var CleanCSS = require('clean-css');
 var gulp = require('gulp');
 var buffer = require('gulp-buffer');
 var Handlebars = require('handlebars');
-var eslint = require('gulp-eslint');
+const { ESLint } = require("eslint");
 var changed = require('gulp-changed');
 var _ = require('lodash');
 var merge = require('merge2');
@@ -109,11 +109,9 @@ gulp.task('generate-charts', function () {
   });
 });
 
-gulp.task('lint', function () {
-  return gulp.src(['gulpfile.js', 'src/*.js'])
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+gulp.task('lint', async function () {
+  const eslint = new ESLint();
+  return await eslint.lintFiles(['gulpfile.js', 'src/*.js']);
 });
 
 gulp.task('default', function() {
