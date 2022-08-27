@@ -39,5 +39,6 @@
     "mapnik": "latest",
     "tinyify": "latest",
     "vinyl-source-stream": "latest"
-  }
+  },
+  "eslintConfig": {}
 }

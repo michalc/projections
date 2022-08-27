@@ -103,7 +103,7 @@ gulp.task('generate-charts', function () {
       .pipe(gulp.dest(outputDir));
 
     saveStream.push(chartsString) 
-    saveStream.push(null) 
+    saveStream.push(null)
 
     return streamToPromise(saveStream);
   });
