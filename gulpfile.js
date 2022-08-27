@@ -4,7 +4,7 @@ var browserify = require('browserify');
 var CleanCSS = require('clean-css');
 var gulp = require('gulp');
 var buffer = require('gulp-buffer');
-var handlebars = require('gulp-compile-handlebars');
+var Handlebars = require('handlebars');
 var eslint = require('gulp-eslint');
 var changed = require('gulp-changed');
 var _ = require('lodash');
@@ -12,6 +12,7 @@ var merge = require('merge2');
 var source = require('vinyl-source-stream');
 var stream = require('stream');
 var streamToPromise = require('stream-to-promise');
+var fs = require('fs');
 
 // Requires dev dependencies to be installed
 gulp.task('download-charts', function () {
@@ -152,10 +153,10 @@ gulp.task('default', function() {
   var handlebarOpts = {
     helpers: {
       javascript: function(context) {
-        return new handlebars.Handlebars.SafeString(context.data.root.javascript);
+        return new Handlebars.SafeString(context.data.root.javascript);
       },
       css: function(context) {
-        return new handlebars.Handlebars.SafeString(context.data.root.css);
+        return new Handlebars.SafeString(context.data.root.css);
       }
     }
   };
@@ -165,14 +166,11 @@ gulp.task('default', function() {
   var html = Promise.all([javascript, css]).then(function(results) {
     var javascriptContents = results[0];
     var cssContents = results[1];
-    var htmlStream = gulp.src(htmlSrc)
-        .pipe(handlebars({
-          javascript: javascriptContents,
-          css: cssContents
-        }, handlebarOpts))
-        .pipe(gulp.dest(dest));
-
-    return streamToPromise(htmlStream);
+    var template = Handlebars.compile(fs.readFileSync('src/index.html', 'utf8'));
+    return template({
+      javascript: javascriptContents,
+      css: cssContents,
+    }, handlebarOpts);
   });
 
   return Promise.all([streamToPromise(css), html])
