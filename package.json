@@ -10,7 +10,6 @@
     "gulp": "latest",
     "gulp-buffer": "latest",
     "gulp-changed": "latest",
-    "gulp-cssnext": "latest",
     "gulp-eslint": "latest",
     "gulp-rev": "latest",
     "handlebars": "latest",

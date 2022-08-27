@@ -117,7 +117,6 @@ gulp.task('lint', function () {
 });
 
 gulp.task('default', function() {
-  var cssnext = require('gulp-cssnext');
   var build = 'build';
   var dest = build;
 
@@ -139,9 +138,6 @@ gulp.task('default', function() {
   ];
   var cssStream = gulp.src(cssSrc)
     .pipe(changed(dest))
-    .pipe(cssnext({
-      browsers: 'Safari >= 8, iOS >= 8, Chrome >= 46, Firefox >= 42'
-    }));
   var css = streamToPromise(cssStream).then(function(css) {
     var concatedCss = css.map(function(file) {
       return file.contents.toString('utf-8');
