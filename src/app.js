@@ -4,19 +4,6 @@
 
 var Mercator = require('./mercator');
 
-function fetch(url) {
-  return new Promise(function(resolve, reject) {
-    function reqListener() {
-      resolve(JSON.parse(oReq.responseText));
-    }
-
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener('load', reqListener);
-    oReq.open('GET', url);
-    oReq.send();
-  });
-}
-
 function removeClass(el, className) {
   var classNameReg = new RegExp('(\\s|^)' + className + '(\\s|$)')
   el.className = el.className.replace(classNameReg, ' ');
@@ -80,7 +67,9 @@ window.addEventListener('load', function() {
     onUp();
   });
 
-  fetch('data/data-v2.json').then(function(latLongCharts) {
+  fetch('data/data-v2.json').then(function(response) {
+    return response.json()
+  }).then(function(latLongCharts) {
     removeClass(document.body, 'loading');
     Mercator.init(latLongCharts, svg);
     var dimension = Math.min(window.innerWidth, window.innerHeight);
