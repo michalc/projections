@@ -26,8 +26,7 @@
     "sinon": "latest",
     "sinon-chai": "latest",
     "stream-to-promise": "latest",
-    "vinyl-source-stream": "latest",
-    "watchify": "latest"
+    "vinyl-source-stream": "latest"
   },
   "scripts": {
     "test": "gulp lint && ./node_modules/.bin/karma start && ./node_modules/.bin/codecov"
