@@ -30,6 +30,7 @@ var BOUNDS_SCREEN_TOP = 0;
 var BOUNDS_SCREEN_BOTTOM;
 var BOUNDS_SCREEN_LEFT = 0;
 var BOUNDS_SCREEN_RIGHT;
+var W;
 
 var rotationMatrix = new Float64Array(9);
 rotationMatrix[0] = 1;
