@@ -167,6 +167,8 @@ gulp.task('default', function() {
       javascript: javascriptContents,
       css: cssContents,
     }, handlebarOpts);
+  }).then(function(html) {
+    fs.writeFileSync('build/index.html', html)
   });
 
   return Promise.all([streamToPromise(css), html])
