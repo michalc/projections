@@ -115,7 +115,7 @@ gulp.task('lint', function () {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('default', [], function() {
+gulp.task('default', function() {
   var cssnext = require('gulp-cssnext');
   var build = 'build';
   var dest = build;
