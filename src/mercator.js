@@ -104,8 +104,6 @@ function toEarth(chartX, chartY, out, outOffset) {
   out[outOffset + 1] = phi;
 }
 
-// longRotation rotates about z axis (line through earth pole to pole)
-// latRotation rotates about y axis (line through earth along original equator
 function rotate(rot, xzyArray, xyzOffset, resultArray, resultOffset) {
   var x = xzyArray[xyzOffset];
   var y = xzyArray[xyzOffset+1];
