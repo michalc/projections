@@ -25,7 +25,7 @@ module.exports = function(config) {
       reporters: [
         { type: "text" },
         { type: "html", dir: "coverage" },
-        { type: "lcov" }
+        { type: "lcov", dir: "coverage", subdir: ".", file: "lcov.info"}
       ]
     },
     exclude: [
