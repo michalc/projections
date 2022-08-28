@@ -1,6 +1,6 @@
 # projections [![Build Status](https://travis-ci.org/michalc/projections.svg?branch=master)](https://travis-ci.org/michalc/projections) [![codecov](https://codecov.io/gh/michalc/projections/branch/master/graph/badge.svg)](https://codecov.io/gh/michalc/projections)
 
-Source for http://projections.charemza.name/
+Source for https://projections.charemza.name/
 
 ## What does this do?
 
