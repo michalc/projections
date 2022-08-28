@@ -17,10 +17,6 @@ body {
   justify-content: center;
 }
 
-svg {
-  touch-action: none;
-}
-
 p {
   position: absolute;
   left: 0;
@@ -40,4 +36,15 @@ p {
 
 .hide {
   opacity: 0;
+}
+
+svg {
+  touch-action: none;
+  background-color: #068dc5;
+}
+
+.land {
+  fill: #f7f7f7;
+  fill-opacity: 1;
+  stroke: none;
 }
