@@ -279,7 +279,7 @@ function multiply(target, b, a) {
   target[8] = b[6]*a[2] + b[7]*a[5] + b[8]*a[8];
 }
 
-function draw(svg, rotationMatrix) {
+function draw(rotationMatrix) {
   var coordsStringOffset = 0;
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
@@ -296,7 +296,7 @@ function drawFromTo() {
   if (!charts) return;
   fillRotationMatrixFromTo(rotationMatrixExtra, draggingPointFrom, draggingPointTo);
   multiply(rotationMatrixCombined, rotationMatrixExtra, rotationMatrix);
-  draw(svg, rotationMatrixCombined);
+  draw(rotationMatrixCombined);
 }
 
 function onMove(x, y, svgRect) {
