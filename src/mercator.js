@@ -106,16 +106,10 @@ function toEarth(chartX, chartY, out, outOffset) {
 
 // longRotation rotates about z axis (line through earth pole to pole)
 // latRotation rotates about y axis (line through earth along original equator
-function rotate(rot, thetaPhiArray, thetaPhiOffset, resultArray, resultOffset) {
-  var theta = thetaPhiArray[thetaPhiOffset];
-  var phi = thetaPhiArray[thetaPhiOffset+1];
-
-  // Convert to cartesian coordinates (assuming radius of Earth is 1)
-  // http://mathworld.wolfram.com/SphericalCoordinates.html
-  var sinPhi = Math.sin(phi)
-  var x = Math.cos(theta) * sinPhi;
-  var y = Math.sin(theta) * sinPhi;
-  var z = Math.cos(phi);
+function rotate(rot, xzyArray, xyzOffset, resultArray, resultOffset) {
+  var x = xzyArray[xyzOffset];
+  var y = xzyArray[xyzOffset+1];
+  var z = xzyArray[xyzOffset+2];
 
   var x_r = rot[0] * x + rot[1] * y + rot[2] * z;
   var y_r = rot[3] * x + rot[4] * y + rot[5] * z;
@@ -283,9 +277,9 @@ function draw(rotationMatrix) {
   var coordsStringOffset = 0;
   for (var j = 0; j < charts.length; ++j) {
     // Fill rotatedCoords
-    var numCoords = charts[j].length / 2;
+    var numCoords = charts[j].length / 3;
     for (var i = 0; i < numCoords; ++i) {
-      rotate(rotationMatrix, charts[j], i*2, rotatedCoords, i*2);
+      rotate(rotationMatrix, charts[j], i*3, rotatedCoords, i*2);
     }
     coordsStringOffset = getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset);
   }
@@ -337,14 +331,23 @@ function setBounds(width, height) {
 function init(latLongCharts, _svg) {
   svg = _svg;
   charts = latLongCharts.map(function(shape) {
-    var shapeCoords = new Float64Array(shape.length * 2);
+    var shapeCoords = new Float64Array(shape.length * 3);
     for (var i = 0; i < shape.length; ++i) {
       var long = shape[i][0];
       var lat = shape[i][1];
       var theta = toRadians(long);
       var phi = toRadians(90 - lat);
-      shapeCoords[i*2] = theta;
-      shapeCoords[i*2 + 1] = phi;
+
+      // Convert to cartesian coordinates (assuming radius of Earth is 1)
+      // http://mathworld.wolfram.com/SphericalCoordinates.html
+      var sinPhi = Math.sin(phi)
+      var x = Math.cos(theta) * sinPhi;
+      var y = Math.sin(theta) * sinPhi;
+      var z = Math.cos(phi);
+
+      shapeCoords[i*3] = x;
+      shapeCoords[i*3 + 1] = y;
+      shapeCoords[i*3 + 2] = z;
     }
     return shapeCoords;
   });
@@ -354,7 +357,7 @@ function init(latLongCharts, _svg) {
   path.setAttributeNS(null, 'class', 'land');
   svg.appendChild(path);
   for (var i = 0; i < charts.length; ++i) {
-    maxLength = Math.max(charts[i].length / 2, maxLength);
+    maxLength = Math.max(charts[i].length / 3, maxLength);
   }
   rotatedCoords = new Float64Array(8 * 2 * maxLength);
 }
