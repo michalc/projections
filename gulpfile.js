@@ -95,7 +95,13 @@ gulp.task('generate-charts', function () {
       })
       .value();
 
-    charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper], lakes]);
+    charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper], lakes]).map(function(chart) {
+      return chart.map(function(points) {
+        return points.map(function(point) {
+          return parseFloat(point.toFixed(3));
+        });
+      })
+    });
     chartsString = JSON.stringify(charts);
 
     var saveStream = new stream.Readable()
