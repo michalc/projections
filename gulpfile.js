@@ -151,6 +151,9 @@ gulp.task('default', function() {
       },
       css: function(context) {
         return new Handlebars.SafeString(context.data.root.css);
+      },
+      data: function(context) {
+        return new Handlebars.SafeString(context.data.root.data);
       }
     }
   };
@@ -164,6 +167,7 @@ gulp.task('default', function() {
     return template({
       javascript: javascriptContents,
       css: cssContents,
+      data: fs.readFileSync('data/data-v2.json', 'utf8'),
     }, handlebarOpts);
   }).then(function(html) {
     fs.writeFileSync('build/index.html', html)

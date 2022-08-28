@@ -17,10 +17,6 @@ body {
   justify-content: center;
 }
 
-.loading {
-  display: none;
-}
-
 svg {
   touch-action: none;
 }

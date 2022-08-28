@@ -62,13 +62,8 @@ window.addEventListener('load', function() {
     onUp();
   });
 
-  fetch('data/data-v2.json').then(function(response) {
-    return response.json()
-  }).then(function(latLongCharts) {
-    document.body.classList.remove('loading');
-    Mercator.init(latLongCharts, svg);
-    var dimension = Math.min(window.innerWidth, window.innerHeight);
-    Mercator.setBounds(dimension, dimension);
-    svgRect = svg.getBoundingClientRect();
-  });
+  Mercator.init(window.data, svg);
+  var dimension = Math.min(window.innerWidth, window.innerHeight);
+  Mercator.setBounds(dimension, dimension);
+  svgRect = svg.getBoundingClientRect();
 });
