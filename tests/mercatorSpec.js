@@ -11,11 +11,31 @@ var tolerance = 0.000001;
 describe('mercator', function() {
   describe('rotate', function() {
     it('keeps 0 as the same', function() {
-      var longLat = [12.3, 34.5];
-      var output = new Float64Array(8 * 3);
-      Mercator.rotate(0, 0, longLat, output, 1);
-      expect(output[1]).to.be.within(longLat[0] - tolerance, longLat[0] + tolerance);
-      expect(output[2]).to.be.within(longLat[1] - tolerance, longLat[1] + tolerance);;
+      var latLongCharts = [[[12.3, 34.5], [18.3, 38.5], [18.3, 48.5]]];
+      const dimension = Math.min(window.innerWidth, window.innerHeight);
+      var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+      document.body.appendChild(svg);
+      const svgRect = svg.getBoundingClientRect();
+
+      Mercator.init(latLongCharts, svg);
+      Mercator.setBounds(dimension, dimension);
+
+      expect(svg.outerHTML).to.be.equal(
+        '<svg width="600" height="600" viewBox="0 0 60000 60000">' +
+        '<path class="land" d="M32050,21407L33050,20578L33050,18272z"></path>' +
+        '</svg>'
+      );
+
+      Mercator.onDown(0, 0, svgRect);
+      Mercator.onMove(10, 10, svgRect);
+      expect(svg.outerHTML).to.be.equal(
+        '<svg width="600" height="600" viewBox="0 0 60000 60000">' +
+        '<path class="land" d="M32007,21248L33009,20400L32987,18062z"></path>' +
+        '</svg>'
+      );
+
+      svg.remove();
     });
   });
 });

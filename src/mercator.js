@@ -9,6 +9,8 @@ Mercator.onMove = onMove;
 Mercator.onDown = onDown;
 Mercator.setBounds = setBounds;
 
+var svg;
+
 var PI = Math.PI;
 var PI_2 = PI * 2;
 var W_over_PI_2;
@@ -332,7 +334,8 @@ function setBounds(width, height) {
   drawFromTo();
 }
 
-function init(latLongCharts, svg) {
+function init(latLongCharts, _svg) {
+  svg = _svg;
   charts = latLongCharts.map(function(shape) {
     var shapeCoords = new Float64Array(shape.length * 2);
     for (var i = 0; i < shape.length; ++i) {
