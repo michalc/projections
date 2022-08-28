@@ -29,7 +29,7 @@
     "vinyl-source-stream": "latest"
   },
   "scripts": {
-    "test": "gulp lint && ./node_modules/.bin/karma start && ./node_modules/.bin/codecov"
+    "test": "gulp lint && ./node_modules/.bin/karma start"
   },
   "devDependencies": {
     "geojson-stream": "latest",
