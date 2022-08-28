@@ -115,12 +115,8 @@ function rotate(rot, xzyArray, xyzOffset, resultArray, resultOffset) {
 
   // +ve / 0 = Infinity, -ve / 0 = -Infinity, and
   // atan2 works for +- Infinity
-  var theta_r = Math.atan2(y_r, x_r);
-
-  var phi_r = Math.acos(z_r);
-
-  resultArray[resultOffset] = theta_r;
-  resultArray[resultOffset + 1] = phi_r;
+  resultArray[resultOffset] = Math.atan2(y_r, x_r); // theta_r
+  resultArray[resultOffset + 1] = Math.acos(z_r);   // phi_r
 }
 
 function concatInteger(integer, string, stringOffset) {
