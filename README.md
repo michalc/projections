@@ -1,4 +1,4 @@
-# projections [![Build Status](https://travis-ci.org/michalc/projections.svg?branch=master)](https://travis-ci.org/michalc/projections) [![codecov](https://codecov.io/gh/michalc/projections/branch/master/graph/badge.svg)](https://codecov.io/gh/michalc/projections)
+# projections ![Build Status](https://github.com/michalc/projections/actions/workflows/run-tests.yml/badge.svg?branch=master) [![codecov](https://codecov.io/gh/michalc/projections/branch/master/graph/badge.svg)](https://codecov.io/gh/michalc/projections)
 
 Source for https://projections.charemza.name/
 
