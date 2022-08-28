@@ -2,6 +2,8 @@
 
 Source for https://projections.charemza.name/
 
+https://user-images.githubusercontent.com/13877/187075105-ac63cc9d-afd2-4c59-92ab-476fbf202214.mov
+
 ## What does this do?
 
 It shows the world using a spherical Mercator projection, but allows the world to be rotated first, by dragging.
