@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
     onMove(e.clientX, e.clientY);
   });
   document.body.addEventListener('touchmove', function(e) {
-    e.preventDefault();
     onMove(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
   });
 
@@ -44,23 +43,16 @@ document.addEventListener('DOMContentLoaded', function() {
     onDown(e.clientX, e.clientY);
   });
   svg.addEventListener('touchstart', function(e) {
-    e.preventDefault();
     onDown(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-  });
+  }, {passive: true});
 
   function onUp() {
     isDown = false;
     Mercator.onUp();
   }
   document.body.addEventListener('mouseup', onUp);
-  document.body.addEventListener('touchend', function(e) {
-    e.preventDefault();
-    onUp();
-  });
-  document.body.addEventListener('touchcancel', function(e) {
-    e.preventDefault();
-    onUp();
-  });
+  document.body.addEventListener('touchend', onUp);
+  document.body.addEventListener('touchcancel', onUp);
 
   Mercator.init(window.data, svg);
   var dimension = Math.min(window.innerWidth, window.innerHeight);
