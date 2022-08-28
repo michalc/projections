@@ -4,7 +4,7 @@
 
 var Mercator = require('./mercator');
 
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
   var svg = document.getElementById('svg');
   var instructions = document.getElementById('instructions');
   var svgRect;
