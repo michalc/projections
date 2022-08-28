@@ -98,7 +98,7 @@ gulp.task('generate-charts', function () {
     charts = _.flatten([mostOfWorld, antarticaIslands, [antarticaProper], lakes]).map(function(chart) {
       return chart.map(function(points) {
         return points.map(function(point) {
-          return parseFloat(point.toFixed(3));
+          return parseInt(parseFloat(point.toFixed(3)) * 1000);
         });
       })
     });

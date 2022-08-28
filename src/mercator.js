@@ -333,8 +333,8 @@ function init(latLongCharts, _svg) {
   charts = latLongCharts.map(function(shape) {
     var shapeCoords = new Float64Array(shape.length * 3);
     for (var i = 0; i < shape.length; ++i) {
-      var long = shape[i][0];
-      var lat = shape[i][1];
+      var long = shape[i][0] / 1000.0;
+      var lat = shape[i][1] / 1000.0;
       var theta = toRadians(long);
       var phi = toRadians(90 - lat);
 

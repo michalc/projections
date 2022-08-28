@@ -11,7 +11,7 @@ var tolerance = 0.000001;
 describe('mercator', function() {
   describe('rotate', function() {
     it('keeps 0 as the same', function() {
-      var latLongCharts = [[[12.3, 34.5], [18.3, 38.5], [18.3, 48.5]]];
+      var latLongCharts = [[[12.3 * 1000, 34.5 * 1000], [18.3 * 1000, 38.5 * 1000], [18.3 * 1000, 48.5 * 1000]]];
       const dimension = Math.min(window.innerWidth, window.innerHeight);
       var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
