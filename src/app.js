@@ -8,6 +8,8 @@ window.addEventListener('load', function() {
   var svg = document.getElementById('svg');
   var instructions = document.getElementById('instructions');
   var svgRect;
+  var hidden = false;
+  var isDown = false;
 
   window.addEventListener('resize', function() {
     var dimension = Math.min(window.innerWidth, window.innerHeight);
@@ -15,8 +17,6 @@ window.addEventListener('load', function() {
     svgRect = svg.getBoundingClientRect();
   });
 
-  var hidden = false;
-  var isDown = false;
   function onMove(x, y) {
     if (!hidden && isDown) {
       window.setTimeout(function() {
