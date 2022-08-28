@@ -41,6 +41,8 @@ p {
 svg {
   touch-action: none;
   background-color: #068dc5;
+  width: min(100vh, 100vw);
+  height: min(100vh, 100vw);
 }
 
 .land {

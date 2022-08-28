@@ -22,7 +22,7 @@ describe('mercator', function() {
       Mercator.setBounds(dimension, dimension);
 
       expect(svg.outerHTML).to.be.equal(
-        '<svg width="600" height="600" viewBox="0 0 60000 60000">' +
+        '<svg viewBox="0 0 60000 60000">' +
         '<path class="land" d="M32050,21407L33050,20578L33050,18272z"></path>' +
         '</svg>'
       );
@@ -30,7 +30,7 @@ describe('mercator', function() {
       Mercator.onDown(0, 0, svgRect);
       Mercator.onMove(10, 10, svgRect);
       expect(svg.outerHTML).to.be.equal(
-        '<svg width="600" height="600" viewBox="0 0 60000 60000">' +
+        '<svg viewBox="0 0 60000 60000">' +
         '<path class="land" d="M32007,21248L33009,20400L32987,18062z"></path>' +
         '</svg>'
       );

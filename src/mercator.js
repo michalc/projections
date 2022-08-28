@@ -316,8 +316,6 @@ function onUp() {
 }
 
 function setBounds(width, height) {
-  svg.setAttribute('width', width);
-  svg.setAttribute('height', height);
   svg.setAttribute('viewBox', '0 0 ' + (width * SVG_SCALE) + ' ' + (height * SVG_SCALE));
   BOUNDS_SCREEN_RIGHT = width * SVG_SCALE;
   BOUNDS_SCREEN_BOTTOM = height * SVG_SCALE;
