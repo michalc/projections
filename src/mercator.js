@@ -66,12 +66,6 @@ function toRadians(deg) {
 }
 
 function phiToY(phi) {
-  // Fudge to be able to plot things at (/beyond) pole
-  // this is useful since shapes might contain vertices
-  // that are at infinity, but still want to plot the ones
-  // that aren'ts
-  if (0       >= phi) return MAX_BOUND;
-  if (PI <= phi) return -MAX_BOUND;
   return W_over_PI_2 * Math.log(Math.tan((PI - phi) / 2));
 }
 
