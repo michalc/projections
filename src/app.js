@@ -11,11 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
   var hidden = false;
   var isDown = false;
 
-  window.addEventListener('resize', function() {
+  function setSize() {
     var dimension = Math.min(window.innerWidth, window.innerHeight);
     Mercator.setBounds(dimension, dimension);
     svgRect = svg.getBoundingClientRect();
-  });
+  }
+  window.addEventListener('resize', setSize);
 
   function onMove(x, y) {
     if (!hidden && isDown) {
@@ -55,7 +56,5 @@ document.addEventListener('DOMContentLoaded', function() {
   document.body.addEventListener('touchcancel', onUp);
 
   Mercator.init(window.data, svg);
-  var dimension = Math.min(window.innerWidth, window.innerHeight);
-  Mercator.setBounds(dimension, dimension);
-  svgRect = svg.getBoundingClientRect();
+  setSize();
 });
