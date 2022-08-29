@@ -351,5 +351,5 @@ function init(latLongCharts, _svg) {
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 3, maxLength);
   }
-  rotatedCoords = new Float64Array(8 * 2 * maxLength);
+  rotatedCoords = new Float64Array(2 * maxLength);
 }
