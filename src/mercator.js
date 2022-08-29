@@ -346,7 +346,6 @@ function init(latLongCharts, _svg) {
 
   var maxLength = -Infinity;
   path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttributeNS(null, 'class', 'land');
   svg.appendChild(path);
   for (var i = 0; i < charts.length; ++i) {
     maxLength = Math.max(charts[i].length / 3, maxLength);

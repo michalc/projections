@@ -45,7 +45,7 @@ svg {
   height: min(100vh, 100vw);
 }
 
-.land {
+path {
   fill: #f7f7f7;
   fill-opacity: 1;
   stroke: none;
