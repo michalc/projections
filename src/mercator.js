@@ -22,10 +22,6 @@ var PI_2_over_W;
 // float -> string is _much_ slower than int -> string
 var SVG_SCALE = 100;
 
-// Points at infinity on the chart
-// get mapped to this
-var MAX_BOUND = 99999;
-
 var BOUNDS_EARTH_TOP = toRadians(90 - 83.6);
 var BOUNDS_EARTH_LEFT = toRadians(-180);
 var BOUNDS_SCREEN_TOP = 0;
