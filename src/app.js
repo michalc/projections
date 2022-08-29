@@ -5,7 +5,7 @@
 var Mercator = require('./mercator');
 
 document.addEventListener('DOMContentLoaded', function() {
-  var svg = document.getElementById('svg');
+  var svg = document.getElementsByTagName('svg')[0];
   var instructions = document.getElementsByTagName('p')[0];
   var svgRect;
   var hidden = false;
