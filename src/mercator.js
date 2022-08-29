@@ -52,7 +52,7 @@ var charts;
 var mousedown = false;
 
 var coordsString = new Uint8Array(200000);
-var decoder = new TextDecoder();
+var decoder = new TextDecoder('ascii');
 var digitsReversed = new Uint8Array(6);
 var ASCII_ZERO = 48;
 var ASCII_MINUS = 45;
