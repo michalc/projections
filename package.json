@@ -2,16 +2,23 @@
   "name": "projections",
   "repository": "https://github.com/michalc/projections/",
   "license": "GPL-3.0",
-  "dependencies": {
+  "dependencies": {},
+  "scripts": {
+    "test": "gulp lint && ./node_modules/.bin/karma start"
+  },
+  "devDependencies": {
     "browserify": "latest",
     "browserify-istanbul": "latest",
     "chai": "latest",
     "clean-css": "latest",
     "eslint": "latest",
+    "geojson-stream": "latest",
     "gulp": "latest",
     "gulp-buffer": "latest",
     "gulp-changed": "latest",
+    "gulp-download-stream": "latest",
     "gulp-rev": "latest",
+    "gulp-unzip": "github:michalc/gulp-unzip#fix-vinyl",
     "handlebars": "latest",
     "karma": "latest",
     "karma-browserify": "latest",
@@ -20,22 +27,13 @@
     "karma-mocha": "latest",
     "karma-sinon-chai": "latest",
     "lodash": "latest",
+    "mapnik": "latest",
     "merge2": "latest",
     "mocha": "latest",
     "normalize.css": "latest",
     "sinon": "latest",
     "sinon-chai": "latest",
     "stream-to-promise": "latest",
-    "vinyl-source-stream": "latest"
-  },
-  "scripts": {
-    "test": "gulp lint && ./node_modules/.bin/karma start"
-  },
-  "devDependencies": {
-    "geojson-stream": "latest",
-    "gulp-download-stream": "latest",
-    "gulp-unzip": "github:michalc/gulp-unzip#fix-vinyl",
-    "mapnik": "latest",
     "tinyify": "latest",
     "vinyl-source-stream": "latest"
   },
