@@ -267,7 +267,7 @@ function draw(rotationMatrix) {
     }
     coordsStringOffset = getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset);
   }
-  path.setAttributeNS(null, 'd', decoder.decode(new DataView(coordsString.buffer, 0, coordsStringOffset)));
+  path.setAttributeNS(null, 'd', decoder.decode(new Uint8Array(coordsString.buffer, 0, coordsStringOffset)));
 }
 
 function drawFromTo() {
