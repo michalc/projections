@@ -22,11 +22,17 @@ var PI_2_over_W;
 // float -> string is _much_ slower than int -> string
 var SVG_SCALE = 100;
 
-var BOUNDS_EARTH_TOP = toRadians(90 - 83.6);
+var CROP_LAT = 5;
+var BOUNDS_EARTH_TOP = toRadians(CROP_LAT);
+var BOUNDS_EARTH_BOTTOM = toRadians(180 - CROP_LAT);
 var BOUNDS_EARTH_LEFT = toRadians(-180);
 var BOUNDS_SCREEN_TOP = 0;
 var BOUNDS_SCREEN_LEFT = 0;
 var BOUNDS_SCREEN_RIGHT;
+var Y_TOP;
+var Y_BOTTOM;
+var CHART_Y_PER_Y;
+var Y_PER_CHART_Y;
 var W;
 
 var rotationMatrix = new Float64Array(9);
@@ -70,8 +76,7 @@ function xToTheta(theta_0, x) {
 
 function toChart(theta, phi, out, outOffset) {
   var y = phiToY(phi);
-  var y_top = phiToY(BOUNDS_EARTH_TOP);
-  var chartY = y_top - y;
+  var chartY = (Y_TOP - y) * CHART_Y_PER_Y;
 
   var theta_0 = BOUNDS_EARTH_LEFT;
   var chartX = W_over_PI_2 * (theta - theta_0);
@@ -85,8 +90,7 @@ function toEarth(chartX, chartY, out, outOffset) {
   var x = chartX;
   var theta = xToTheta(theta_0, x);
 
-  var y_top = phiToY(BOUNDS_EARTH_TOP);
-  var y = y_top - chartY;
+  var y = Y_TOP - chartY * Y_PER_CHART_Y;
   var phi = PI - 2 * Math.atan(Math.exp(y * PI_2_over_W));
 
   out[outOffset] = theta;
@@ -304,6 +308,10 @@ function setBounds(width, height) {
   W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
   PI_2_over_W = PI_2 / W;
   W_over_PI_2 = W / PI_2;
+  Y_TOP = phiToY(BOUNDS_EARTH_TOP);
+  Y_BOTTOM = phiToY(BOUNDS_EARTH_BOTTOM);
+  CHART_Y_PER_Y = (height * SVG_SCALE) / (Y_TOP - Y_BOTTOM);
+  Y_PER_CHART_Y = (Y_TOP - Y_BOTTOM) / (height * SVG_SCALE);
 
   drawFromTo();
 }
