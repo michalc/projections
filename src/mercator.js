@@ -29,8 +29,8 @@ var BOUNDS_EARTH_LEFT = toRadians(-180);
 var BOUNDS_SCREEN_TOP = 0;
 var BOUNDS_SCREEN_LEFT = 0;
 var BOUNDS_SCREEN_RIGHT;
-var Y_TOP;
-var Y_BOTTOM;
+var Y_TOP = phiToY(BOUNDS_EARTH_TOP);
+var Y_BOTTOM = phiToY(BOUNDS_EARTH_BOTTOM);
 var CHART_Y_PER_Y;
 var Y_PER_CHART_Y;
 var W;
@@ -308,8 +308,6 @@ function setBounds(width, height) {
   W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
   PI_2_over_W = PI_2 / W;
   W_over_PI_2 = W / PI_2;
-  Y_TOP = phiToY(BOUNDS_EARTH_TOP);
-  Y_BOTTOM = phiToY(BOUNDS_EARTH_BOTTOM);
   CHART_Y_PER_Y = (height * SVG_SCALE) / (Y_TOP - Y_BOTTOM);
   Y_PER_CHART_Y = (Y_TOP - Y_BOTTOM) / (height * SVG_SCALE);
 
