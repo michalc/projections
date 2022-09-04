@@ -67,7 +67,7 @@ function toRadians(deg) {
 }
 
 function phiToY(phi) {
-  return W_over_PI_2 * Math.log(Math.tan((PI - phi) / 2));
+  return Math.log(Math.tan((PI - phi) / 2));
 }
 
 function xToTheta(theta_0, x) {
@@ -91,7 +91,7 @@ function toEarth(chartX, chartY, out, outOffset) {
   var theta = xToTheta(theta_0, x);
 
   var y = Y_TOP - chartY * Y_PER_CHART_Y;
-  var phi = PI - 2 * Math.atan(Math.exp(y * PI_2_over_W));
+  var phi = PI - 2 * Math.atan(Math.exp(y));
 
   out[outOffset] = theta;
   out[outOffset + 1] = phi;
