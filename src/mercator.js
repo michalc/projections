@@ -153,7 +153,6 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
   var latDiffToSouthPole = Math.abs(PI - maxPhi);
   var latDiffToNorthPole = Math.abs(minPhi);
   var offPhi = latDiffToSouthPole <= latDiffToNorthPole ? toRadians(90 + 88) : toRadians(90 - 88);
-  var extraTheta = toRadians(10);
 
   var tempCoordsOffset = 0;
   for (var i = 0; i < numCoords; ++i) {
@@ -170,13 +169,13 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
     if (direction) {
       toChart(currTheta - PI_2 * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (PI_2 + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - PI_2 * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (PI_2 + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - PI_2 * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (PI_2 + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + PI_2 * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(prevTheta + (PI_2 + extraTheta) * direction, prevPhi, tempCoords, tempCoordsOffset);
+      toChart(prevTheta + PI_2 * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
       toChart(prevTheta + PI_2 * direction, prevPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
