@@ -25,7 +25,6 @@ var SVG_SCALE = 100;
 var BOUNDS_EARTH_TOP = toRadians(90 - 83.6);
 var BOUNDS_EARTH_LEFT = toRadians(-180);
 var BOUNDS_SCREEN_TOP = 0;
-var BOUNDS_SCREEN_BOTTOM;
 var BOUNDS_SCREEN_LEFT = 0;
 var BOUNDS_SCREEN_RIGHT;
 var W;
@@ -302,7 +301,6 @@ function onUp() {
 function setBounds(width, height) {
   svg.setAttribute('viewBox', '0 0 ' + (width * SVG_SCALE) + ' ' + (height * SVG_SCALE));
   BOUNDS_SCREEN_RIGHT = width * SVG_SCALE;
-  BOUNDS_SCREEN_BOTTOM = height * SVG_SCALE;
   W = BOUNDS_SCREEN_RIGHT - BOUNDS_SCREEN_LEFT;
   PI_2_over_W = PI_2 / W;
   W_over_PI_2 = W / PI_2;
