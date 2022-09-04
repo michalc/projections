@@ -169,7 +169,7 @@ function getShape(numCoords, rotatedCoords, coordsString, coordsStringOffset) {
       tempCoordsOffset += 2;
       toChart(currTheta - (PI_2 + extraTheta) * direction, currPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
-      toChart(currTheta - (PI_2+ extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
+      toChart(currTheta - (PI_2 + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
       toChart(prevTheta + (PI_2 + extraTheta) * direction, offPhi, tempCoords, tempCoordsOffset);
       tempCoordsOffset += 2;
